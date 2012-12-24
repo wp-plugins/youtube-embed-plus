@@ -1,4 +1,4 @@
-=== YouTube ===
+=== YouTube Embed ===
 Contributors: embedplus
 Plugin Name: YouTube Embed
 Tags: basic youtube, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, plugin, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin
@@ -22,7 +22,7 @@ To start using this plugin, simply paste a YouTube link on its own line. You can
 * iv_load_policy - Set this to 3 to turn off annotations (or 1 to show them). Example: http://www.youtube.com/watch?v=quwebVjAEJA&iv_load_policy=3
 * loop - Set this to 1 to loop the video (or 0 to not loop). Example: http://www.youtube.com/watch?v=quwebVjAEJA&loop=1
 * modestbranding - Set this to 1 to remove the YouTube logo while playing (or 0 to show the logo). Example: http://www.youtube.com/watch?v=quwebVjAEJA&modestbranding=1
-* * rel - Set this to 0 to not show related videos at the end of playing (or 1 to show them). Example: http://www.youtube.com/watch?v=quwebVjAEJA&rel=0
+* rel - Set this to 0 to not show related videos at the end of playing (or 1 to show them). Example: http://www.youtube.com/watch?v=quwebVjAEJA&rel=0
 * showinfo - Set this to 0 to hide the video title and other info (or 1 to show it). Example: http://www.youtube.com/watch?v=quwebVjAEJA&showinfo=0
 * theme - Set this to 'light' to make the player have the light-colored theme (or 'dark' for the dark theme). Example: http://www.youtube.com/watch?v=quwebVjAEJA&theme=light
 
