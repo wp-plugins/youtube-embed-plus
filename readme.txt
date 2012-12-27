@@ -1,4 +1,4 @@
-=== YouTube Embed ===
+=== YouTube ===
 Contributors: embedplus
 Plugin Name: YouTube Embed
 Tags: basic youtube, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, plugin, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin
