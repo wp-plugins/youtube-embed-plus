@@ -4,14 +4,14 @@ Plugin Name: YouTube Embed
 Tags: basic youtube, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, plugin, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin
 Requires at least: 2.9
 Tested up to: 3.5
-Stable tag: 1.0
+Stable tag: 1.1
 License: GPLv3 or later
 
 YouTube embed plugin for WordPress. Provides the basic features of YouTube for your blog, and convenient defaults.
 
 == Description ==
 
-This YouTube embed plugin for WordPress is very simple.  It provides the basic features of YouTube, and will have you embedding in seconds after installing it.  If you want to explore a more advanced plugin, we suggest looking at another one like: [Advanced YouTube Embed]( http://wordpress.org/extend/plugins/embedplus-for-wordpress/) by [EmbedPlus](http://www.embedplus.com). 
+This YouTube embed plugin for WordPress is very simple.  It provides the basic features of YouTube, and will have you embedding in seconds after installing it.  If you want to explore a more advanced plugin, we suggest looking at another one like: [Advanced YouTube Embed](http://wordpress.org/extend/plugins/embedplus-for-wordpress/) by [EmbedPlus](http://www.embedplus.com). 
 
 To start using this plugin, simply paste a YouTube link on its own line. You can also make default settings for all your YouTube videos under the YouTube admin menu. You can make additional YouTube embed customizations by adding more to the link as shown below: 
 
@@ -25,6 +25,8 @@ To start using this plugin, simply paste a YouTube link on its own line. You can
 * rel - Set this to 0 to not show related videos at the end of playing (or 1 to show them). Example: http://www.youtube.com/watch?v=quwebVjAEJA&rel=0
 * showinfo - Set this to 0 to hide the video title and other info (or 1 to show it). Example: http://www.youtube.com/watch?v=quwebVjAEJA&showinfo=0
 * theme - Set this to 'light' to make the player have the light-colored theme (or 'dark' for the dark theme). Example: http://www.youtube.com/watch?v=quwebVjAEJA&theme=light
+
+Hear about major upcoming announcements and feature updates by [signing up here](http://eepurl.com/tpof9).
 
 == Installation ==
 
@@ -57,10 +59,14 @@ Please use the Support forum until we put up a site for this plugin.
 
 == Changelog ==
 
-= YouTube Embed 1.0 =
+= YouTube Embed 1.1 =
+Links added to enable future user communications.
 
+= YouTube Embed 1.0 =
 First release uploaded to the plugin repository.
 
 == Other Notes ==
+
+Hear about major upcoming announcements and feature updates by [signing up here](http://eepurl.com/tpof9).
 
 Again, note that this is a no-frills plugin. We're just supporting the basic functions that people typically want when embedding YouTube videos.  If you want more, take a look at a more powerful one here: [Advanced YouTube Embed]( http://wordpress.org/extend/plugins/embedplus-for-wordpress/) by [EmbedPlus](http://www.embedplus.com).

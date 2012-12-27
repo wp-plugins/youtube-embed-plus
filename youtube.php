@@ -3,14 +3,14 @@
   Plugin Name: YouTube Embed
   Plugin URI: http://www.embedplus.com
   Description: YouTube embed plugin for WordPress. Provides the basic features of YouTube for your blog, and convenient defaults.
-  Version: 1.0
+  Version: 1.1
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
-*/
+ */
 
 /*
   YouTube Embed
-  Copyright (C) 2012 EmbedPlus.com
+  Copyright (C) 2013 EmbedPlus.com
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -77,7 +77,6 @@ class YouTubePrefs
 //            // allow shortcode in widgets
 //            //add_filter('widget_text', 'do_shortcode', 11);
 //        }
-        
     }
 
     static function initoptions()
@@ -319,6 +318,8 @@ class YouTubePrefs
 
         echo "<h2>" . '<img src="' . plugins_url('images/youtubeicon16.png', __FILE__) . '" /> ' . __('YouTube Preferences') . "</h2>";
 
+        echo '<em>Hear about major upcoming announcements and feature updates by <a target="_blank" href="http://eepurl.com/tpof9">signing up here</a>.</em>';
+
         // settings form
         ?>
         <style type="text/css">
@@ -421,13 +422,17 @@ class YouTubePrefs
                 _e("<li><strong>end</strong> - Sets the time (in seconds) to stop the video. <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350<strong>&end=100</strong></em> </li>");
                 _e('</ul>');
                 ?>
-                
+
             </form>
 
             <h3><?php _e('Other Notes') ?></h3>
             <P>
-                <?php _e("Note that this is a no-frills plugin. We're just supporting the basic functions that people typically want when embedding YouTube videos, and providing an easy way to make defaults. If you want more, take a look at a more powerful one here: <a target=\"_blank\" href=\"http://wordpress.org/extend/plugins/embedplus-for-wordpress/\">Advanced YouTube Embed</a> by <a target=\"_blank\" href=\"http://www.embedplus.com\">EmbedPlus."); ?>
+                <?php _e("Note that this is a no-frills plugin. We're just supporting the basic functions that people typically want when embedding YouTube videos, and providing an easy way to make defaults. If you want more, take a look at a more powerful one here: <a target=\"_blank\" href=\"http://wordpress.org/extend/plugins/embedplus-for-wordpress/\">Advanced YouTube Embed</a> by <a target=\"_blank\" href=\"http://www.embedplus.com\">EmbedPlus</a>."); ?>
             </p>
+            <p>
+                <?php echo '<em>Hear about major upcoming announcements and feature updates by <a target="_blank" href="http://eepurl.com/tpof9">signing up here</a>.</em>'; ?>
+            </p>
+
         </div>
         <?php
     }
