@@ -31,6 +31,8 @@
 
 class YouTubePrefs
 {
+    public static $version = '2.0';
+    public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
     public static $defaultheight = null;
@@ -63,12 +65,19 @@ class YouTubePrefs
 
     public function __construct()
     {
-
         $do_autoembeds = get_option('embed_autourls');
         if ($do_autoembeds == 0)
         {
             update_option('embed_autourls', 1);
         }
+        
+        self::$alloptions = get_option(self::$opt_alloptions);
+        if (self::$alloptions == false || version_compare(self::$alloptions[self::$opt_version], self::$version, '<'))
+        {
+            self::initoptions();
+        }
+        self::$optembedwidth = intval(get_option('embed_size_w'));
+        self::$optembedheight = intval(get_option('embed_size_h'));
 
         self::$yt_options = array(
             self::$opt_autoplay,
@@ -111,6 +120,7 @@ class YouTubePrefs
                 $_theme = get_option('youtubeprefs_theme', 'dark');
 
                 $all = array(
+                    self::$opt_version => self::$version,
                     self::$opt_center => 0,
                     self::$opt_auto_hd => $_auto_hd,
                     self::$opt_autoplay => $_autoplay,
@@ -137,6 +147,7 @@ class YouTubePrefs
 
                 update_option('embed_autourls', 1);
             }
+            self::$alloptions = get_option(self::$opt_alloptions);
         }
     }
 
@@ -160,10 +171,6 @@ class YouTubePrefs
 
     public static function apply_prefs($content)
     {
-        self::$optembedwidth = intval(get_option('embed_size_w'));
-        self::$optembedheight = intval(get_option('embed_size_h'));
-        self::$alloptions = get_option(self::$opt_alloptions);
-
         $content = preg_replace_callback(self::$ytregex, "YouTubePrefs::get_html", $content);
         return $content;
     }

@@ -18,20 +18,20 @@ This YouTube embed plugin for WordPress is very simple.  It provides the basic f
 * What and when are your best and worst performers?
 * How much do the producers of the YouTube videos you embed rely on **your site** for views?
 
-If you want to explore a more advanced plugin, we suggest looking at another one like: [Advanced YouTube Embed]( http://wordpress.org/extend/plugins/embedplus-for-wordpress/) by [EmbedPlus](http://www.embedplus.com). 
+If you want to explore a more advanced plugin, we suggest looking at another one like: [Advanced YouTube Embed](http://wordpress.org/extend/plugins/embedplus-for-wordpress/) by [EmbedPlus](http://www.embedplus.com). 
 
 To start using this plugin, simply paste a YouTube link on its own line. You can also make default settings for all your YouTube videos under the YouTube admin menu. You can make additional YouTube embed customizations by adding more to the link as shown below: 
 
-* width - Sets the width of your player. If omitted, the default width will be the width of your theme's content. Example: http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350
-* height - Sets the height of your player. If omitted, this will be calculated for you automatically. Example: http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350
-* autoplay - Set this to 1 to autoplay the video (or 0 to play the video once). Example: http://www.youtube.com/watch?v=quwebVjAEJA&autoplay=1
-* cc_load_policy - Set this to 1 to turn on closed captioning (or 0 to leave them off). Example: http://www.youtube.com/watch?v=quwebVjAEJA&cc_load_policy=1
-* iv_load_policy - Set this to 3 to turn off annotations (or 1 to show them). Example: http://www.youtube.com/watch?v=quwebVjAEJA&iv_load_policy=3
-* loop - Set this to 1 to loop the video (or 0 to not loop). Example: http://www.youtube.com/watch?v=quwebVjAEJA&loop=1
-* modestbranding - Set this to 1 to remove the YouTube logo while playing (or 0 to show the logo). Example: http://www.youtube.com/watch?v=quwebVjAEJA&modestbranding=1
-* rel - Set this to 0 to not show related videos at the end of playing (or 1 to show them). Example: http://www.youtube.com/watch?v=quwebVjAEJA&rel=0
-* showinfo - Set this to 0 to hide the video title and other info (or 1 to show it). Example: http://www.youtube.com/watch?v=quwebVjAEJA&showinfo=0
-* theme - Set this to 'light' to make the player have the light-colored theme (or 'dark' for the dark theme). Example: http://www.youtube.com/watch?v=quwebVjAEJA&theme=light
+* width - Sets the width of your player. If omitted, the default width will be the width of your theme's content. Example: `http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350`
+* height - Sets the height of your player. If omitted, this will be calculated for you automatically. Example: `http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350`
+* autoplay - Set this to 1 to autoplay the video (or 0 to play the video once). Example: `http://www.youtube.com/watch?v=quwebVjAEJA&autoplay=1`
+* cc_load_policy - Set this to 1 to turn on closed captioning (or 0 to leave them off). Example: `http://www.youtube.com/watch?v=quwebVjAEJA&cc_load_policy=1`
+* iv_load_policy - Set this to 3 to turn off annotations (or 1 to show them). Example: `http://www.youtube.com/watch?v=quwebVjAEJA&iv_load_policy=3`
+* loop - Set this to 1 to loop the video (or 0 to not loop). Example: `http://www.youtube.com/watch?v=quwebVjAEJA&loop=1`
+* modestbranding - Set this to 1 to remove the YouTube logo while playing (or 0 to show the logo). Example: `http://www.youtube.com/watch?v=quwebVjAEJA&modestbranding=1`
+* rel - Set this to 0 to not show related videos at the end of playing (or 1 to show them). Example: `http://www.youtube.com/watch?v=quwebVjAEJA&rel=0`
+* showinfo - Set this to 0 to hide the video title and other info (or 1 to show it). Example: `http://www.youtube.com/watch?v=quwebVjAEJA&showinfo=0`
+* theme - Set this to 'light' to make the player have the light-colored theme (or 'dark' for the dark theme). Example: `http://www.youtube.com/watch?v=quwebVjAEJA&theme=light`
 
 == Installation ==
 
@@ -43,16 +43,16 @@ To start using this plugin, simply paste a YouTube link on its own line. You can
 
 Additional codes (adding these will override the default settings in the admin):
 
-* width - Sets the width of your player. If omitted, the default width will be the width of your theme's content. Example: http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350
-* height - Sets the height of your player. If omitted, this will be calculated for you automatically. Example: http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350
-* autoplay - Set this to 1 to autoplay the video (or 0 to play the video once). Example: http://www.youtube.com/watch?v=quwebVjAEJA&autoplay=1
-* cc_load_policy - Set this to 1 to turn on closed captioning (or 0 to leave them off). Example: http://www.youtube.com/watch?v=quwebVjAEJA&cc_load_policy=1
-* iv_load_policy - Set this to 3 to turn off annotations (or 1 to show them). Example: http://www.youtube.com/watch?v=quwebVjAEJA&iv_load_policy=3
-* loop - Set this to 1 to loop the video (or 0 to not loop). Example: http://www.youtube.com/watch?v=quwebVjAEJA&loop=1
-* modestbranding - Set this to 1 to remove the YouTube logo while playing (or 0 to show the logo). Example: http://www.youtube.com/watch?v=quwebVjAEJA&modestbranding=1
-* rel - Set this to 0 to not show related videos at the end of playing (or 1 to show them). Example: http://www.youtube.com/watch?v=quwebVjAEJA&rel=0
-* showinfo - Set this to 0 to hide the video title and other info (or 1 to show it). Example: http://www.youtube.com/watch?v=quwebVjAEJA&showinfo=0
-* theme - Set this to 'light' to make the player have the light-colored theme (or 'dark' for the dark theme). Example: http://www.youtube.com/watch?v=quwebVjAEJA&theme=light
+* width - Sets the width of your player. If omitted, the default width will be the width of your theme's content. Example: `http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350`
+* height - Sets the height of your player. If omitted, this will be calculated for you automatically. Example: `http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350`
+* autoplay - Set this to 1 to autoplay the video (or 0 to play the video once). Example: `http://www.youtube.com/watch?v=quwebVjAEJA&autoplay=1`
+* cc_load_policy - Set this to 1 to turn on closed captioning (or 0 to leave them off). Example: `http://www.youtube.com/watch?v=quwebVjAEJA&cc_load_policy=1`
+* iv_load_policy - Set this to 3 to turn off annotations (or 1 to show them). Example: `http://www.youtube.com/watch?v=quwebVjAEJA&iv_load_policy=3`
+* loop - Set this to 1 to loop the video (or 0 to not loop). Example: `http://www.youtube.com/watch?v=quwebVjAEJA&loop=1`
+* modestbranding - Set this to 1 to remove the YouTube logo while playing (or 0 to show the logo). Example: `http://www.youtube.com/watch?v=quwebVjAEJA&modestbranding=1`
+* rel - Set this to 0 to not show related videos at the end of playing (or 1 to show them). Example: `http://www.youtube.com/watch?v=quwebVjAEJA&rel=0`
+* showinfo - Set this to 0 to hide the video title and other info (or 1 to show it). Example: `http://www.youtube.com/watch?v=quwebVjAEJA&showinfo=0`
+* theme - Set this to 'light' to make the player have the light-colored theme (or 'dark' for the dark theme). Example: `http://www.youtube.com/watch?v=quwebVjAEJA&theme=light`
 
 = Contact =
 
