@@ -2,8 +2,8 @@
 /*
   Plugin Name: YouTube Embed
   Plugin URI: http://www.embedplus.com
-  Description: YouTube embed plugin for WordPress. Provides the basic features of YouTube for your blog, and convenient defaults.
-  Version: 1.1
+  Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add view tracking and access to your very own analytics dashboard.
+  Version: 2.0
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
@@ -31,20 +31,23 @@
 
 class YouTubePrefs
 {
-
     public static $optembedwidth = null;
     public static $optembedheight = null;
     public static $defaultheight = null;
     public static $defaultwidth = null;
-    public static $opt_auto_hd = 'youtubeprefs_auto_hd';
-    public static $opt_autoplay = 'youtubeprefs_autoplay';
-    public static $opt_cc_load_policy = 'youtubeprefs_cc_load_policy';
-    public static $opt_iv_load_policy = 'youtubeprefs_iv_load_policy';
-    public static $opt_loop = 'youtubeprefs_loop';
-    public static $opt_modestbranding = 'youtubeprefs_modestbranding';
-    public static $opt_rel = 'youtubeprefs_rel';
-    public static $opt_showinfo = 'youtubeprefs_showinfo';
-    public static $opt_theme = 'youtubeprefs_theme';
+    public static $opt_center = 'centervid';
+    public static $opt_auto_hd = 'auto_hd';
+    public static $opt_autoplay = 'autoplay';
+    public static $opt_cc_load_policy = 'cc_load_policy';
+    public static $opt_iv_load_policy = 'iv_load_policy';
+    public static $opt_loop = 'loop';
+    public static $opt_modestbranding = 'modestbranding';
+    public static $opt_rel = 'rel';
+    public static $opt_showinfo = 'showinfo';
+    public static $opt_theme = 'theme';
+    public static $opt_alloptions = 'youtubeprefs_alloptions';
+    public static $alloptions = null;
+    public static $yt_options = array();
 
     /*
       color
@@ -66,6 +69,18 @@ class YouTubePrefs
         {
             update_option('embed_autourls', 1);
         }
+
+        self::$yt_options = array(
+            self::$opt_autoplay,
+            self::$opt_cc_load_policy,
+            self::$opt_iv_load_policy,
+            self::$opt_loop,
+            self::$opt_modestbranding,
+            self::$opt_rel,
+            self::$opt_showinfo,
+            self::$opt_theme
+        );
+
         self::do_ytprefs();
 
         if (self::wp_above_version('2.9'))
@@ -83,17 +98,45 @@ class YouTubePrefs
     {
         if (self::wp_above_version('2.9'))
         {
-            add_option(self::$opt_auto_hd, 0);
-            add_option(self::$opt_autoplay, 0);
-            add_option(self::$opt_cc_load_policy, 0);
-            add_option(self::$opt_iv_load_policy, 1);
-            add_option(self::$opt_loop, 0);
-            add_option(self::$opt_modestbranding, 0);
-            add_option(self::$opt_rel, 1);
-            add_option(self::$opt_showinfo, 1);
-            add_option(self::$opt_theme, 'dark');
+            if (get_option(self::$opt_alloptions) === false)
+            {
+                $_auto_hd = get_option('youtubeprefs_auto_hd', 0);
+                $_autoplay = get_option('youtubeprefs_autoplay', 0);
+                $_cc_load_policy = get_option('youtubeprefs_cc_load_policy', 0);
+                $_iv_load_policy = get_option('youtubeprefs_iv_load_policy', 1);
+                $_loop = get_option('youtubeprefs_loop', 0);
+                $_modestbranding = get_option('youtubeprefs_modestbranding', 0);
+                $_rel = get_option('youtubeprefs_rel', 1);
+                $_showinfo = get_option('youtubeprefs_showinfo', 1);
+                $_theme = get_option('youtubeprefs_theme', 'dark');
 
-            update_option('embed_autourls', 1);
+                $all = array(
+                    self::$opt_center => 0,
+                    self::$opt_auto_hd => $_auto_hd,
+                    self::$opt_autoplay => $_autoplay,
+                    self::$opt_cc_load_policy => $_cc_load_policy,
+                    self::$opt_iv_load_policy => $_iv_load_policy,
+                    self::$opt_loop => $_loop,
+                    self::$opt_modestbranding => $_modestbranding,
+                    self::$opt_rel => $_rel,
+                    self::$opt_showinfo => $_showinfo,
+                    self::$opt_theme => $_theme
+                );
+
+                add_option(self::$opt_alloptions, $all);
+
+//                add_option(self::$opt_auto_hd, 0);
+//                add_option(self::$opt_autoplay, 0);
+//                add_option(self::$opt_cc_load_policy, 0);
+//                add_option(self::$opt_iv_load_policy, 1);
+//                add_option(self::$opt_loop, 0);
+//                add_option(self::$opt_modestbranding, 0);
+//                add_option(self::$opt_rel, 1);
+//                add_option(self::$opt_showinfo, 1);
+//                add_option(self::$opt_theme, 'dark');
+
+                update_option('embed_autourls', 1);
+            }
         }
     }
 
@@ -117,6 +160,10 @@ class YouTubePrefs
 
     public static function apply_prefs($content)
     {
+        self::$optembedwidth = intval(get_option('embed_size_w'));
+        self::$optembedheight = intval(get_option('embed_size_h'));
+        self::$alloptions = get_option(self::$opt_alloptions);
+
         $content = preg_replace_callback(self::$ytregex, "YouTubePrefs::get_html", $content);
         return $content;
     }
@@ -131,47 +178,63 @@ class YouTubePrefs
 
         $linkscheme = parse_url($link, PHP_URL_SCHEME);
 
-        $code1 = '<iframe width="' . self::$defaultwidth . '" height="' . self::$defaultheight .
+        $code1 = '<iframe id="_ytid_' . rand(10000, 99999) . '" width="' . self::$defaultwidth . '" height="' . self::$defaultheight .
                 '" src="' . $linkscheme . '://www.youtube.com/embed/' . $linkparams['v'] . '?';
-        $code2 = '" frameborder="0" allowfullscreen></iframe>';
+        $code2 = '" frameborder="0" allowfullscreen type="text/html" class="__youtube_prefs__"></iframe>';
 
-        $prefparams = array();
+        /*
+          $prefparams = array();
 
-        //get_option(self::$opt_auto_hd, 0);
-        $autoplay = get_option(self::$opt_autoplay, 0);
-        $cc_load_policy = get_option(self::$opt_cc_load_policy, 0) == 1 ? 1 : '';
-        $iv_load_policy = get_option(self::$opt_iv_load_policy, 1);
-        $loop = get_option(self::$opt_loop, 0);
-        $modestbranding = get_option(self::$opt_modestbranding, 0) == 1 ? 1 : '';
-        $rel = get_option(self::$opt_rel, 1);
-        $showinfo = get_option(self::$opt_showinfo, 1);
-        $theme = get_option(self::$opt_theme, 'dark');
+          //get_option(self::$opt_auto_hd, 0);
+          $autoplay = get_option(self::$opt_autoplay, 0);
+          $cc_load_policy = get_option(self::$opt_cc_load_policy, 0) == 1 ? 1 : '';
+          $iv_load_policy = get_option(self::$opt_iv_load_policy, 1);
+          $loop = get_option(self::$opt_loop, 0);
+          $modestbranding = get_option(self::$opt_modestbranding, 0) == 1 ? 1 : '';
+          $rel = get_option(self::$opt_rel, 1);
+          $showinfo = get_option(self::$opt_showinfo, 1);
+          $theme = get_option(self::$opt_theme, 'dark');
 
-        if ($autoplay == 1)
-            $prefparams['autoplay'] = 1;
-        if ($cc_load_policy == 1)
-            $prefparams['cc_load_policy'] = 1;
-        if ($iv_load_policy == 3)
-            $prefparams['iv_load_policy'] = 3;
-        if ($loop == 1)
-            $prefparams['loop'] = 1;
-        if ($modestbranding == 1)
-            $prefparams['modestbranding'] = 1;
-        if ($rel == 0)
-            $prefparams['rel'] = 0;
-        if ($showinfo == 0)
-            $prefparams['showinfo'] = 0;
-        if ($theme == 'light')
-            $prefparams['theme'] = 'light';
+          if ($autoplay == 1)
+          $prefparams['autoplay'] = 1;
+          if ($cc_load_policy == 1)
+          $prefparams['cc_load_policy'] = 1;
+          if ($iv_load_policy == 3)
+          $prefparams['iv_load_policy'] = 3;
+          if ($loop == 1)
+          $prefparams['loop'] = 1;
+          if ($modestbranding == 1)
+          $prefparams['modestbranding'] = 1;
+          if ($rel == 0)
+          $prefparams['rel'] = 0;
+          if ($showinfo == 0)
+          $prefparams['showinfo'] = 0;
+          if ($theme == 'light')
+          $prefparams['theme'] = 'light';
+         */
 
-        $finalparams = $linkparams + $prefparams;
-        $finalsrc = '';
+        $finalparams = $linkparams + self::$alloptions;
+        $origin = '';
+
+        try
+        {
+            if (!empty($_SERVER["HTTP_HOST"]))
+            {
+                $origin = 'origin=' .
+                        ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? 'https://' : 'http://') . $_SERVER["HTTP_HOST"] . '&';
+            }
+        }
+        catch (Exception $e)
+        {
+            
+        }
+        $finalsrc = 'enablejsapi=1&' . $origin;
 
         if (count($finalparams) > 1)
         {
             foreach ($finalparams as $key => $value)
             {
-                if ($key != 'v')
+                if (in_array($key, self::$yt_options))
                 {
                     $finalsrc .= htmlspecialchars($key) . '=' . htmlspecialchars($value) . '&';
                     if ($key == 'loop' && $value == 1)
@@ -182,9 +245,12 @@ class YouTubePrefs
 
         $code = $code1 . $finalsrc . $code2;
 
+        if (self::$alloptions[self::$opt_center] == 1)
+        {
+            $code = '<div style="text-align: center; display: block;">' . $code . '</div>';
+        }
+
         // reset static vals for next embed
-        self::$optembedwidth = null;
-        self::$optembedheight = null;
         self::$defaultheight = null;
         self::$defaultwidth = null;
 
@@ -209,13 +275,9 @@ class YouTubePrefs
 
     public static function init_dimensions($url, $urlkvp)
     {
-
         // get default dimensions; try embed size in settings, then try theme's content width, then just 480px
         if (self::$defaultwidth == null)
         {
-            self::$optembedwidth = intval(get_option('embed_size_w'));
-            self::$optembedheight = intval(get_option('embed_size_h'));
-
             global $content_width;
             if (empty($content_width))
                 $content_width = $GLOBALS['content_width'];
@@ -253,6 +315,35 @@ class YouTubePrefs
     public static function ytprefs_plugin_menu()
     {
         add_menu_page('YouTube Settings', 'YouTube', 'manage_options', 'youtube-my-preferences', 'YouTubePrefs::ytprefs_show_options', plugins_url('images/youtubeicon16.png', __FILE__), '10.00392854349');
+        add_menu_page('YouTube Analytics Dashboard', 'My YouTube Performance', 'manage_options', 'youtube-ep-analytics-dashboard', 'YouTubePrefs::epstats_show_options', plugins_url('images/epstats16.png', __FILE__), '10.00492884349');
+    }
+
+    public static function epstats_show_options()
+    {
+
+        if (!current_user_can('manage_options'))
+        {
+            wp_die(__('You do not have sufficient permissions to access this page.'));
+        }
+
+        // Now display the settings editing screen
+        ?>
+        <div class="wrap">
+            <?php
+            // header
+
+            echo "<h2>" . '<img src="' . plugins_url('images/epstats16.png', __FILE__) . '" /> ' . __('YouTube Analytics Dashboard') . "</h2>";
+
+            // settings form
+            ?>
+            <style type="text/css">
+                .epicon { width: 20px; height: 20px; vertical-align: middle; padding-right: 5px;}
+                .epindent {padding-left: 25px;}
+            </style>
+            <br>
+            <iframe style="-webkit-box-shadow: 0px 0px 20px 0px #000000; box-shadow: 0px 0px 20px 0px #000000;" src="https://www.embedplus.com/dashboard/wordpress-video-analytics-seo.aspx?domain=<?php echo (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : ""); ?>" width="1030" height="1600" scrolling="auto"/>
+        </div>
+        <?php
     }
 
     public static function ytprefs_show_options()
@@ -267,43 +358,61 @@ class YouTubePrefs
         $ytprefs_submitted = 'ytprefs_submitted';
 
         // Read in existing option values from database
-        $auto_hd = get_option(self::$opt_auto_hd);
-        $autoplay = get_option(self::$opt_autoplay, 0);
-        $cc_load_policy = get_option(self::$opt_cc_load_policy, 0);
-        $iv_load_policy = get_option(self::$opt_iv_load_policy, 1);
-        $loop = get_option(self::$opt_loop, 0);
-        $modestbranding = get_option(self::$opt_modestbranding, 0);
-        $rel = get_option(self::$opt_rel, 1);
-        $showinfo = get_option(self::$opt_showinfo, 1);
-        $theme = get_option(self::$opt_theme, 'dark');
+        /*
+          $auto_hd = get_option(self::$opt_auto_hd);
+          $autoplay = get_option(self::$opt_autoplay, 0);
+          $cc_load_policy = get_option(self::$opt_cc_load_policy, 0);
+          $iv_load_policy = get_option(self::$opt_iv_load_policy, 1);
+          $loop = get_option(self::$opt_loop, 0);
+          $modestbranding = get_option(self::$opt_modestbranding, 0);
+          $rel = get_option(self::$opt_rel, 1);
+          $showinfo = get_option(self::$opt_showinfo, 1);
+          $theme = get_option(self::$opt_theme, 'dark');
+         */
+
+        $all = get_option(self::$opt_alloptions);
 
         // See if the user has posted us some information
         // If they did, this hidden field will be set to 'Y'
         if (isset($_POST[$ytprefs_submitted]) && $_POST[$ytprefs_submitted] == 'Y')
         {
             // Read their posted values
-            $auto_hd = $_POST[self::$opt_auto_hd] == (true || 'on') ? 1 : 0;
-            $autoplay = $_POST[self::$opt_autoplay] == (true || 'on') ? 1 : 0;
-            $cc_load_policy = $_POST[self::$opt_cc_load_policy] == (true || 'on') ? 1 : 0;
-            $iv_load_policy = $_POST[self::$opt_iv_load_policy] == (true || 'on') ? 1 : 3;
-            $loop = $_POST[self::$opt_loop] == (true || 'on') ? 1 : 0;
-            $modestbranding = $_POST[self::$opt_modestbranding] == (true || 'on') ? 1 : 0;
-            $rel = $_POST[self::$opt_rel] == (true || 'on') ? 1 : 0;
-            $showinfo = $_POST[self::$opt_showinfo] == (true || 'on') ? 1 : 0;
-            $theme = $_POST[self::$opt_theme] == (true || 'on') ? 'dark' : 'light';
+//            $auto_hd = $_POST[self::$opt_auto_hd] == (true || 'on') ? 1 : 0;
+//            $autoplay = $_POST[self::$opt_autoplay] == (true || 'on') ? 1 : 0;
+//            $cc_load_policy = $_POST[self::$opt_cc_load_policy] == (true || 'on') ? 1 : 0;
+//            $iv_load_policy = $_POST[self::$opt_iv_load_policy] == (true || 'on') ? 1 : 3;
+//            $loop = $_POST[self::$opt_loop] == (true || 'on') ? 1 : 0;
+//            $modestbranding = $_POST[self::$opt_modestbranding] == (true || 'on') ? 1 : 0;
+//            $rel = $_POST[self::$opt_rel] == (true || 'on') ? 1 : 0;
+//            $showinfo = $_POST[self::$opt_showinfo] == (true || 'on') ? 1 : 0;
+//            $theme = $_POST[self::$opt_theme] == (true || 'on') ? 'dark' : 'light';
 
+            $new_options = array();
+            $new_options[self::$opt_center] = $_POST[self::$opt_center] == (true || 'on') ? 1 : 0;
+            $new_options[self::$opt_auto_hd] = $_POST[self::$opt_auto_hd] == (true || 'on') ? 1 : 0;
+            $new_options[self::$opt_autoplay] = $_POST[self::$opt_autoplay] == (true || 'on') ? 1 : 0;
+            $new_options[self::$opt_cc_load_policy] = $_POST[self::$opt_cc_load_policy] == (true || 'on') ? 1 : 0;
+            $new_options[self::$opt_iv_load_policy] = $_POST[self::$opt_iv_load_policy] == (true || 'on') ? 1 : 3;
+            $new_options[self::$opt_loop] = $_POST[self::$opt_loop] == (true || 'on') ? 1 : 0;
+            $new_options[self::$opt_modestbranding] = $_POST[self::$opt_modestbranding] == (true || 'on') ? 1 : 0;
+            $new_options[self::$opt_rel] = $_POST[self::$opt_rel] == (true || 'on') ? 1 : 0;
+            $new_options[self::$opt_showinfo] = $_POST[self::$opt_showinfo] == (true || 'on') ? 1 : 0;
+            $new_options[self::$opt_theme] = $_POST[self::$opt_theme] == (true || 'on') ? 'dark' : 'light';
+
+            $all = $new_options + $all;
 
             // Save the posted value in the database
-            update_option(self::$opt_auto_hd, $auto_hd);
-            update_option(self::$opt_autoplay, $autoplay);
-            update_option(self::$opt_cc_load_policy, $cc_load_policy);
-            update_option(self::$opt_iv_load_policy, $iv_load_policy);
-            update_option(self::$opt_loop, $loop);
-            update_option(self::$opt_modestbranding, $modestbranding);
-            update_option(self::$opt_rel, $rel);
-            update_option(self::$opt_showinfo, $showinfo);
-            update_option(self::$opt_theme, $theme);
+//            update_option(self::$opt_auto_hd, $auto_hd);
+//            update_option(self::$opt_autoplay, $autoplay);
+//            update_option(self::$opt_cc_load_policy, $cc_load_policy);
+//            update_option(self::$opt_iv_load_policy, $iv_load_policy);
+//            update_option(self::$opt_loop, $loop);
+//            update_option(self::$opt_modestbranding, $modestbranding);
+//            update_option(self::$opt_rel, $rel);
+//            update_option(self::$opt_showinfo, $showinfo);
+//            update_option(self::$opt_theme, $theme);
 
+            update_option(self::$opt_alloptions, $all);
             // Put a settings updated message on the screen
             ?>
             <div class="updated"><p><strong><?php _e('Settings saved.'); ?></strong></p></div>
@@ -319,9 +428,12 @@ class YouTubePrefs
         echo "<h2>" . '<img src="' . plugins_url('images/youtubeicon16.png', __FILE__) . '" /> ' . __('YouTube Preferences') . "</h2>";
 
         echo '<em>Hear about major upcoming announcements and feature updates by <a target="_blank" href="http://eepurl.com/tpof9">signing up here</a>.</em>';
-
+        
+        echo '<a style="display: block; padding-top: 10px; text-decoration: none;" target="_blank" href="http://www.embedplus.com/dashboard/wordpress-video-analytics-seo.aspx"><img src="' . plugins_url('images/clickdashboard.png', __FILE__) . '" /></a>';
+        
         // settings form
         ?>
+            
         <style type="text/css">
             #ytform p { line-height: 20px; }
             #ytform ul li {margin-left: 30px; list-style: disc outside none;}
@@ -354,43 +466,40 @@ class YouTubePrefs
                 </p>
 
                 <div class="ytindent">
-
-                    <!--
                     <p>
-                        <input name="<?php echo self::$opt_auto_hd; ?>" id="<?php echo self::$opt_auto_hd; ?>" <?php checked($auto_hd, 1); ?> type="checkbox" class="checkbox">
-                        <label for="<?php echo self::$opt_auto_hd; ?>"><?php _e('Automatically make all videos HD quality (when possible).') ?></label>
+                        <input name="<?php echo self::$opt_center; ?>" id="<?php echo self::$opt_center; ?>" <?php checked($all[self::$opt_center], 1); ?> type="checkbox" class="checkbox">
+                        <label for="<?php echo self::$opt_center; ?>"><?php _e('Automatically center all your videos (not necessary if all you\'re videos span the whole width of your blog)') ?></label>
                     </p>
-                    -->
                     <p>
-                        <input name="<?php echo self::$opt_autoplay; ?>" id="<?php echo self::$opt_autoplay; ?>" <?php checked($autoplay, 1); ?> type="checkbox" class="checkbox">
+                        <input name="<?php echo self::$opt_autoplay; ?>" id="<?php echo self::$opt_autoplay; ?>" <?php checked($all[self::$opt_autoplay], 1); ?> type="checkbox" class="checkbox">
                         <label for="<?php echo self::$opt_autoplay; ?>"><?php _e('Automatically start playing your videos') ?></label>
                     </p>
                     <p>
-                        <input name="<?php echo self::$opt_cc_load_policy; ?>" id="<?php echo self::$opt_cc_load_policy; ?>" <?php checked($cc_load_policy, 1); ?> type="checkbox" class="checkbox">
+                        <input name="<?php echo self::$opt_cc_load_policy; ?>" id="<?php echo self::$opt_cc_load_policy; ?>" <?php checked($all[self::$opt_cc_load_policy], 1); ?> type="checkbox" class="checkbox">
                         <label for="<?php echo self::$opt_cc_load_policy; ?>"><?php _e('Turn on closed captions by default') ?></label>
                     </p>
                     <p>
-                        <input name="<?php echo self::$opt_iv_load_policy; ?>" id="<?php echo self::$opt_iv_load_policy; ?>" <?php checked($iv_load_policy, 1); ?> type="checkbox" class="checkbox">
+                        <input name="<?php echo self::$opt_iv_load_policy; ?>" id="<?php echo self::$opt_iv_load_policy; ?>" <?php checked($all[self::$opt_iv_load_policy], 1); ?> type="checkbox" class="checkbox">
                         <label for="<?php echo self::$opt_iv_load_policy; ?>"><?php _e('Show annotations by default') ?></label>
                     </p>
                     <p>
-                        <input name="<?php echo self::$opt_loop; ?>" id="<?php echo self::$opt_loop; ?>" <?php checked($loop, 1); ?> type="checkbox" class="checkbox">
+                        <input name="<?php echo self::$opt_loop; ?>" id="<?php echo self::$opt_loop; ?>" <?php checked($all[self::$opt_loop], 1); ?> type="checkbox" class="checkbox">
                         <label for="<?php echo self::$opt_loop; ?>"><?php _e('Loop all your videos') ?></label>
                     </p>
                     <p>
-                        <input name="<?php echo self::$opt_modestbranding; ?>" id="<?php echo self::$opt_modestbranding; ?>" <?php checked($modestbranding, 1); ?> type="checkbox" class="checkbox">
+                        <input name="<?php echo self::$opt_modestbranding; ?>" id="<?php echo self::$opt_modestbranding; ?>" <?php checked($all[self::$opt_modestbranding], 1); ?> type="checkbox" class="checkbox">
                         <label for="<?php echo self::$opt_modestbranding; ?>"><?php _e('Modest branding - hide YouTube logo while playing') ?></label>
                     </p>
                     <p>
-                        <input name="<?php echo self::$opt_rel; ?>" id="<?php echo self::$opt_rel; ?>" <?php checked($rel, 1); ?> type="checkbox" class="checkbox">
+                        <input name="<?php echo self::$opt_rel; ?>" id="<?php echo self::$opt_rel; ?>" <?php checked($all[self::$opt_rel], 1); ?> type="checkbox" class="checkbox">
                         <label for="<?php echo self::$opt_rel; ?>"><?php _e('Show related videos at the end') ?></label>
                     </p>
                     <p>
-                        <input name="<?php echo self::$opt_showinfo; ?>" id="<?php echo self::$opt_showinfo; ?>" <?php checked($showinfo, 1); ?> type="checkbox" class="checkbox">
+                        <input name="<?php echo self::$opt_showinfo; ?>" id="<?php echo self::$opt_showinfo; ?>" <?php checked($all[self::$opt_showinfo], 1); ?> type="checkbox" class="checkbox">
                         <label for="<?php echo self::$opt_showinfo; ?>"><?php _e('Show the video title and other info') ?></label>
                     </p>
                     <p>
-                        <input name="<?php echo self::$opt_theme; ?>" id="<?php echo self::$opt_theme; ?>" <?php checked($theme, 'dark'); ?> type="checkbox" class="checkbox">
+                        <input name="<?php echo self::$opt_theme; ?>" id="<?php echo self::$opt_theme; ?>" <?php checked($all[self::$opt_theme], 'dark'); ?> type="checkbox" class="checkbox">
                         <label for="<?php echo self::$opt_theme; ?>"><?php _e('Use the dark theme (uncheck to use light theme)') ?></label>
                     </p>
                     <p class="submit">
@@ -402,7 +511,7 @@ class YouTubePrefs
                     <?php _e("How To Override Defaults / Other Options") ?>
                 </h3>
                 <?php
-                _e("<p>Suppose you have a few videos that need to be different from the above defaults. You can add options to the end of a link as displayed below. Each option should begin with '&'. </p>");
+                _e("<p>Suppose you have a few videos that need to be different from the above defaults. You can add options to the end of a link as displayed below to override the above defaults. Each option should begin with '&'. </p>");
                 _e('<ul>');
                 _e("<li><strong>width</strong> - Sets the width of your player. If omitted, the default width will be the width of your theme's content.<em> Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&width=500</strong>&height=350</em></li>");
                 _e("<li><strong>height</strong> - Sets the height of your player. If omitted, this will be calculated for you automatically. <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA&width=500<strong>&height=350</strong></em> </li>");
@@ -437,101 +546,18 @@ class YouTubePrefs
         <?php
     }
 
+    public static function ytprefsscript()
+    {
+        wp_enqueue_script('__ytprefs__', plugins_url('scripts/ytprefs.min.js', __FILE__));
+    }
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//class start
-class Add_new_tinymce_btn
-{
-
-    public $btn_arr;
-    public $js_file;
-
-    /*
-     * call the constructor and set class variables
-     * From the constructor call the functions via wordpress action/filter
-     */
-
-    function __construct($seperator, $btn_name, $javascrip_location)
-    {
-        $this->btn_arr = array("Seperator" => $seperator, "Name" => $btn_name);
-        $this->js_file = $javascrip_location;
-        add_action('init', array($this, 'add_tinymce_button'));
-        add_filter('tiny_mce_version', array($this, 'refresh_mce_version'));
-    }
-
-    /*
-     * create the buttons only if the user has editing privs.
-     * If so we create the button and add it to the tinymce button array
-     */
-
-    function add_tinymce_button()
-    {
-        if (!current_user_can('edit_posts') && !current_user_can('edit_pages'))
-            return;
-        if (get_user_option('rich_editing') == 'true')
-        {
-            //the function that adds the javascript
-            add_filter('mce_external_plugins', array($this, 'add_new_tinymce_plugin'));
-            //adds the button to the tinymce button array
-            add_filter('mce_buttons', array($this, 'register_new_button'));
-        }
-    }
-
-    /*
-     * add the new button to the tinymce array
-     */
-
-    function register_new_button($buttons)
-    {
-        array_push($buttons, $this->btn_arr["Seperator"], $this->btn_arr["Name"]);
-        return $buttons;
-    }
-
-    /*
-     * Call the javascript file that loads the
-     * instructions for the new button
-     */
-
-    function add_new_tinymce_plugin($plugin_array)
-    {
-        $plugin_array[$this->btn_arr['Name']] = $this->js_file;
-        return $plugin_array;
-    }
-
-    /*
-     * This function tricks tinymce in thinking
-     * it needs to refresh the buttons
-     */
-
-    function refresh_mce_version($ver)
-    {
-        $ver += 3;
-        return $ver;
-    }
-
-}
-
-//class end
 
 register_activation_hook(__FILE__, array('YouTubePrefs', 'initoptions'));
+add_action('wp_enqueue_scripts', array('YouTubePrefs', 'ytprefsscript'));
 
 $youtubeplg = new YouTubePrefs();
 
-/*
-$youtubeprefsmce = new Add_new_tinymce_btn('|', 'youtubeprefswiz', plugins_url() . '/youtube/js/youtube_mce.js.php');
 
-if (YouTubePrefs::wp_above_version('2.9'))
-{
-    add_action('admin_enqueue_scripts', 'youtubeprefs_admin_enqueue_scripts');
-}
-else
-{
-    wp_enqueue_style('youtubeprefswiz', plugins_url() . '/youtube/js/youtube_mce.css');
-}
-
-function youtubeprefs_admin_enqueue_scripts()
-{
-    wp_enqueue_style('youtubeprefswiz', plugins_url() . '/youtube/js/youtube_mce.css');
-}
-*/

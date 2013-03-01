@@ -1,17 +1,24 @@
-=== YouTube ===
+=== YouTube Embed ===
 Contributors: embedplus
 Plugin Name: YouTube Embed
-Tags: basic youtube, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, plugin, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin
+Tags: seo, video analytics, basic analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, plugin, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin
 Requires at least: 2.9
-Tested up to: 3.5
-Stable tag: 1.1
+Tested up to: 3.5.1
+Stable tag: 2.0
 License: GPLv3 or later
 
-YouTube embed plugin for WordPress. Provides the basic features of YouTube for your blog, and convenient defaults.
+YouTube embed plugin with basic features and convenient defaults. Upgrade now to add view tracking and access to your very own analytics dashboard.
 
 == Description ==
 
-This YouTube embed plugin for WordPress is very simple.  It provides the basic features of YouTube, and will have you embedding in seconds after installing it.  If you want to explore a more advanced plugin, we suggest looking at another one like: [Advanced YouTube Embed](http://wordpress.org/extend/plugins/embedplus-for-wordpress/) by [EmbedPlus](http://www.embedplus.com). 
+This YouTube embed plugin for WordPress is very simple.  It provides the basic features of the YouTube embedded player, and will have you posting videos in seconds after installing it. Version 2.0 and after adds view tracking to each embed so that you can gain access to your very own YouTube analytics dashboard. Upgrade if you'd like the feature and get answers to questions like:
+
+* How much are your visitors actually watching the videos you post?
+* How does the view activity on your site compare to other sites like it?
+* What and when are your best and worst performers?
+* How much do the producers of the YouTube videos you embed rely on **your site** for views?
+
+If you want to explore a more advanced plugin, we suggest looking at another one like: [Advanced YouTube Embed]( http://wordpress.org/extend/plugins/embedplus-for-wordpress/) by [EmbedPlus](http://www.embedplus.com). 
 
 To start using this plugin, simply paste a YouTube link on its own line. You can also make default settings for all your YouTube videos under the YouTube admin menu. You can make additional YouTube embed customizations by adding more to the link as shown below: 
 
@@ -26,14 +33,13 @@ To start using this plugin, simply paste a YouTube link on its own line. You can
 * showinfo - Set this to 0 to hide the video title and other info (or 1 to show it). Example: http://www.youtube.com/watch?v=quwebVjAEJA&showinfo=0
 * theme - Set this to 'light' to make the player have the light-colored theme (or 'dark' for the dark theme). Example: http://www.youtube.com/watch?v=quwebVjAEJA&theme=light
 
-Hear about major upcoming announcements and feature updates by [signing up here](http://eepurl.com/tpof9).
-
 == Installation ==
 
 1. Use the WordPress plugin installer to install the plugin.  Alternatively, you can just extract the folder in our download package and upload it to your plugin directory.
 1. Access the Plugins admin menu to activate the YouTube embed plugin.
 1. Make your default settings after clicking the new YouTube menu item that shows up in your admin panel.
 1. In your editor, start pasting the links with any desired additional codes needed for your YouTube embed. Make sure the link is on its own line.
+1. To get an analytics dashboard, [sign up for one of the options here >>](https://www.embedplus.com/dashboard/wordpress-video-analytics-seo.aspx)
 
 Additional codes (adding these will override the default settings in the admin):
 
@@ -59,14 +65,23 @@ Please use the Support forum until we put up a site for this plugin.
 
 == Changelog ==
 
+= YouTube Embed 2.0 =
+
+This upgrade specifically integrates a user-friendly YouTube Analytics Dashboard to this plugin so you can learn a lot more about the videos you post.  Download it if you would like it to use your site's YouTube-related activity to help answer questions like:
+ 
+* How much are your visitors actually watching the videos you post?
+* How does the view activity on your site compare to other sites like it?
+* What and when are your best and worst performers?
+* How much do the producers of the YouTube videos you embed rely on **your site** for views?
+
+We think these are all interesting questions; however, note that there's no need to upgrade if you don't.  
+
 = YouTube Embed 1.1 =
-Links added to enable future user communications.
+Fixed minor bug.
 
 = YouTube Embed 1.0 =
 First release uploaded to the plugin repository.
 
 == Other Notes ==
 
-Hear about major upcoming announcements and feature updates by [signing up here](http://eepurl.com/tpof9).
-
-Again, note that this is a no-frills plugin. We're just supporting the basic functions that people typically want when embedding YouTube videos.  If you want more, take a look at a more powerful one here: [Advanced YouTube Embed]( http://wordpress.org/extend/plugins/embedplus-for-wordpress/) by [EmbedPlus](http://www.embedplus.com).
+Again, note that this is a no-frills plugin. We're just supporting the basic functions that people typically want when embedding YouTube videos. This includes [YouTube embed analytics](https://www.embedplus.com/dashboard/wordpress-video-analytics-seo.aspx) to help you learn a lot about the videos you post. If you want more, take a look at a more powerful plugin here: [Advanced YouTube Embed]( http://wordpress.org/extend/plugins/embedplus-for-wordpress/) by [EmbedPlus](http://www.embedplus.com).
