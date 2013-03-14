@@ -1,15 +1,15 @@
 <?php
 /*
-  Plugin Name: YouTube Embed
+  Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com
   Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add view tracking and access to your very own analytics dashboard.
-  Version: 2.0
+  Version: 2.1
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
 
 /*
-  YouTube Embed
+  YouTube
   Copyright (C) 2013 EmbedPlus.com
 
   This program is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@
 
 class YouTubePrefs
 {
-    public static $version = '2.0';
+    public static $version = '2.1';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -235,7 +235,7 @@ class YouTubePrefs
         {
             
         }
-        $finalsrc = 'enablejsapi=1&' . $origin;
+        $finalsrc = 'enablejsapi=1&';// . $origin;
 
         if (count($finalparams) > 1)
         {
@@ -561,10 +561,97 @@ class YouTubePrefs
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//class start
+class Add_new_tinymce_btn_Youtubeprefs
+{
+
+    public $btn_arr;
+    public $js_file;
+
+    /*
+     * call the constructor and set class variables
+     * From the constructor call the functions via wordpress action/filter
+     */
+
+    function __construct($seperator, $btn_name, $javascrip_location)
+    {
+        $this->btn_arr = array("Seperator" => $seperator, "Name" => $btn_name);
+        $this->js_file = $javascrip_location;
+        add_action('init', array($this, 'add_tinymce_button'));
+        add_filter('tiny_mce_version', array($this, 'refresh_mce_version'));
+    }
+
+    /*
+     * create the buttons only if the user has editing privs.
+     * If so we create the button and add it to the tinymce button array
+     */
+
+    function add_tinymce_button()
+    {
+        if (!current_user_can('edit_posts') && !current_user_can('edit_pages'))
+            return;
+        if (get_user_option('rich_editing') == 'true')
+        {
+            //the function that adds the javascript
+            add_filter('mce_external_plugins', array($this, 'add_new_tinymce_plugin'));
+            //adds the button to the tinymce button array
+            add_filter('mce_buttons', array($this, 'register_new_button'));
+        }
+    }
+
+    /*
+     * add the new button to the tinymce array
+     */
+
+    function register_new_button($buttons)
+    {
+        array_push($buttons, $this->btn_arr["Seperator"], $this->btn_arr["Name"]);
+        return $buttons;
+    }
+
+    /*
+     * Call the javascript file that loads the
+     * instructions for the new button
+     */
+
+    function add_new_tinymce_plugin($plugin_array)
+    {
+        $plugin_array[$this->btn_arr['Name']] = $this->js_file;
+        return $plugin_array;
+    }
+
+    /*
+     * This function tricks tinymce in thinking
+     * it needs to refresh the buttons
+     */
+
+    function refresh_mce_version($ver)
+    {
+        $ver += 3;
+        return $ver;
+    }
+
+}
+
+//class end
+
 
 register_activation_hook(__FILE__, array('YouTubePrefs', 'initoptions'));
 add_action('wp_enqueue_scripts', array('YouTubePrefs', 'ytprefsscript'));
 
 $youtubeplg = new YouTubePrefs();
 
+$epstatsmce_youtubeprefs = new Add_new_tinymce_btn_Youtubeprefs('|', 'embedplusstats_youtubeprefs', plugins_url() . '/youtube-embed-plus/scripts/embedplusstats_mce.js.php');
+if (YouTubePrefs::wp_above_version('2.9'))
+{
+    add_action('admin_enqueue_scripts', 'youtubeprefs_admin_enqueue_scripts');
+}
+else
+{
+    wp_enqueue_style('embedpluswiz', plugins_url() . '/youtube-embed-plus/scripts/embedplus_mce.css');
+}
 
+function youtubeprefs_admin_enqueue_scripts()
+{
+    wp_enqueue_style('embedpluswiz', plugins_url() . '/youtube-embed-plus/scripts/embedplus_mce.css');
+}
