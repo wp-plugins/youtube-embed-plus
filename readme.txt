@@ -65,6 +65,9 @@ Please use the Support forum until we put up a site for this plugin.
 
 == Changelog ==
 
+= YouTube Embed 2.2 =
+Minor changes
+
 = YouTube Embed 2.1 =
 By request from several users, we've added easier access to the video analytics dashboard
 
