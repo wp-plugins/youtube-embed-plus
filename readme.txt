@@ -4,7 +4,7 @@ Plugin Name: YouTube Embed
 Tags: seo, video analytics, basic analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, plugin, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin
 Requires at least: 2.9
 Tested up to: 3.5.1
-Stable tag: 2.2
+Stable tag: 2.3
 License: GPLv3 or later
 
 YouTube embed plugin with basic features and convenient defaults. Upgrade now to add view tracking and access to your very own analytics dashboard.
@@ -33,6 +33,11 @@ To start using this plugin, simply paste a YouTube link on its own line. You can
 * showinfo - Set this to 0 to hide the video title and other info (or 1 to show it). Example: `http://www.youtube.com/watch?v=quwebVjAEJA&showinfo=0`
 * theme - Set this to 'light' to make the player have the light-colored theme (or 'dark' for the dark theme). Example: `http://www.youtube.com/watch?v=quwebVjAEJA&theme=light`
 
+You can also start and end each individual video at particular times. Like the above, each option should begin with '&'
+
+* start - Sets the time (in seconds) to start the video. Example: `http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350&start=20`
+* end - Sets the time (in seconds) to stop the video. Example: `http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350&end=100`
+
 == Installation ==
 
 1. Use the WordPress plugin installer to install the plugin.  Alternatively, you can just extract the folder in our download package and upload it to your plugin directory.
@@ -54,6 +59,11 @@ Additional codes (adding these will override the default settings in the admin):
 * showinfo - Set this to 0 to hide the video title and other info (or 1 to show it). Example: `http://www.youtube.com/watch?v=quwebVjAEJA&showinfo=0`
 * theme - Set this to 'light' to make the player have the light-colored theme (or 'dark' for the dark theme). Example: `http://www.youtube.com/watch?v=quwebVjAEJA&theme=light`
 
+You can also start and end each individual video at particular times. Like the above, each option should begin with '&'
+
+* start - Sets the time (in seconds) to start the video. Example: `http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350&start=20`
+* end - Sets the time (in seconds) to stop the video. Example: `http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350&end=100`
+
 = Contact =
 
 Please use the Support forum until we put up a site for this plugin.
@@ -64,6 +74,12 @@ Please use the Support forum until we put up a site for this plugin.
 2. YouTube Embed Screenshot 2: YouTube's admin settings.
 
 == Changelog ==
+
+= YouTube Embed 2.3 =
+Start/end time shortcut bug fix
+
+= YouTube Embed 2.2 =
+Minor changes
 
 = YouTube Embed 2.1 =
 By request from several users, we've added easier access to the video analytics dashboard
