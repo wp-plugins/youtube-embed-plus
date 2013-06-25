@@ -1,10 +1,10 @@
 === YouTube ===
 Contributors: embedplus
 Plugin Name: YouTube Embed
-Tags: seo, video analytics, basic analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, plugin, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin
+Tags: hd, autohd, auto hd, seo, video analytics, basic analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, plugin, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin
 Requires at least: 2.9
-Tested up to: 3.5.1
-Stable tag: 2.3
+Tested up to: 3.5.2
+Stable tag: 2.4
 License: GPLv3 or later
 
 YouTube embed plugin with basic features and convenient defaults. Upgrade now to add view tracking and access to your very own analytics dashboard.
@@ -24,6 +24,7 @@ To start using this plugin, simply paste a YouTube link on its own line. You can
 
 * width - Sets the width of your player. If omitted, the default width will be the width of your theme's content. Example: `http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350`
 * height - Sets the height of your player. If omitted, this will be calculated for you automatically. Example: `http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350`
+* vq - Set this to `hd720` or `hd1080` to force the video to play in HD quality. Example: `http://www.youtube.com/watch?v=quwebVjAEJA&vq=hd720`
 * autoplay - Set this to 1 to autoplay the video (or 0 to play the video once). Example: `http://www.youtube.com/watch?v=quwebVjAEJA&autoplay=1`
 * cc_load_policy - Set this to 1 to turn on closed captioning (or 0 to leave them off). Example: `http://www.youtube.com/watch?v=quwebVjAEJA&cc_load_policy=1`
 * iv_load_policy - Set this to 3 to turn off annotations (or 1 to show them). Example: `http://www.youtube.com/watch?v=quwebVjAEJA&iv_load_policy=3`
@@ -50,6 +51,7 @@ Additional codes (adding these will override the default settings in the admin):
 
 * width - Sets the width of your player. If omitted, the default width will be the width of your theme's content. Example: `http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350`
 * height - Sets the height of your player. If omitted, this will be calculated for you automatically. Example: `http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350`
+* vq - Set this to `hd720` or `hd1080` to force the video to play in HD quality. Example: `http://www.youtube.com/watch?v=quwebVjAEJA&vq=hd720`
 * autoplay - Set this to 1 to autoplay the video (or 0 to play the video once). Example: `http://www.youtube.com/watch?v=quwebVjAEJA&autoplay=1`
 * cc_load_policy - Set this to 1 to turn on closed captioning (or 0 to leave them off). Example: `http://www.youtube.com/watch?v=quwebVjAEJA&cc_load_policy=1`
 * iv_load_policy - Set this to 3 to turn off annotations (or 1 to show them). Example: `http://www.youtube.com/watch?v=quwebVjAEJA&iv_load_policy=3`
@@ -74,6 +76,11 @@ Please use the Support forum until we put up a site for this plugin.
 2. YouTube Embed Screenshot 2: YouTube's admin settings.
 
 == Changelog ==
+
+= YouTube Embed 2.4 =
+Added auto HD support
+Support for shorthand (i.e. `http://www.youtu.be`)
+Fixed editor issue
 
 = YouTube Embed 2.3 =
 Start/end time shortcut bug fix

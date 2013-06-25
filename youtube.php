@@ -3,7 +3,7 @@
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com
   Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add view tracking and access to your very own analytics dashboard.
-  Version: 2.3
+  Version: 2.4
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
@@ -32,7 +32,7 @@
 class YouTubePrefs
 {
 
-    public static $version = '2.3';
+    public static $version = '2.4';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -48,6 +48,7 @@ class YouTubePrefs
     public static $opt_rel = 'rel';
     public static $opt_showinfo = 'showinfo';
     public static $opt_theme = 'theme';
+    public static $opt_vq = 'vq';
     public static $opt_alloptions = 'youtubeprefs_alloptions';
     public static $alloptions = null;
     public static $yt_options = array();
@@ -56,13 +57,24 @@ class YouTubePrefs
       color
       controls
       disablekb
-      enablejsapi
       list
       listType
       playlist
-     * 
      */
-    public static $ytregex = '@^\s*https?://(?:www\.)?(?:youtube.com/watch\?|youtu.be/)([^\s"]+)\s*$@im';
+    
+    //TEST REGEX
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    public static $ytregex = '@^\s*https?://(?:www\.)?(?:(?:youtube.com/watch\?)|(?:youtu.be/))([^\s"]+)\s*$@im';
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
 
     public function __construct()
     {
@@ -89,6 +101,7 @@ class YouTubePrefs
             self::$opt_rel,
             self::$opt_showinfo,
             self::$opt_theme,
+            self::$opt_vq,
             'start',
             'end'
         );
@@ -121,6 +134,8 @@ class YouTubePrefs
                 $_rel = get_option('youtubeprefs_rel', 1);
                 $_showinfo = get_option('youtubeprefs_showinfo', 1);
                 $_theme = get_option('youtubeprefs_theme', 'dark');
+                $_vq = get_option('youtubeprefs_vq', '');
+                
 
                 $all = array(
                     self::$opt_version => self::$version,
@@ -133,7 +148,8 @@ class YouTubePrefs
                     self::$opt_modestbranding => $_modestbranding,
                     self::$opt_rel => $_rel,
                     self::$opt_showinfo => $_showinfo,
-                    self::$opt_theme => $_theme
+                    self::$opt_theme => $_theme,
+                    self::$opt_vq => $_vq
                 );
 
                 add_option(self::$opt_alloptions, $all);
@@ -182,8 +198,14 @@ class YouTubePrefs
     {
         $link = trim(preg_replace('/&amp;/i', '&', $m[0]));
         $link = preg_replace('/\s/', '', $link);
-        $linkparams = explode('?', $link);
-        $linkparams = self::keyvalue($linkparams[1], true);
+        $linkparamstemp = explode('?', $link);
+        $linkparams = self::keyvalue($linkparamstemp[1], true);
+        if (strpos($linkparamstemp[0], 'youtu.be') !== false && !$linkparams['v'])
+        {
+            $vtemp = explode('/', $linkparamstemp[0]);
+            $linkparams['v'] = array_pop($vtemp);
+        }
+            
         self::init_dimensions($link, $linkparams);
 
         $linkscheme = parse_url($link, PHP_URL_SCHEME);
@@ -351,7 +373,7 @@ class YouTubePrefs
                 .epindent {padding-left: 25px;}
             </style>
             <br>
-            <iframe style="-webkit-box-shadow: 0px 0px 20px 0px #000000; box-shadow: 0px 0px 20px 0px #000000;" src="https://www.embedplus.com/dashboard/wordpress-video-analytics-seo.aspx?domain=<?php echo (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : ""); ?>" width="1030" height="1600" scrolling="auto"/>
+            <iframe style="-webkit-box-shadow: 0px 0px 20px 0px #000000; box-shadow: 0px 0px 20px 0px #000000;" src="https://www.embedplus.com/dashboard/wordpress-video-analytics-seo.aspx?domain=<?php echo (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : ""); ?>" width="1030" height="1800" scrolling="auto"/>
         </div>
         <?php
     }
@@ -408,6 +430,7 @@ class YouTubePrefs
             $new_options[self::$opt_rel] = $_POST[self::$opt_rel] == (true || 'on') ? 1 : 0;
             $new_options[self::$opt_showinfo] = $_POST[self::$opt_showinfo] == (true || 'on') ? 1 : 0;
             $new_options[self::$opt_theme] = $_POST[self::$opt_theme] == (true || 'on') ? 'dark' : 'light';
+            $new_options[self::$opt_vq] = $_POST[self::$opt_vq] == (true || 'on') ? 'hd720' : '';
 
             $all = $new_options + $all;
 
@@ -516,6 +539,10 @@ class YouTubePrefs
                         <input name="<?php echo self::$opt_theme; ?>" id="<?php echo self::$opt_theme; ?>" <?php checked($all[self::$opt_theme], 'dark'); ?> type="checkbox" class="checkbox">
                         <label for="<?php echo self::$opt_theme; ?>"><?php _e('Use the dark theme (uncheck to use light theme)') ?></label>
                     </p>
+                    <p>
+                        <input name="<?php echo self::$opt_vq; ?>" id="<?php echo self::$opt_vq; ?>" <?php checked($all[self::$opt_vq], 'hd720'); ?> type="checkbox" class="checkbox">
+                        <label for="<?php echo self::$opt_vq; ?>"><?php _e('Force HD quality when available') ?></label>
+                    </p>
                     <p class="submit">
                         <input type="submit" name="Submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
                     </p>
@@ -537,6 +564,7 @@ class YouTubePrefs
                 _e("<li><strong>rel</strong> - Set this to 0 to not show related videos at the end of playing (or 1 to show them). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&rel=0</strong></em> </li>");
                 _e("<li><strong>showinfo</strong> - Set this to 0 to hide the video title and other info (or 1 to show it). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&showinfo=0</strong></em> </li>");
                 _e("<li><strong>theme</strong> - Set this to 'light' to make the player have the light-colored theme (or 'dark' for the dark theme). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&theme=light</strong></em> </li>");
+                _e("<li><strong>vq</strong> - Set this to 'hd720' or 'hd1080' to force the video to have HD quality. Leave blank to let YouTube decide. <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&vq=hd720</strong></em> </li>");
                 _e('</ul>');
 
                 _e("<p>You can also start and end each individual video at particular times. Like the above, each option should begin with '&'</p>");
@@ -554,6 +582,9 @@ class YouTubePrefs
             </p>
             <p>
                 <?php echo '<em>Hear about major upcoming announcements and feature updates by <a target="_blank" href="http://eepurl.com/tpof9">signing up here</a>.</em>'; ?>
+            </p>
+            <p>
+                <?php echo '<a style="display: block; padding-top: 10px; text-decoration: none;" target="_blank" href="http://www.embedplus.com/dashboard/wordpress-video-analytics-seo.aspx"><img src="' . plugins_url('images/clickdashboard.png', __FILE__) . '" /></a>'; ?>
             </p>
 
         </div>
@@ -648,17 +679,17 @@ add_action('wp_enqueue_scripts', array('YouTubePrefs', 'ytprefsscript'));
 
 $youtubeplg = new YouTubePrefs();
 
-$epstatsmce_youtubeprefs = new Add_new_tinymce_btn_Youtubeprefs('|', 'embedplusstats_youtubeprefs', plugins_url() . '/youtube-embed-plus/scripts/embedplusstats_mce.js.php');
+$epstatsmce_youtubeprefs = new Add_new_tinymce_btn_Youtubeprefs('|', 'embedplusstats_youtubeprefs', plugins_url() . '/youtube-embed-plus/scripts/embedplusstats_mce.js');
 if (YouTubePrefs::wp_above_version('2.9'))
 {
     add_action('admin_enqueue_scripts', 'youtubeprefs_admin_enqueue_scripts');
 }
 else
 {
-    wp_enqueue_style('embedpluswiz', plugins_url() . '/youtube-embed-plus/scripts/embedplus_mce.css');
+    wp_enqueue_style('embedplusyoutube', plugins_url() . '/youtube-embed-plus/scripts/embedplus_mce.css');
 }
 
 function youtubeprefs_admin_enqueue_scripts()
 {
-    wp_enqueue_style('embedpluswiz', plugins_url() . '/youtube-embed-plus/scripts/embedplus_mce.css');
+    wp_enqueue_style('embedplusyoutube', plugins_url() . '/youtube-embed-plus/scripts/embedplus_mce.css');
 }
