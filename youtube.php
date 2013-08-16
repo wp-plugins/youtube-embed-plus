@@ -3,7 +3,7 @@
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com
   Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add view tracking and access to your very own analytics dashboard.
-  Version: 2.4
+  Version: 2.6
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
@@ -32,7 +32,7 @@
 class YouTubePrefs
 {
 
-    public static $version = '2.4';
+    public static $version = '2.6';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -56,12 +56,12 @@ class YouTubePrefs
     /*
       color
       controls
+      autohide
       disablekb
       list
       listType
       playlist
      */
-    
     //TEST REGEX
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -69,6 +69,7 @@ class YouTubePrefs
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     public static $ytregex = '@^\s*https?://(?:www\.)?(?:(?:youtube.com/watch\?)|(?:youtu.be/))([^\s"]+)\s*$@im';
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -135,7 +136,7 @@ class YouTubePrefs
                 $_showinfo = get_option('youtubeprefs_showinfo', 1);
                 $_theme = get_option('youtubeprefs_theme', 'dark');
                 $_vq = get_option('youtubeprefs_vq', '');
-                
+
 
                 $all = array(
                     self::$opt_version => self::$version,
@@ -205,7 +206,7 @@ class YouTubePrefs
             $vtemp = explode('/', $linkparamstemp[0]);
             $linkparams['v'] = array_pop($vtemp);
         }
-            
+
         self::init_dimensions($link, $linkparams);
 
         $linkscheme = parse_url($link, PHP_URL_SCHEME);
@@ -347,7 +348,7 @@ class YouTubePrefs
     public static function ytprefs_plugin_menu()
     {
         add_menu_page('YouTube Settings', 'YouTube', 'manage_options', 'youtube-my-preferences', 'YouTubePrefs::ytprefs_show_options', plugins_url('images/youtubeicon16.png', __FILE__), '10.00392854349');
-        add_menu_page('YouTube Analytics Dashboard', 'My YouTube Performance', 'manage_options', 'youtube-ep-analytics-dashboard', 'YouTubePrefs::epstats_show_options', plugins_url('images/epstats16.png', __FILE__), '10.00492884349');
+        add_menu_page('YouTube Analytics Dashboard', 'EmbedPlus YouTube Pro', 'manage_options', 'youtube-ep-analytics-dashboard', 'YouTubePrefs::epstats_show_options', plugins_url('images/epstats16.png', __FILE__), '10.00492884349');
     }
 
     public static function epstats_show_options()
@@ -373,7 +374,7 @@ class YouTubePrefs
                 .epindent {padding-left: 25px;}
             </style>
             <br>
-            <iframe style="-webkit-box-shadow: 0px 0px 20px 0px #000000; box-shadow: 0px 0px 20px 0px #000000;" src="https://www.embedplus.com/dashboard/wordpress-video-analytics-seo.aspx?domain=<?php echo (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : ""); ?>" width="1030" height="1800" scrolling="auto"/>
+            <iframe style="-webkit-box-shadow: 0px 0px 20px 0px #000000; box-shadow: 0px 0px 20px 0px #000000;" src="https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx?domain=<?php echo (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : ""); ?>" width="1030" height="1800" scrolling="auto"/>
         </div>
         <?php
     }
@@ -460,25 +461,54 @@ class YouTubePrefs
 
         echo "<h2>" . '<img src="' . plugins_url('images/youtubeicon16.png', __FILE__) . '" /> ' . __('YouTube Preferences') . "</h2>";
 
-        echo '<em>Hear about major upcoming announcements and feature updates by <a target="_blank" href="http://eepurl.com/tpof9">signing up here</a>.</em>';
-
-        echo '<a style="display: block; padding-top: 10px; text-decoration: none;" target="_blank" href="http://www.embedplus.com/dashboard/wordpress-video-analytics-seo.aspx"><img src="' . plugins_url('images/clickdashboard.png', __FILE__) . '" /></a>';
-
         // settings form
         ?>
-
-        <p>
-            Need support?  Email us at <?php echo antispambot('team@embedplus.com') ?>.  Due to the number of feature requests we get, priority will be give to users currently subscribing to one of our available <a href="https://www.embedplus.com/dashboard/easy-video-analytics-seo.aspx" target="_blank">analytics options &raquo;</a>.
-        </p>
 
         <style type="text/css">
             #ytform p { line-height: 20px; }
             #ytform ul li {margin-left: 30px; list-style: disc outside none;}
             .ytindent {padding: 0px 0px 0px 20px;}
             .shadow {-webkit-box-shadow: 0px 0px 20px 0px #000000; box-shadow: 0px 0px 20px 0px #000000;}
+            .gopro img {vertical-align: middle;
+                        width: 20px;
+                        height: 20px;
+                        padding-bottom: 4px;}
+            .bold {font-weight: bold;}
+            #goprobox {border-radius: 15px; padding: 5px 20px 20px 20px; margin: 15px; border: 3px solid #dddddd; width: 300px;}
         </style>
 
         <div class="ytindent">
+
+
+            <div id="goprobox">
+
+                <h3>
+                    Go PRO
+                </h3>
+                <ul class="gopro">
+                    <li>
+                        <img src="<?php echo plugins_url('images/prioritysupport.png', __FILE__) ?>">
+                        Priority support (Puts your request in front)
+                    </li>
+                    <li>
+                        <img src="<?php echo plugins_url('images/bulletgraph45.png', __FILE__) ?>">
+                        Your own video analytics dashboard
+                    </li>
+                    <li>
+                        <img src="<?php echo plugins_url('images/infinity.png', __FILE__) ?>">
+                        Unlimited PRO upgrades and downloads
+                    </li>
+                    <li>
+                        <img src="<?php echo plugins_url('images/questionsale.png', __FILE__) ?>">
+                        What else? You tell us!
+                    </li>
+                </ul>
+                <a href="https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx" class="button-primary" target="_blank">Click here to go PRO &raquo;</a>
+
+            </div>
+
+
+            <br>
             <form name="form1" method="post" action="" id="ytform">
                 <input type="hidden" name="<?php echo $ytprefs_submitted; ?>" value="Y">
                 <h3>
@@ -487,13 +517,14 @@ class YouTubePrefs
                 <p>
                     All you have to do is paste the link to the YouTube video on its own line, as shown below (including the http:// part). Easy, eh?
                 </p>
+                <ul class="reglist">
+                    <li>Make sure the url is really on its own line by itself</li>
+                    <li>Make sure the url is <strong>not</strong> an active hyperlink (i.e., it should just be plain text). Otherwise, highlight the url and click the "unlink" button in your editor: <img src="<?php echo plugins_url('images/unlink.png', __FILE__) ?>"/>.</li>
+                </ul>       
                 <p>
                     <img class="shadow" src="<?php echo plugins_url('images/ownline.jpg', __FILE__) ?>" />
                 </p>
-
-                <p>
-                    Note: Make sure the link is in plain text (not hyperlinked/blue).
-                </p>
+                <br>
 
                 <h3>
                     <?php _e("Default Options") ?>
@@ -575,17 +606,6 @@ class YouTubePrefs
                 ?>
 
             </form>
-
-            <h3><?php _e('Other Notes') ?></h3>
-            <P>
-                <?php _e("Note that this is a no-frills plugin. We're just supporting the basic functions that people typically want when embedding YouTube videos, and providing an easy way to make defaults. If you want more, take a look at a more powerful one here: <a target=\"_blank\" href=\"http://wordpress.org/extend/plugins/embedplus-for-wordpress/\">Advanced YouTube Embed</a> by <a target=\"_blank\" href=\"http://www.embedplus.com\">EmbedPlus</a>."); ?>
-            </p>
-            <p>
-                <?php echo '<em>Hear about major upcoming announcements and feature updates by <a target="_blank" href="http://eepurl.com/tpof9">signing up here</a>.</em>'; ?>
-            </p>
-            <p>
-                <?php echo '<a style="display: block; padding-top: 10px; text-decoration: none;" target="_blank" href="http://www.embedplus.com/dashboard/wordpress-video-analytics-seo.aspx"><img src="' . plugins_url('images/clickdashboard.png', __FILE__) . '" /></a>'; ?>
-            </p>
 
         </div>
         <?php

@@ -3,8 +3,8 @@ Contributors: embedplus
 Plugin Name: YouTube Embed
 Tags: hd, autohd, auto hd, seo, video analytics, basic analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, plugin, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin
 Requires at least: 2.9
-Tested up to: 3.5.2
-Stable tag: 2.4
+Tested up to: 3.6
+Stable tag: 2.6
 License: GPLv3 or later
 
 YouTube embed plugin with basic features and convenient defaults. Upgrade now to add view tracking and access to your very own analytics dashboard.
@@ -66,16 +66,15 @@ You can also start and end each individual video at particular times. Like the a
 * start - Sets the time (in seconds) to start the video. Example: `http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350&start=20`
 * end - Sets the time (in seconds) to stop the video. Example: `http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350&end=100`
 
-= Contact =
-
-Please use the Support forum until we put up a site for this plugin.
-
 == Screenshots ==
 
 1. YouTube Embed Screenshot 1: Paste a YouTube link on its own line and it will become a YouTube embed on your website.
 2. YouTube Embed Screenshot 2: YouTube's admin settings.
 
 == Changelog ==
+
+= YouTube Embed 2.6 =
+Compatible with WP 3.6
 
 = YouTube Embed 2.4 =
 Added auto HD support
