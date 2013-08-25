@@ -3,7 +3,7 @@
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com
   Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add view tracking and access to your very own analytics dashboard.
-  Version: 2.6
+  Version: 3.0
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
@@ -32,14 +32,13 @@
 class YouTubePrefs
 {
 
-    public static $version = '2.6';
+    public static $version = '3.0';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
     public static $defaultheight = null;
     public static $defaultwidth = null;
     public static $opt_center = 'centervid';
-    public static $opt_auto_hd = 'auto_hd';
     public static $opt_autoplay = 'autoplay';
     public static $opt_cc_load_policy = 'cc_load_policy';
     public static $opt_iv_load_policy = 'iv_load_policy';
@@ -49,10 +48,12 @@ class YouTubePrefs
     public static $opt_showinfo = 'showinfo';
     public static $opt_theme = 'theme';
     public static $opt_vq = 'vq';
+    public static $opt_pro = 'pro';
     public static $opt_alloptions = 'youtubeprefs_alloptions';
     public static $alloptions = null;
     public static $yt_options = array();
-
+    //public static $epbase = 'http://localhost:2346';
+    public static $epbase = 'http://www.embedplus.com';
     /*
       color
       controls
@@ -79,12 +80,6 @@ class YouTubePrefs
 
     public function __construct()
     {
-        $do_autoembeds = get_option('embed_autourls');
-        if ($do_autoembeds == 0)
-        {
-            update_option('embed_autourls', 1);
-        }
-
         self::$alloptions = get_option(self::$opt_alloptions);
         if (self::$alloptions == false || version_compare(self::$alloptions[self::$opt_version], self::$version, '<'))
         {
@@ -108,67 +103,63 @@ class YouTubePrefs
         );
 
         self::do_ytprefs();
-
-        if (self::wp_above_version('2.9'))
-        {
-            add_action('admin_menu', 'YouTubePrefs::ytprefs_plugin_menu');
-        }
-//        if (!is_admin())
-//        {
-//            // allow shortcode in widgets
-//            //add_filter('widget_text', 'do_shortcode', 11);
-//        }
+        add_action('admin_menu', 'YouTubePrefs::ytprefs_plugin_menu');
     }
 
     static function initoptions()
     {
-        if (self::wp_above_version('2.9'))
+        $_center = 0;
+        $_autoplay = get_option('youtubeprefs_autoplay', 0);
+        $_cc_load_policy = get_option('youtubeprefs_cc_load_policy', 0);
+        $_iv_load_policy = get_option('youtubeprefs_iv_load_policy', 1);
+        $_loop = get_option('youtubeprefs_loop', 0);
+        $_modestbranding = get_option('youtubeprefs_modestbranding', 0);
+        $_rel = get_option('youtubeprefs_rel', 1);
+        $_showinfo = get_option('youtubeprefs_showinfo', 1);
+        $_theme = get_option('youtubeprefs_theme', 'dark');
+        $_vq = get_option('youtubeprefs_vq', '');
+        $_pro = '';
+
+        $arroptions = get_option(self::$opt_alloptions);
+
+        if ($arroptions !== false)
         {
-            if (get_option(self::$opt_alloptions) === false)
-            {
-                $_auto_hd = get_option('youtubeprefs_auto_hd', 0);
-                $_autoplay = get_option('youtubeprefs_autoplay', 0);
-                $_cc_load_policy = get_option('youtubeprefs_cc_load_policy', 0);
-                $_iv_load_policy = get_option('youtubeprefs_iv_load_policy', 1);
-                $_loop = get_option('youtubeprefs_loop', 0);
-                $_modestbranding = get_option('youtubeprefs_modestbranding', 0);
-                $_rel = get_option('youtubeprefs_rel', 1);
-                $_showinfo = get_option('youtubeprefs_showinfo', 1);
-                $_theme = get_option('youtubeprefs_theme', 'dark');
-                $_vq = get_option('youtubeprefs_vq', '');
-
-
-                $all = array(
-                    self::$opt_version => self::$version,
-                    self::$opt_center => 0,
-                    self::$opt_auto_hd => $_auto_hd,
-                    self::$opt_autoplay => $_autoplay,
-                    self::$opt_cc_load_policy => $_cc_load_policy,
-                    self::$opt_iv_load_policy => $_iv_load_policy,
-                    self::$opt_loop => $_loop,
-                    self::$opt_modestbranding => $_modestbranding,
-                    self::$opt_rel => $_rel,
-                    self::$opt_showinfo => $_showinfo,
-                    self::$opt_theme => $_theme,
-                    self::$opt_vq => $_vq
-                );
-
-                add_option(self::$opt_alloptions, $all);
-
-//                add_option(self::$opt_auto_hd, 0);
-//                add_option(self::$opt_autoplay, 0);
-//                add_option(self::$opt_cc_load_policy, 0);
-//                add_option(self::$opt_iv_load_policy, 1);
-//                add_option(self::$opt_loop, 0);
-//                add_option(self::$opt_modestbranding, 0);
-//                add_option(self::$opt_rel, 1);
-//                add_option(self::$opt_showinfo, 1);
-//                add_option(self::$opt_theme, 'dark');
-
-                update_option('embed_autourls', 1);
-            }
-            self::$alloptions = get_option(self::$opt_alloptions);
+            $_center = self::tryget($arroptions, self::$opt_center, 0);
+            $_autoplay = self::tryget($arroptions, self::$opt_autoplay, 0);
+            $_cc_load_policy = self::tryget($arroptions, self::$opt_cc_load_policy, 0);
+            $_iv_load_policy = self::tryget($arroptions, self::$opt_iv_load_policy, 1);
+            $_loop = self::tryget($arroptions, self::$opt_loop, 0);
+            $_modestbranding = self::tryget($arroptions, self::$opt_modestbranding, 0);
+            $_rel = self::tryget($arroptions, self::$opt_rel, 1);
+            $_showinfo = self::tryget($arroptions, self::$opt_showinfo, 1);
+            $_theme = self::tryget($arroptions, self::$opt_theme, 'dark');
+            $_vq = self::tryget($arroptions, self::$opt_vq, '');
+            $_pro = self::tryget($arroptions, self::$opt_pro, '');
         }
+
+        $all = array(
+            self::$opt_version => self::$version,
+            self::$opt_center => $_center,
+            self::$opt_autoplay => $_autoplay,
+            self::$opt_cc_load_policy => $_cc_load_policy,
+            self::$opt_iv_load_policy => $_iv_load_policy,
+            self::$opt_loop => $_loop,
+            self::$opt_modestbranding => $_modestbranding,
+            self::$opt_rel => $_rel,
+            self::$opt_showinfo => $_showinfo,
+            self::$opt_theme => $_theme,
+            self::$opt_vq => $_vq,
+            self::$opt_pro => $_pro
+        );
+
+        update_option(self::$opt_alloptions, $all);
+        update_option('embed_autourls', 1);
+        self::$alloptions = get_option(self::$opt_alloptions);
+    }
+
+    public static function tryget($array, $key, $default = null)
+    {
+        return isset($array[$key]) ? $array[$key] : $default;
     }
 
     public static function wp_above_version($ver)
@@ -183,7 +174,7 @@ class YouTubePrefs
 
     public static function do_ytprefs()
     {
-        if (self::wp_above_version('2.9') && !is_admin())
+        if (!is_admin())
         {
             add_filter('the_content', 'YouTubePrefs::apply_prefs', 1);
         }
@@ -215,36 +206,6 @@ class YouTubePrefs
                 '" src="' . $linkscheme . '://www.youtube.com/embed/' . $linkparams['v'] . '?';
         $code2 = '" frameborder="0" allowfullscreen type="text/html" class="__youtube_prefs__"></iframe>';
 
-        /*
-          $prefparams = array();
-
-          //get_option(self::$opt_auto_hd, 0);
-          $autoplay = get_option(self::$opt_autoplay, 0);
-          $cc_load_policy = get_option(self::$opt_cc_load_policy, 0) == 1 ? 1 : '';
-          $iv_load_policy = get_option(self::$opt_iv_load_policy, 1);
-          $loop = get_option(self::$opt_loop, 0);
-          $modestbranding = get_option(self::$opt_modestbranding, 0) == 1 ? 1 : '';
-          $rel = get_option(self::$opt_rel, 1);
-          $showinfo = get_option(self::$opt_showinfo, 1);
-          $theme = get_option(self::$opt_theme, 'dark');
-
-          if ($autoplay == 1)
-          $prefparams['autoplay'] = 1;
-          if ($cc_load_policy == 1)
-          $prefparams['cc_load_policy'] = 1;
-          if ($iv_load_policy == 3)
-          $prefparams['iv_load_policy'] = 3;
-          if ($loop == 1)
-          $prefparams['loop'] = 1;
-          if ($modestbranding == 1)
-          $prefparams['modestbranding'] = 1;
-          if ($rel == 0)
-          $prefparams['rel'] = 0;
-          if ($showinfo == 0)
-          $prefparams['showinfo'] = 0;
-          if ($theme == 'light')
-          $prefparams['theme'] = 'light';
-         */
 
         $finalparams = $linkparams + self::$alloptions;
         $origin = '';
@@ -278,7 +239,7 @@ class YouTubePrefs
 
         $code = $code1 . $finalsrc . $code2;
 
-        if (self::$alloptions[self::$opt_center] == 1)
+        if ($finalparams[self::$opt_center] == 1)
         {
             $code = '<div style="text-align: center; display: block;">' . $code . '</div>';
         }
@@ -348,7 +309,7 @@ class YouTubePrefs
     public static function ytprefs_plugin_menu()
     {
         add_menu_page('YouTube Settings', 'YouTube', 'manage_options', 'youtube-my-preferences', 'YouTubePrefs::ytprefs_show_options', plugins_url('images/youtubeicon16.png', __FILE__), '10.00392854349');
-        add_menu_page('YouTube Analytics Dashboard', 'EmbedPlus YouTube Pro', 'manage_options', 'youtube-ep-analytics-dashboard', 'YouTubePrefs::epstats_show_options', plugins_url('images/epstats16.png', __FILE__), '10.00492884349');
+        add_menu_page('YouTube Analytics Dashboard', 'YouTube Pro', 'manage_options', 'youtube-ep-analytics-dashboard', 'YouTubePrefs::epstats_show_options', plugins_url('images/epstats16.png', __FILE__), '10.00492884349');
     }
 
     public static function epstats_show_options()
@@ -372,11 +333,50 @@ class YouTubePrefs
             <style type="text/css">
                 .epicon { width: 20px; height: 20px; vertical-align: middle; padding-right: 5px;}
                 .epindent {padding-left: 25px;}
+                iframe.shadow {-webkit-box-shadow: 0px 0px 20px 0px #000000; box-shadow: 0px 0px 20px 0px #000000;}
             </style>
             <br>
-            <iframe style="-webkit-box-shadow: 0px 0px 20px 0px #000000; box-shadow: 0px 0px 20px 0px #000000;" src="https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx?domain=<?php echo (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : ""); ?>" width="1030" height="1800" scrolling="auto"/>
+            <?php
+            $thishost = (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : "");
+            $thiskey = self::$alloptions[self::$opt_pro];
+            if (self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0)
+            {
+                echo '<p><i>Logging you in...</i></p>';
+            }
+            ?>
+            <iframe class="shadow" src="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx?ref=protab&domain=<?php echo $thishost; ?>&prokey=<?php echo $thiskey; ?>" width="1030" height="2000" scrolling="auto"/>
         </div>
         <?php
+    }
+
+    public static function my_embedplus_pro_record()
+    {
+        $result = array();
+        if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')
+        {
+            $tmppro = preg_replace('/[^A-Za-z0-9-]/i', '', $_REQUEST[self::$opt_pro]);
+            $new_options = array();
+            $new_options[self::$opt_pro] = $tmppro;
+            $all = get_option(self::$opt_alloptions);
+            $all = $new_options + $all;
+            update_option(self::$opt_alloptions, $all);
+
+            if (strlen($tmppro) > 0)
+            {
+                $result['type'] = 'success';
+            }
+            else
+            {
+                $result['type'] = 'error';
+            }
+            echo json_encode($result);
+        }
+        else
+        {
+            $result['type'] = 'error';
+            header("Location: " . $_SERVER["HTTP_REFERER"]);
+        }
+        die();
     }
 
     public static function ytprefs_show_options()
@@ -391,17 +391,6 @@ class YouTubePrefs
         $ytprefs_submitted = 'ytprefs_submitted';
 
         // Read in existing option values from database
-        /*
-          $auto_hd = get_option(self::$opt_auto_hd);
-          $autoplay = get_option(self::$opt_autoplay, 0);
-          $cc_load_policy = get_option(self::$opt_cc_load_policy, 0);
-          $iv_load_policy = get_option(self::$opt_iv_load_policy, 1);
-          $loop = get_option(self::$opt_loop, 0);
-          $modestbranding = get_option(self::$opt_modestbranding, 0);
-          $rel = get_option(self::$opt_rel, 1);
-          $showinfo = get_option(self::$opt_showinfo, 1);
-          $theme = get_option(self::$opt_theme, 'dark');
-         */
 
         $all = get_option(self::$opt_alloptions);
 
@@ -410,19 +399,9 @@ class YouTubePrefs
         if (isset($_POST[$ytprefs_submitted]) && $_POST[$ytprefs_submitted] == 'Y')
         {
             // Read their posted values
-//            $auto_hd = $_POST[self::$opt_auto_hd] == (true || 'on') ? 1 : 0;
-//            $autoplay = $_POST[self::$opt_autoplay] == (true || 'on') ? 1 : 0;
-//            $cc_load_policy = $_POST[self::$opt_cc_load_policy] == (true || 'on') ? 1 : 0;
-//            $iv_load_policy = $_POST[self::$opt_iv_load_policy] == (true || 'on') ? 1 : 3;
-//            $loop = $_POST[self::$opt_loop] == (true || 'on') ? 1 : 0;
-//            $modestbranding = $_POST[self::$opt_modestbranding] == (true || 'on') ? 1 : 0;
-//            $rel = $_POST[self::$opt_rel] == (true || 'on') ? 1 : 0;
-//            $showinfo = $_POST[self::$opt_showinfo] == (true || 'on') ? 1 : 0;
-//            $theme = $_POST[self::$opt_theme] == (true || 'on') ? 'dark' : 'light';
 
             $new_options = array();
             $new_options[self::$opt_center] = $_POST[self::$opt_center] == (true || 'on') ? 1 : 0;
-            $new_options[self::$opt_auto_hd] = $_POST[self::$opt_auto_hd] == (true || 'on') ? 1 : 0;
             $new_options[self::$opt_autoplay] = $_POST[self::$opt_autoplay] == (true || 'on') ? 1 : 0;
             $new_options[self::$opt_cc_load_policy] = $_POST[self::$opt_cc_load_policy] == (true || 'on') ? 1 : 0;
             $new_options[self::$opt_iv_load_policy] = $_POST[self::$opt_iv_load_policy] == (true || 'on') ? 1 : 3;
@@ -436,15 +415,6 @@ class YouTubePrefs
             $all = $new_options + $all;
 
             // Save the posted value in the database
-//            update_option(self::$opt_auto_hd, $auto_hd);
-//            update_option(self::$opt_autoplay, $autoplay);
-//            update_option(self::$opt_cc_load_policy, $cc_load_policy);
-//            update_option(self::$opt_iv_load_policy, $iv_load_policy);
-//            update_option(self::$opt_loop, $loop);
-//            update_option(self::$opt_modestbranding, $modestbranding);
-//            update_option(self::$opt_rel, $rel);
-//            update_option(self::$opt_showinfo, $showinfo);
-//            update_option(self::$opt_theme, $theme);
 
             update_option(self::$opt_alloptions, $all);
             // Put a settings updated message on the screen
@@ -473,46 +443,83 @@ class YouTubePrefs
                         width: 20px;
                         height: 20px;
                         padding-bottom: 4px;}
+            .orange {color: #f85d00;}
             .bold {font-weight: bold;}
-            #goprobox {border-radius: 15px; padding: 5px 20px 20px 20px; margin: 15px; border: 3px solid #dddddd; width: 300px;}
+            .grey{color: #888888;}
+            #goprobox {border-radius: 15px; padding: 5px 20px 20px 20px; margin: 15px; border: 3px solid #dddddd; width: 470px;}
+            .pronon {font-weight: bold; color: #f85d00;}
+            ul.reglist li {margin-left: 30px; list-style: disc outside none;}
         </style>
 
         <div class="ytindent">
 
-
             <div id="goprobox">
 
-                <h3>
-                    Go PRO
-                </h3>
-                <ul class="gopro">
-                    <li>
-                        <img src="<?php echo plugins_url('images/prioritysupport.png', __FILE__) ?>">
-                        Priority support (Puts your request in front)
-                    </li>
-                    <li>
-                        <img src="<?php echo plugins_url('images/bulletgraph45.png', __FILE__) ?>">
-                        Your own video analytics dashboard
-                    </li>
-                    <li>
-                        <img src="<?php echo plugins_url('images/infinity.png', __FILE__) ?>">
-                        Unlimited PRO upgrades and downloads
-                    </li>
-                    <li>
-                        <img src="<?php echo plugins_url('images/questionsale.png', __FILE__) ?>">
-                        What else? You tell us!
-                    </li>
-                </ul>
-                <a href="https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx" class="button-primary" target="_blank">Click here to go PRO &raquo;</a>
+                <?php
+                $haspro = ($all[self::$opt_pro] && strlen(trim($all[self::$opt_pro])) > 0);
+
+                if ($haspro)
+                {
+                    echo "<h3>" . __('Thank you for going PRO.');
+                    echo ' &nbsp;<input type="submit" name="showkey" class="button-primary" style="vertical-align: 15%;" id="showprokey" value="Show my PRO key" />';
+                    echo "</h3>";
+                    ?>
+                    <?php
+                }
+                else
+                {
+                    ?>
+
+                    <h3>
+                        Go PRO
+                    </h3>
+                    <ul class="gopro">
+                        <li>
+                            <img src="<?php echo plugins_url('images/youtubewizard.png', __FILE__) ?>">
+                            YouTube Wizard - Easily embed without memorizing codes
+                        </li>
+                        <li>
+                            <img src="<?php echo plugins_url('images/prioritysupport.png', __FILE__) ?>">
+                            Priority support (Puts your request in front)
+                        </li>
+                        <li>
+                            <img src="<?php echo plugins_url('images/bulletgraph45.png', __FILE__) ?>">
+                            Your own video analytics dashboard
+                        </li>
+                        <li>
+                            <img src="<?php echo plugins_url('images/infinity.png', __FILE__) ?>">
+                            Unlimited PRO upgrades and downloads
+                        </li>
+                        <li>
+                            <img src="<?php echo plugins_url('images/questionsale.png', __FILE__) ?>">
+                            What else? You tell us!
+                        </li>
+                    </ul>
+                    <a href="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx" class="button-primary" target="_blank">Click here to go PRO &raquo;</a> &nbsp;  Your PRO key will then be immediately emailed to you.
+
+                    <br>
+                    <br>
+                    <h3>Have your PRO key? Save it below:</h3>
+
+                <?php } ?>
+                <form name="form2" method="post" action="" id="epform2" class="submitpro" <?php if ($haspro) echo 'style="display: none;"' ?>>
+                    <input type="hidden" name="<?php echo $pro_submitted; ?>" value="Y">
+
+                    <input style="box-shadow: 0px 0px 5px 0px #1870D5; width: 270px;" name="<?php echo self::$opt_pro; ?>" id="opt_pro" value="<?php echo $all[self::$opt_pro]; ?>" type="text">
+                    <input type="submit" name="Submit" class="button-primary" id="prokeysubmit" value="<?php _e('Save Key') ?>" />
+                    <br>
+                    <span style="display: none;" id="prokeyloading" class="orange bold">Verifying...</span>
+                    <span  class="orange bold" style="display: none;" id="prokeysuccess">Success! Please refresh this page.</span>
+                    <span class="orange bold" style="display: none;" id="prokeyfailed">Sorry, that seems to be an invalid key.</span>
+
+                </form>
 
             </div>
-
-
             <br>
             <form name="form1" method="post" action="" id="ytform">
                 <input type="hidden" name="<?php echo $ytprefs_submitted; ?>" value="Y">
                 <h3>
-                    <?php _e("How to Insert a YouTube Video") ?>
+                    <?php _e("How to Insert a YouTube Video") ?> <span class="pronon">(PRO/Non-PRO)</span>
                 </h3>
                 <p>
                     All you have to do is paste the link to the YouTube video on its own line, as shown below (including the http:// part). Easy, eh?
@@ -525,9 +532,17 @@ class YouTubePrefs
                     <img class="shadow" src="<?php echo plugins_url('images/ownline.jpg', __FILE__) ?>" />
                 </p>
                 <br>
-
+                <h3>YouTube Wizard - Easily embed without memorizing codes <span class="pronon">(PRO Only)</span></h3>
+                <p>
+                    Whenever you want to embed a YouTube video, simply click the PRO editor button to launch the wizard. There, you'll just paste the link to the video, click on options to personalize it, and then get the code to paste in your editor. No memorization needed.
+                </p>
+                <img src="<?php echo plugins_url('images/ssprowizard.jpg', __FILE__) ?>" >
+                
+                <br>
+                
+                
                 <h3>
-                    <?php _e("Default Options") ?>
+                    <?php _e("Default Options") ?> <span class="pronon">(PRO/Non-PRO)</span>
                 </h3>
                 <p>
                     <?php _e("Below you can set the default options for all your videos. However, you can override them (and more) on a per-video basis. Directions on how to do that are in the next section.") ?>
@@ -580,10 +595,11 @@ class YouTubePrefs
                 </div>
 
                 <h3>
-                    <?php _e("How To Override Defaults / Other Options") ?>
+                    <?php _e("How To Override Defaults / Other Options") ?> <span class="pronon">(PRO/Non-PRO)</span>
                 </h3>
+                <p>Suppose you have a few videos that need to be different from the above defaults. You can add options to the end of a link as displayed below to override the above defaults. Each option should begin with '&'.
+                    <br><span class="pronon">PRO users: You can use the easier wizard instead by clicking on the <img style="width: 16px;height:16px;" src="<?php echo plugins_url('images/youtubewizard.png', __FILE__) ?>"> button in the editor.</span>
                 <?php
-                _e("<p>Suppose you have a few videos that need to be different from the above defaults. You can add options to the end of a link as displayed below to override the above defaults. Each option should begin with '&'. </p>");
                 _e('<ul>');
                 _e("<li><strong>width</strong> - Sets the width of your player. If omitted, the default width will be the width of your theme's content.<em> Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&width=500</strong>&height=350</em></li>");
                 _e("<li><strong>height</strong> - Sets the height of your player. If omitted, this will be calculated for you automatically. <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA&width=500<strong>&height=350</strong></em> </li>");
@@ -606,8 +622,80 @@ class YouTubePrefs
                 ?>
 
             </form>
+            <br>
+            <h3>
+                Priority Support <span class="pronon">(PRO Only)</span>
+            </h3>
+            <p>
+                <strong>PRO users:</strong> Below, We've enabled the ability to have priority support with our team.  Use this to get one-on-one help with any issues you might have or to send us suggestions for future features.  We typically respond within minutes during normal work hours.  
+            </p>
+            <p>
+                <strong>Tip for non-PRO users:</strong> We've found that a common support request has been from users that are pasting video links on single lines, as required, but are not seeing the video embed show up. One of these two suggestions is usually the fix:
+            <ul class="reglist">
+                <li>Make sure the url is really on its own line by itself</li>
+                <li>Make sure the url is not an active hyperlink (i.e., it should just be plain text). Otherwise, highlight the url and click the "unlink" button in your editor: <img src="<?php echo plugins_url('images/unlink.png', __FILE__) ?>"/>.</li>
+            </ul>                
+        </p>
+        <iframe src="<?php echo self::$epbase ?>/dashboard/prosupport.aspx?simple=1&prokey=<?php echo $all[self::$opt_pro]; ?>&domain=<?php echo site_url(); ?>" width="500" height="600"></iframe>
 
         </div>
+        <script type="text/javascript">
+            var prokeyval;
+            jQuery(document).ready(function($) {
+                                                                                                                                                                                
+                jQuery('#showprokey').click(function(){
+                    jQuery('.submitpro').show(500);
+                    return false;
+                });
+                                                                                                                                                                     
+                jQuery('#prokeysubmit').click(function(){
+                    jQuery(this).attr('disabled', 'disabled');
+                    jQuery('#prokeyfailed').hide();
+                    jQuery('#prokeysuccess').hide();
+                    jQuery('#prokeyloading').show();
+                    prokeyval = jQuery('#opt_pro').val();
+                                                                                                                                                                                                    
+                    var tempscript=document.createElement("script");
+                    tempscript.src="//www.embedplus.com/dashboard/wordpress-pro-validatejp.aspx?simple=1&prokey=" + prokeyval;
+                    var n=document.getElementsByTagName("head")[0].appendChild(tempscript);
+                    setTimeout(function(){
+                        n.parentNode.removeChild(n)
+                    },500);
+                    return false;
+                });
+                                                                                                                                                                
+                window.embedplus_record_prokey = function(good){
+                                                                                                                    
+                    jQuery.ajax({
+                        type : "post",
+                        dataType : "json",
+                        timeout: 30000,
+                        url : "<?php echo admin_url('admin-ajax.php') ?>",
+                        data : { action: 'my_embedplus_pro_record', <?php echo self::$opt_pro; ?>:  (good? prokeyval : "")},
+                        success: function(response) {
+                            if(response.type == "success") {
+                                jQuery("#prokeysuccess").show();
+                            }
+                            else {
+                                jQuery("#prokeyfailed").show();
+                            }
+                        },
+                        error: function(xhr, ajaxOptions, thrownError){
+                            jQuery('#prokeyfailed').show();
+                        },
+                        complete: function() {
+                            jQuery('#prokeyloading').hide();
+                            jQuery('#prokeysubmit').removeAttr('disabled');
+                        }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                    });
+                                                                                                                    
+                };
+                                                                                                                                                                
+            });
+        </script>
+
+
         <?php
     }
 
@@ -696,20 +784,52 @@ class Add_new_tinymce_btn_Youtubeprefs
 
 register_activation_hook(__FILE__, array('YouTubePrefs', 'initoptions'));
 add_action('wp_enqueue_scripts', array('YouTubePrefs', 'ytprefsscript'));
+add_action("wp_ajax_my_embedplus_pro_record", array('YouTubePrefs', 'my_embedplus_pro_record'));
+
 
 $youtubeplg = new YouTubePrefs();
 
-$epstatsmce_youtubeprefs = new Add_new_tinymce_btn_Youtubeprefs('|', 'embedplusstats_youtubeprefs', plugins_url() . '/youtube-embed-plus/scripts/embedplusstats_mce.js');
-if (YouTubePrefs::wp_above_version('2.9'))
-{
-    add_action('admin_enqueue_scripts', 'youtubeprefs_admin_enqueue_scripts');
-}
-else
-{
-    wp_enqueue_style('embedplusyoutube', plugins_url() . '/youtube-embed-plus/scripts/embedplus_mce.css');
-}
+$embedplusmce_youtubeprefs = new Add_new_tinymce_btn_Youtubeprefs('|', 'embedpluswiz_youtubeprefs', plugins_url() . '/youtube-embed-plus/scripts/embedplus_mce.js');
+//$epstatsmce_youtubeprefs = new Add_new_tinymce_btn_Youtubeprefs('|', 'embedplusstats_youtubeprefs', plugins_url() . '/youtube-embed-plus/scripts/embedplusstats_mce.js');
+
+add_action('admin_enqueue_scripts', 'youtubeprefs_admin_enqueue_scripts');
 
 function youtubeprefs_admin_enqueue_scripts()
 {
+    add_action('wp_print_scripts', 'youtubeprefs_output_scriptvars');
     wp_enqueue_style('embedplusyoutube', plugins_url() . '/youtube-embed-plus/scripts/embedplus_mce.css');
+}
+
+function youtubeprefs_output_scriptvars()
+{
+    $blogwidth = null;
+    try
+    {
+        $embed_size_w = intval(get_option('embed_size_w'));
+
+        global $content_width;
+        if (empty($content_width))
+            $content_width = $GLOBALS['content_width'];
+        if (empty($content_width))
+            $content_width = $_GLOBALS['content_width'];
+
+        $blogwidth = $embed_size_w ? $embed_size_w : ($content_width ? $content_width : 450);
+    }
+    catch (Exception $ex)
+    {
+        
+    }
+
+    $epprokey = YouTubePrefs::$alloptions[YouTubePrefs::$opt_pro];
+
+    $myytdefaults = http_build_query(YouTubePrefs::$alloptions);
+    ?>
+    <script type="text/javascript">
+        var epblogwidth = <?php echo $blogwidth; ?>;
+        var epprokey = '<?php echo $epprokey; ?>';
+        var epbasesite = '<?php echo YouTubePrefs::$epbase; ?>';
+        var epversion = '<?php echo YouTubePrefs::$version; ?>';
+        var myytdefaults = '<?php echo $myytdefaults; ?>';
+    </script>
+    <?php
 }

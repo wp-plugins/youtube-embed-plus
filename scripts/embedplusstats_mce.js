@@ -2,11 +2,11 @@
         tinymce.create('tinymce.plugins.Embedplusstats_youtubeprefs', {
             init : function(ed, url) {
                 var plep = new Image();
-                plep.src = url+'/btn_embedplusstats.png';
+                plep.src = url+'/../btn_embedplusstats.png';
                 ed.addButton('embedplusstats_youtubeprefs', {
                     title : 'How much are your visitors actually watching the videos you post? Click here to start using this popular feature from EmbedPlus Labs »',
                     onclick : function(ev) {
-                        window.open('https://www.embedplus.com/dashboard/easy-video-analytics-seo.aspx', '_blank');
+                        window.open(epbasesite + '/dashboard/pro-easy-video-analytics.aspx?ref=wysiwygbutton&prokey=' + epprokey + '&domain=' + escape(window.location.toString()), '_blank');
                     }
                 });
                        
@@ -20,7 +20,7 @@
                     author : 'EmbedPlus',
                     authorurl : 'http://www.embedplus.com/',
                     infourl : 'http://www.embedplus.com/',
-                    version : "2.4"
+                    version : epversion
                 };
             }
         });
