@@ -3,7 +3,7 @@
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com
   Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add view tracking and access to your very own analytics dashboard.
-  Version: 3.0
+  Version: 3.1
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
@@ -32,7 +32,7 @@
 class YouTubePrefs
 {
 
-    public static $version = '3.0';
+    public static $version = '3.1';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -292,7 +292,7 @@ class YouTubePrefs
             $oembed = _wp_oembed_get_object();
             $args = array();
             $args['width'] = self::$defaultwidth;
-            $args['height'] = self::$optembedheight;
+            //$args['height'] = self::$optembedheight;
             $args['discover'] = false;
             $odata = $oembed->fetch('http://www.youtube.com/oembed', $url, $args);
 
@@ -446,9 +446,10 @@ class YouTubePrefs
             .orange {color: #f85d00;}
             .bold {font-weight: bold;}
             .grey{color: #888888;}
-            #goprobox {border-radius: 15px; padding: 5px 20px 20px 20px; margin: 15px; border: 3px solid #dddddd; width: 470px;}
+            #goprobox {border-radius: 15px; padding: 0px 20px 20px 20px; margin-top: 15px; border: 3px solid #dddddd; width: 670px;}
             .pronon {font-weight: bold; color: #f85d00;}
             ul.reglist li {margin-left: 30px; list-style: disc outside none;}
+            .procol {width: 370px; float: left;}
         </style>
 
         <div class="ytindent">
@@ -473,34 +474,42 @@ class YouTubePrefs
                     <h3>
                         Go PRO
                     </h3>
-                    <ul class="gopro">
-                        <li>
-                            <img src="<?php echo plugins_url('images/youtubewizard.png', __FILE__) ?>">
-                            YouTube Wizard - Easily embed without memorizing codes
-                        </li>
-                        <li>
-                            <img src="<?php echo plugins_url('images/prioritysupport.png', __FILE__) ?>">
-                            Priority support (Puts your request in front)
-                        </li>
-                        <li>
-                            <img src="<?php echo plugins_url('images/bulletgraph45.png', __FILE__) ?>">
-                            Your own video analytics dashboard
-                        </li>
-                        <li>
-                            <img src="<?php echo plugins_url('images/infinity.png', __FILE__) ?>">
-                            Unlimited PRO upgrades and downloads
-                        </li>
-                        <li>
-                            <img src="<?php echo plugins_url('images/questionsale.png', __FILE__) ?>">
-                            What else? You tell us!
-                        </li>
-                    </ul>
-                    <a href="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx" class="button-primary" target="_blank">Click here to go PRO &raquo;</a> &nbsp;  Your PRO key will then be immediately emailed to you.
 
+                    <div class="procol">
+                        <ul class="gopro">
+                            <li>
+                                <img src="<?php echo plugins_url('images/youtubewizard.png', __FILE__) ?>">
+                                YouTube Wizard - Easily embed without memorizing codes
+                            </li>
+                            <li>
+                                <img src="<?php echo plugins_url('images/prioritysupport.png', __FILE__) ?>">
+                                Priority support (Puts your request in front)
+                            </li>
+                            <li>
+                                <img src="<?php echo plugins_url('images/bulletgraph45.png', __FILE__) ?>">
+                                Your own video analytics dashboard
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="procol" style="width: 280px;">
+                        <ul class="gopro">
+                            <li>
+                                <img src="<?php echo plugins_url('images/infinity.png', __FILE__) ?>">
+                                Unlimited PRO upgrades and downloads
+                            </li>
+                            <li>
+                                <img src="<?php echo plugins_url('images/questionsale.png', __FILE__) ?>">
+                                What else? You tell us!
+                            </li>
+                            <li>
+                                <a href="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx" class="button-primary" target="_blank">Click here to go PRO &raquo;</a>
+                            </li>                                
+                        </ul>
+                    </div>
                     <br>
                     <br>
-                    <h3>Have your PRO key? Save it below:</h3>
-
+                    <div style="clear: both;"></div>
+                    <h3>Enter and save your PRO key (emailed to you):</h3>
                 <?php } ?>
                 <form name="form2" method="post" action="" id="epform2" class="submitpro" <?php if ($haspro) echo 'style="display: none;"' ?>>
                     <input type="hidden" name="<?php echo $pro_submitted; ?>" value="Y">
@@ -519,7 +528,7 @@ class YouTubePrefs
             <form name="form1" method="post" action="" id="ytform">
                 <input type="hidden" name="<?php echo $ytprefs_submitted; ?>" value="Y">
                 <h3>
-                    <?php _e("How to Insert a YouTube Video") ?> <span class="pronon">(PRO/Non-PRO)</span>
+                    <?php _e("How to Insert a YouTube Video") ?> <span class="pronon">(For all users - PRO/Free)</span>
                 </h3>
                 <p>
                     All you have to do is paste the link to the YouTube video on its own line, as shown below (including the http:// part). Easy, eh?
@@ -532,17 +541,17 @@ class YouTubePrefs
                     <img class="shadow" src="<?php echo plugins_url('images/ownline.jpg', __FILE__) ?>" />
                 </p>
                 <br>
-                <h3>YouTube Wizard - Easily embed without memorizing codes <span class="pronon">(PRO Only)</span></h3>
+                <h3>YouTube Wizard - Easily embed without memorizing special codes <span class="pronon">(PRO Only)</span></h3>
                 <p>
                     Whenever you want to embed a YouTube video, simply click the PRO editor button to launch the wizard. There, you'll just paste the link to the video, click on options to personalize it, and then get the code to paste in your editor. No memorization needed.
                 </p>
                 <img src="<?php echo plugins_url('images/ssprowizard.jpg', __FILE__) ?>" >
-                
+
                 <br>
-                
-                
+
+
                 <h3>
-                    <?php _e("Default Options") ?> <span class="pronon">(PRO/Non-PRO)</span>
+                    <?php _e("Default Options") ?> <span class="pronon">(For all users - PRO/Free)</span>
                 </h3>
                 <p>
                     <?php _e("Below you can set the default options for all your videos. However, you can override them (and more) on a per-video basis. Directions on how to do that are in the next section.") ?>
@@ -595,31 +604,31 @@ class YouTubePrefs
                 </div>
 
                 <h3>
-                    <?php _e("How To Override Defaults / Other Options") ?> <span class="pronon">(PRO/Non-PRO)</span>
+                    <?php _e("How To Override Defaults / Other Options") ?> <span class="pronon">(For all users - PRO/Free)</span>
                 </h3>
                 <p>Suppose you have a few videos that need to be different from the above defaults. You can add options to the end of a link as displayed below to override the above defaults. Each option should begin with '&'.
                     <br><span class="pronon">PRO users: You can use the easier wizard instead by clicking on the <img style="width: 16px;height:16px;" src="<?php echo plugins_url('images/youtubewizard.png', __FILE__) ?>"> button in the editor.</span>
-                <?php
-                _e('<ul>');
-                _e("<li><strong>width</strong> - Sets the width of your player. If omitted, the default width will be the width of your theme's content.<em> Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&width=500</strong>&height=350</em></li>");
-                _e("<li><strong>height</strong> - Sets the height of your player. If omitted, this will be calculated for you automatically. <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA&width=500<strong>&height=350</strong></em> </li>");
-                _e("<li><strong>autoplay</strong> - Set this to 1 to autoplay the video (or 0 to play the video once). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&autoplay=1</strong></em> </li>");
-                _e("<li><strong>cc_load_policy</strong> - Set this to 1 to turn on closed captioning (or 0 to leave them off). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&cc_load_policy=1</strong></em> </li>");
-                _e("<li><strong>iv_load_policy</strong> - Set this to 3 to turn off annotations (or 1 to show them). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&iv_load_policy=3</strong></em> </li>");
-                _e("<li><strong>loop</strong> - Set this to 1 to loop the video (or 0 to not loop). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&loop=1</strong></em> </li>");
-                _e("<li><strong>modestbranding</strong> - Set this to 1 to remove the YouTube logo while playing (or 0 to show the logo). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&modestbranding=1</strong></em> </li>");
-                _e("<li><strong>rel</strong> - Set this to 0 to not show related videos at the end of playing (or 1 to show them). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&rel=0</strong></em> </li>");
-                _e("<li><strong>showinfo</strong> - Set this to 0 to hide the video title and other info (or 1 to show it). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&showinfo=0</strong></em> </li>");
-                _e("<li><strong>theme</strong> - Set this to 'light' to make the player have the light-colored theme (or 'dark' for the dark theme). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&theme=light</strong></em> </li>");
-                _e("<li><strong>vq</strong> - Set this to 'hd720' or 'hd1080' to force the video to have HD quality. Leave blank to let YouTube decide. <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&vq=hd720</strong></em> </li>");
-                _e('</ul>');
+                    <?php
+                    _e('<ul>');
+                    _e("<li><strong>width</strong> - Sets the width of your player. If omitted, the default width will be the width of your theme's content.<em> Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&width=500</strong>&height=350</em></li>");
+                    _e("<li><strong>height</strong> - Sets the height of your player. We do not recommend setting height because best-height will be calculated for you automatically, based on the above height. <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA&width=500<strong>&height=350</strong></em> </li>");
+                    _e("<li><strong>autoplay</strong> - Set this to 1 to autoplay the video (or 0 to play the video once). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&autoplay=1</strong></em> </li>");
+                    _e("<li><strong>cc_load_policy</strong> - Set this to 1 to turn on closed captioning (or 0 to leave them off). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&cc_load_policy=1</strong></em> </li>");
+                    _e("<li><strong>iv_load_policy</strong> - Set this to 3 to turn off annotations (or 1 to show them). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&iv_load_policy=3</strong></em> </li>");
+                    _e("<li><strong>loop</strong> - Set this to 1 to loop the video (or 0 to not loop). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&loop=1</strong></em> </li>");
+                    _e("<li><strong>modestbranding</strong> - Set this to 1 to remove the YouTube logo while playing (or 0 to show the logo). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&modestbranding=1</strong></em> </li>");
+                    _e("<li><strong>rel</strong> - Set this to 0 to not show related videos at the end of playing (or 1 to show them). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&rel=0</strong></em> </li>");
+                    _e("<li><strong>showinfo</strong> - Set this to 0 to hide the video title and other info (or 1 to show it). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&showinfo=0</strong></em> </li>");
+                    _e("<li><strong>theme</strong> - Set this to 'light' to make the player have the light-colored theme (or 'dark' for the dark theme). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&theme=light</strong></em> </li>");
+                    _e("<li><strong>vq</strong> - Set this to 'hd720' or 'hd1080' to force the video to have HD quality. Leave blank to let YouTube decide. <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&vq=hd720</strong></em> </li>");
+                    _e('</ul>');
 
-                _e("<p>You can also start and end each individual video at particular times. Like the above, each option should begin with '&'</p>");
-                _e('<ul>');
-                _e("<li><strong>start</strong> - Sets the time (in seconds) to start the video. <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350<strong>&start=20</strong></em> </li>");
-                _e("<li><strong>end</strong> - Sets the time (in seconds) to stop the video. <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350<strong>&end=100</strong></em> </li>");
-                _e('</ul>');
-                ?>
+                    _e("<p>You can also start and end each individual video at particular times. Like the above, each option should begin with '&'</p>");
+                    _e('<ul>');
+                    _e("<li><strong>start</strong> - Sets the time (in seconds) to start the video. <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350<strong>&start=20</strong></em> </li>");
+                    _e("<li><strong>end</strong> - Sets the time (in seconds) to stop the video. <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350<strong>&end=100</strong></em> </li>");
+                    _e('</ul>');
+                    ?>
 
             </form>
             <br>
@@ -642,19 +651,19 @@ class YouTubePrefs
         <script type="text/javascript">
             var prokeyval;
             jQuery(document).ready(function($) {
-                                                                                                                                                                                
+                                                                                                                                                                                                
                 jQuery('#showprokey').click(function(){
                     jQuery('.submitpro').show(500);
                     return false;
                 });
-                                                                                                                                                                     
+                                                                                                                                                                                     
                 jQuery('#prokeysubmit').click(function(){
                     jQuery(this).attr('disabled', 'disabled');
                     jQuery('#prokeyfailed').hide();
                     jQuery('#prokeysuccess').hide();
                     jQuery('#prokeyloading').show();
                     prokeyval = jQuery('#opt_pro').val();
-                                                                                                                                                                                                    
+                                                                                                                                                                                                                    
                     var tempscript=document.createElement("script");
                     tempscript.src="//www.embedplus.com/dashboard/wordpress-pro-validatejp.aspx?simple=1&prokey=" + prokeyval;
                     var n=document.getElementsByTagName("head")[0].appendChild(tempscript);
@@ -663,9 +672,9 @@ class YouTubePrefs
                     },500);
                     return false;
                 });
-                                                                                                                                                                
+                                                                                                                                                                                
                 window.embedplus_record_prokey = function(good){
-                                                                                                                    
+                                                                                                                                    
                     jQuery.ajax({
                         type : "post",
                         dataType : "json",
@@ -687,11 +696,11 @@ class YouTubePrefs
                             jQuery('#prokeyloading').hide();
                             jQuery('#prokeysubmit').removeAttr('disabled');
                         }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                
                     });
-                                                                                                                    
+                                                                                                                                    
                 };
-                                                                                                                                                                
+                                                                                                                                                                                
             });
         </script>
 
