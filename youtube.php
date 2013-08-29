@@ -535,15 +535,19 @@ class YouTubePrefs
                 </p>
                 <ul class="reglist">
                     <li>Make sure the url is really on its own line by itself</li>
-                    <li>Make sure the url is <strong>not</strong> an active hyperlink (i.e., it should just be plain text). Otherwise, highlight the url and click the "unlink" button in your editor: <img src="<?php echo plugins_url('images/unlink.png', __FILE__) ?>"/>.</li>
+                    <li>Make sure the url is <strong>not</strong> an active hyperlink (i.e., it should just be plain text). Otherwise, highlight the url and click the "unlink" button in your editor: <img src="<?php echo plugins_url('images/unlink.png', __FILE__) ?>"/></li>
+                    <li>Make sure you did <strong>not</strong> format or align the url in any way. If your url still appears in your actual post instead of a video, highlight it and click the "remove formatting" button (formatting can be invisible sometimes): <img src="<?php echo plugins_url('images/erase.png', __FILE__) ?>"/></li>
                 </ul>       
                 <p>
                     <img class="shadow" src="<?php echo plugins_url('images/ownline.jpg', __FILE__) ?>" />
                 </p>
                 <br>
+                
+                
+                
                 <h3>YouTube Wizard - Easily embed without memorizing special codes <span class="pronon">(PRO Only)</span></h3>
                 <p>
-                    Whenever you want to embed a YouTube video, simply click the PRO editor button to launch the wizard. There, you'll just paste the link to the video, click on options to personalize it, and then get the code to paste in your editor. No memorization needed.
+                    Whenever you want to embed a YouTube video with more than the default settings, simply click the PRO editor button <img style="width: 16px;height:16px;" src="<?php echo plugins_url('images/youtubewizard.png', __FILE__) ?>"> to launch the wizard. There, you'll just paste the link to the video, click on options to personalize it, and then get the code to paste in your editor. No memorization needed.
                 </p>
                 <img src="<?php echo plugins_url('images/ssprowizard.jpg', __FILE__) ?>" >
 
@@ -643,6 +647,7 @@ class YouTubePrefs
             <ul class="reglist">
                 <li>Make sure the url is really on its own line by itself</li>
                 <li>Make sure the url is not an active hyperlink (i.e., it should just be plain text). Otherwise, highlight the url and click the "unlink" button in your editor: <img src="<?php echo plugins_url('images/unlink.png', __FILE__) ?>"/>.</li>
+                <li>Make sure you did <strong>not</strong> format or align the url in any way. If your url still appears in your actual post instead of a video, highlight it and click the "remove formatting" button (formatting can be invisible sometimes): <img src="<?php echo plugins_url('images/erase.png', __FILE__) ?>"/></li>
             </ul>                
         </p>
         <iframe src="<?php echo self::$epbase ?>/dashboard/prosupport.aspx?simple=1&prokey=<?php echo $all[self::$opt_pro]; ?>&domain=<?php echo site_url(); ?>" width="500" height="600"></iframe>
