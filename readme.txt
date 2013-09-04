@@ -4,7 +4,7 @@ Plugin Name: YouTube Embed
 Tags: hd, autohd, auto hd, seo, video analytics, basic analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, plugin, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin
 Requires at least: 2.9
 Tested up to: 3.6
-Stable tag: 3.1
+Stable tag: 3.2
 License: GPLv3 or later
 
 YouTube embed plugin with basic features and convenient defaults. Upgrade now to add view tracking and access to your very own analytics dashboard.
@@ -70,15 +70,18 @@ You can also start and end each individual video at particular times. Like the a
 
 1. YouTube Embed Screenshot 1: Paste a YouTube link on its own line and it will become a YouTube embed on your website.
 2. YouTube Embed Screenshot 2: YouTube's admin settings.
-3. YouTube Embed Screenshot 3: PRO YouTube Wizard
+3. YouTube Embed Screenshot 3: PRO Visual YouTube Wizard
 
 == Changelog ==
+
+= YouTube Embed 3.2 =
+Ensures video-specific height overrides defaults properly
 
 = YouTube Embed 3.1 =
 Fixed obscure height problem
 
 = YouTube Embed 3.0 =
-Added YouTube wizard for PRO users
+Added Visual YouTube Wizard for PRO users
 Added autologin to analytics for PRO users
 Added priority support form for PRO users
 

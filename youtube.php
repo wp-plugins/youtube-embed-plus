@@ -3,7 +3,7 @@
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com
   Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add view tracking and access to your very own analytics dashboard.
-  Version: 3.1
+  Version: 3.2
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
@@ -32,7 +32,7 @@
 class YouTubePrefs
 {
 
-    public static $version = '3.1';
+    public static $version = '3.2';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -277,13 +277,13 @@ class YouTubePrefs
                 $content_width = $GLOBALS['content_width'];
 
             self::$defaultwidth = $urlkvp['width'] ? $urlkvp['width'] : (self::$optembedwidth ? self::$optembedwidth : ($content_width ? $content_width : 480));
-            self::$defaultheight = self::get_aspect_height($url);
+            self::$defaultheight = $urlkvp['height'] ? $urlkvp['height'] + 30 : self::get_aspect_height($url, $urlkvp);
         }
     }
 
-    public static function get_aspect_height($url)
+    public static function get_aspect_height($url, $urlkvp)
     {
-
+        
         // attempt to get aspect ratio correct height from oEmbed
         $aspectheight = round((self::$defaultwidth * 9) / 16, 0);
         if ($url)
@@ -292,7 +292,7 @@ class YouTubePrefs
             $oembed = _wp_oembed_get_object();
             $args = array();
             $args['width'] = self::$defaultwidth;
-            //$args['height'] = self::$optembedheight;
+            $args['height'] = self::$defaultwidth; //square to get biggest height from width // self::$optembedheight;
             $args['discover'] = false;
             $odata = $oembed->fetch('http://www.youtube.com/oembed', $url, $args);
 
@@ -449,7 +449,7 @@ class YouTubePrefs
             #goprobox {border-radius: 15px; padding: 0px 20px 20px 20px; margin-top: 15px; border: 3px solid #dddddd; width: 670px;}
             .pronon {font-weight: bold; color: #f85d00;}
             ul.reglist li {margin-left: 30px; list-style: disc outside none;}
-            .procol {width: 370px; float: left;}
+            .procol {width: 400px; float: left;}
         </style>
 
         <div class="ytindent">
@@ -479,7 +479,7 @@ class YouTubePrefs
                         <ul class="gopro">
                             <li>
                                 <img src="<?php echo plugins_url('images/youtubewizard.png', __FILE__) ?>">
-                                YouTube Wizard - Easily embed without memorizing codes
+                                Visual YouTube Wizard - Easily embed without memorizing codes
                             </li>
                             <li>
                                 <img src="<?php echo plugins_url('images/prioritysupport.png', __FILE__) ?>">
@@ -491,7 +491,7 @@ class YouTubePrefs
                             </li>
                         </ul>
                     </div>
-                    <div class="procol" style="width: 280px;">
+                    <div class="procol" style="width: 260px;">
                         <ul class="gopro">
                             <li>
                                 <img src="<?php echo plugins_url('images/infinity.png', __FILE__) ?>">
@@ -545,7 +545,7 @@ class YouTubePrefs
                 
                 
                 
-                <h3>YouTube Wizard - Easily embed without memorizing special codes <span class="pronon">(PRO Only)</span></h3>
+                <h3>Visual YouTube Wizard - Easily embed without memorizing special codes <span class="pronon">(PRO Only)</span></h3>
                 <p>
                     Whenever you want to embed a YouTube video with more than the default settings, simply click the PRO editor button <img style="width: 16px;height:16px;" src="<?php echo plugins_url('images/youtubewizard.png', __FILE__) ?>"> to launch the wizard. There, you'll just paste the link to the video, click on options to personalize it, and then get the code to paste in your editor. No memorization needed.
                 </p>
