@@ -3,7 +3,7 @@
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com
   Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add view tracking and access to your very own analytics dashboard.
-  Version: 3.2
+  Version: 3.3
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
@@ -32,7 +32,7 @@
 class YouTubePrefs
 {
 
-    public static $version = '3.2';
+    public static $version = '3.3';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -48,6 +48,7 @@ class YouTubePrefs
     public static $opt_showinfo = 'showinfo';
     public static $opt_theme = 'theme';
     public static $opt_vq = 'vq';
+    public static $opt_ssl = 'ssl';
     public static $opt_pro = 'pro';
     public static $opt_alloptions = 'youtubeprefs_alloptions';
     public static $alloptions = null;
@@ -119,6 +120,7 @@ class YouTubePrefs
         $_theme = get_option('youtubeprefs_theme', 'dark');
         $_vq = get_option('youtubeprefs_vq', '');
         $_pro = '';
+        $_ssl = 0;
 
         $arroptions = get_option(self::$opt_alloptions);
 
@@ -135,6 +137,7 @@ class YouTubePrefs
             $_theme = self::tryget($arroptions, self::$opt_theme, 'dark');
             $_vq = self::tryget($arroptions, self::$opt_vq, '');
             $_pro = self::tryget($arroptions, self::$opt_pro, '');
+            $_ssl = self::tryget($arroptions, self::$opt_ssl, 0);
         }
 
         $all = array(
@@ -149,7 +152,8 @@ class YouTubePrefs
             self::$opt_showinfo => $_showinfo,
             self::$opt_theme => $_theme,
             self::$opt_vq => $_vq,
-            self::$opt_pro => $_pro
+            self::$opt_pro => $_pro,
+            self::$opt_ssl => $_ssl
         );
 
         update_option(self::$opt_alloptions, $all);
@@ -200,8 +204,12 @@ class YouTubePrefs
 
         self::init_dimensions($link, $linkparams);
 
-        $linkscheme = parse_url($link, PHP_URL_SCHEME);
+        $linkscheme = 'http';
 
+        if (self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0 && self::$alloptions[self::$opt_ssl] == 1)
+        {
+            $linkscheme = 'https';
+        }
         $code1 = '<iframe id="_ytid_' . rand(10000, 99999) . '" width="' . self::$defaultwidth . '" height="' . self::$defaultheight .
                 '" src="' . $linkscheme . '://www.youtube.com/embed/' . $linkparams['v'] . '?';
         $code2 = '" frameborder="0" allowfullscreen type="text/html" class="__youtube_prefs__"></iframe>';
@@ -283,7 +291,7 @@ class YouTubePrefs
 
     public static function get_aspect_height($url, $urlkvp)
     {
-        
+
         // attempt to get aspect ratio correct height from oEmbed
         $aspectheight = round((self::$defaultwidth * 9) / 16, 0);
         if ($url)
@@ -294,7 +302,7 @@ class YouTubePrefs
             $args['width'] = self::$defaultwidth;
             $args['height'] = self::$defaultwidth; //square to get biggest height from width // self::$optembedheight;
             $args['discover'] = false;
-            $odata = $oembed->fetch('http://www.youtube.com/oembed', $url, $args);
+            $odata = $oembed->fetch('https://www.youtube.com/oembed', $url, $args);
 
             if ($odata)
             {
@@ -411,6 +419,7 @@ class YouTubePrefs
             $new_options[self::$opt_showinfo] = $_POST[self::$opt_showinfo] == (true || 'on') ? 1 : 0;
             $new_options[self::$opt_theme] = $_POST[self::$opt_theme] == (true || 'on') ? 'dark' : 'light';
             $new_options[self::$opt_vq] = $_POST[self::$opt_vq] == (true || 'on') ? 'hd720' : '';
+            $new_options[self::$opt_ssl] = isset($_POST[self::$opt_ssl]) && $_POST[self::$opt_ssl] == (true || 'on') ? 1 : 0;
 
             $all = $new_options + $all;
 
@@ -446,10 +455,10 @@ class YouTubePrefs
             .orange {color: #f85d00;}
             .bold {font-weight: bold;}
             .grey{color: #888888;}
-            #goprobox {border-radius: 15px; padding: 0px 20px 20px 20px; margin-top: 15px; border: 3px solid #dddddd; width: 670px;}
+            #goprobox {border-radius: 15px; padding: 0px 0px 20px 20px; margin-top: 15px; border: 3px solid #dddddd; width: 700px;}
             .pronon {font-weight: bold; color: #f85d00;}
             ul.reglist li {margin-left: 30px; list-style: disc outside none;}
-            .procol {width: 400px; float: left;}
+            .procol {width: 420px; float: left;}
         </style>
 
         <div class="ytindent">
@@ -482,17 +491,22 @@ class YouTubePrefs
                                 Visual YouTube Wizard - Easily embed without memorizing codes
                             </li>
                             <li>
+                                <img src="<?php echo plugins_url('images/lock.png', __FILE__) ?>">
+                                Secure YouTube embedded player (will even work for your old links)
+                            </li>
+                            <li>
                                 <img src="<?php echo plugins_url('images/prioritysupport.png', __FILE__) ?>">
                                 Priority support (Puts your request in front)
                             </li>
-                            <li>
-                                <img src="<?php echo plugins_url('images/bulletgraph45.png', __FILE__) ?>">
-                                Your own video analytics dashboard
-                            </li>
+
                         </ul>
                     </div>
                     <div class="procol" style="width: 260px;">
                         <ul class="gopro">
+                            <li>
+                                <img src="<?php echo plugins_url('images/bulletgraph45.png', __FILE__) ?>">
+                                Your own video analytics dashboard
+                            </li>
                             <li>
                                 <img src="<?php echo plugins_url('images/infinity.png', __FILE__) ?>">
                                 Unlimited PRO upgrades and downloads
@@ -501,9 +515,6 @@ class YouTubePrefs
                                 <img src="<?php echo plugins_url('images/questionsale.png', __FILE__) ?>">
                                 What else? You tell us!
                             </li>
-                            <li>
-                                <a href="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx" class="button-primary" target="_blank">Click here to go PRO &raquo;</a>
-                            </li>                                
                         </ul>
                     </div>
                     <br>
@@ -516,6 +527,14 @@ class YouTubePrefs
 
                     <input style="box-shadow: 0px 0px 5px 0px #1870D5; width: 270px;" name="<?php echo self::$opt_pro; ?>" id="opt_pro" value="<?php echo $all[self::$opt_pro]; ?>" type="text">
                     <input type="submit" name="Submit" class="button-primary" id="prokeysubmit" value="<?php _e('Save Key') ?>" />
+                    <?php
+                    if (!$haspro)
+                    {
+                        ?>                    
+                        &nbsp; &nbsp; &nbsp; <span style="font-size: 25px; color: #cccccc;">|</span> &nbsp; &nbsp; &nbsp; <a href="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx" class="button-primary" target="_blank">Click here to go PRO &raquo;</a>
+                        <?php
+                    }
+                    ?>
                     <br>
                     <span style="display: none;" id="prokeyloading" class="orange bold">Verifying...</span>
                     <span  class="orange bold" style="display: none;" id="prokeysuccess">Success! Please refresh this page.</span>
@@ -528,7 +547,7 @@ class YouTubePrefs
             <form name="form1" method="post" action="" id="ytform">
                 <input type="hidden" name="<?php echo $ytprefs_submitted; ?>" value="Y">
                 <h3>
-                    <?php _e("How to Insert a YouTube Video") ?> <span class="pronon">(For all users - PRO/Free)</span>
+        <?php _e("How to Insert a YouTube Video") ?> <span class="pronon">(For all users - PRO/Free)</span>
                 </h3>
                 <p>
                     All you have to do is paste the link to the YouTube video on its own line, as shown below (including the http:// part). Easy, eh?
@@ -542,9 +561,9 @@ class YouTubePrefs
                     <img class="shadow" src="<?php echo plugins_url('images/ownline.jpg', __FILE__) ?>" />
                 </p>
                 <br>
-                
-                
-                
+
+
+
                 <h3>Visual YouTube Wizard - Easily embed without memorizing special codes <span class="pronon">(PRO Only)</span></h3>
                 <p>
                     Whenever you want to embed a YouTube video with more than the default settings, simply click the PRO editor button <img style="width: 16px;height:16px;" src="<?php echo plugins_url('images/youtubewizard.png', __FILE__) ?>"> to launch the wizard. There, you'll just paste the link to the video, click on options to personalize it, and then get the code to paste in your editor. No memorization needed.
@@ -555,10 +574,10 @@ class YouTubePrefs
 
 
                 <h3>
-                    <?php _e("Default Options") ?> <span class="pronon">(For all users - PRO/Free)</span>
+        <?php _e("Default Options") ?> <span class="pronon">(For all users - PRO/Free)</span>
                 </h3>
                 <p>
-                    <?php _e("Below you can set the default options for all your videos. However, you can override them (and more) on a per-video basis. Directions on how to do that are in the next section.") ?>
+        <?php _e("Below you can set the default options for all your videos. However, you can override them (and more) on a per-video basis. Directions on how to do that are in the next section.") ?>
                 </p>
 
                 <div class="ytindent">
@@ -602,13 +621,39 @@ class YouTubePrefs
                         <input name="<?php echo self::$opt_vq; ?>" id="<?php echo self::$opt_vq; ?>" <?php checked($all[self::$opt_vq], 'hd720'); ?> type="checkbox" class="checkbox">
                         <label for="<?php echo self::$opt_vq; ?>"><?php _e('Force HD quality when available') ?></label>
                     </p>
+                    <?php
+                    if ($haspro)
+                    {
+                        ?>
+                        <p>
+                            <input name="<?php echo self::$opt_ssl; ?>" id="<?php echo self::$opt_ssl; ?>" <?php checked($all[self::$opt_ssl], 1); ?> type="checkbox" class="checkbox">
+                            <label for="<?php echo self::$opt_ssl; ?>">
+                                <b>(PRO)</b> Use the secure YouTube player for all videos/visitors (this will go back and also secure your past embeds). Read more about the benefits of HTTPS <a target="_blank" href="http://en.wikipedia.org/wiki/HTTP_Secure">here (Wikipedia)</a>.
+                            </label>
+                        </p>
+                        <?php
+                    }
+                    else
+                    {
+                        ?>
+                        <p>
+                            <input disabled type="checkbox" class="checkbox">
+                            <label>
+                                <span class="pronon">(PRO Only)</span> Use the secure YouTube player for all videos/visitors (this will go back and also secure your past embeds). Read more about the benefits <a href="http://en.wikipedia.org/wiki/HTTP_Secure">here (Wikipedia)</a>.
+                            </label>
+                        </p>
+                        <?php
+                    }
+                    ?>
+
+
                     <p class="submit">
                         <input type="submit" name="Submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
                     </p>
                 </div>
 
                 <h3>
-                    <?php _e("How To Override Defaults / Other Options") ?> <span class="pronon">(For all users - PRO/Free)</span>
+        <?php _e("How To Override Defaults / Other Options") ?> <span class="pronon">(For all users - PRO/Free)</span>
                 </h3>
                 <p>Suppose you have a few videos that need to be different from the above defaults. You can add options to the end of a link as displayed below to override the above defaults. Each option should begin with '&'.
                     <br><span class="pronon">PRO users: You can use the easier wizard instead by clicking on the <img style="width: 16px;height:16px;" src="<?php echo plugins_url('images/youtubewizard.png', __FILE__) ?>"> button in the editor.</span>
@@ -656,19 +701,19 @@ class YouTubePrefs
         <script type="text/javascript">
             var prokeyval;
             jQuery(document).ready(function($) {
-                                                                                                                                                                                                
+                                                                                                                                                                                                                                
                 jQuery('#showprokey').click(function(){
                     jQuery('.submitpro').show(500);
                     return false;
                 });
-                                                                                                                                                                                     
+                                                                                                                                                                                                                     
                 jQuery('#prokeysubmit').click(function(){
                     jQuery(this).attr('disabled', 'disabled');
                     jQuery('#prokeyfailed').hide();
                     jQuery('#prokeysuccess').hide();
                     jQuery('#prokeyloading').show();
                     prokeyval = jQuery('#opt_pro').val();
-                                                                                                                                                                                                                    
+                                                                                                                                                                                                                                                    
                     var tempscript=document.createElement("script");
                     tempscript.src="//www.embedplus.com/dashboard/wordpress-pro-validatejp.aspx?simple=1&prokey=" + prokeyval;
                     var n=document.getElementsByTagName("head")[0].appendChild(tempscript);
@@ -677,9 +722,9 @@ class YouTubePrefs
                     },500);
                     return false;
                 });
-                                                                                                                                                                                
+                                                                                                                                                                                                                
                 window.embedplus_record_prokey = function(good){
-                                                                                                                                    
+                                                                                                                                                                    
                     jQuery.ajax({
                         type : "post",
                         dataType : "json",
@@ -701,11 +746,11 @@ class YouTubePrefs
                             jQuery('#prokeyloading').hide();
                             jQuery('#prokeysubmit').removeAttr('disabled');
                         }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
                     });
-                                                                                                                                    
+                                                                                                                                                                    
                 };
-                                                                                                                                                                                
+                                                                                                                                                                                                                
             });
         </script>
 
