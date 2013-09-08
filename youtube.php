@@ -481,9 +481,8 @@ class YouTubePrefs
                     ?>
 
                     <h3>
-                        Go PRO
+                        Go PRO - Our PRO users help to keep this plugin running and frequently updated.  Go PRO and get enhanced embedding and special perks like: 
                     </h3>
-
                     <div class="procol">
                         <ul class="gopro">
                             <li>
@@ -701,19 +700,19 @@ class YouTubePrefs
         <script type="text/javascript">
             var prokeyval;
             jQuery(document).ready(function($) {
-                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                
                 jQuery('#showprokey').click(function(){
                     jQuery('.submitpro').show(500);
                     return false;
                 });
-                                                                                                                                                                                                                             
+                                                                                                                                                                                                                                                     
                 jQuery('#prokeysubmit').click(function(){
                     jQuery(this).attr('disabled', 'disabled');
                     jQuery('#prokeyfailed').hide();
                     jQuery('#prokeysuccess').hide();
                     jQuery('#prokeyloading').show();
                     prokeyval = jQuery('#opt_pro').val();
-                                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                                    
                     var tempscript=document.createElement("script");
                     tempscript.src="//www.embedplus.com/dashboard/wordpress-pro-validatejp.aspx?simple=1&prokey=" + prokeyval;
                     var n=document.getElementsByTagName("head")[0].appendChild(tempscript);
@@ -722,9 +721,9 @@ class YouTubePrefs
                     },500);
                     return false;
                 });
-                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                
                 window.embedplus_record_prokey = function(good){
-                                                                                                                                                                            
+                                                                                                                                                                                                    
                     jQuery.ajax({
                         type : "post",
                         dataType : "json",
@@ -746,11 +745,11 @@ class YouTubePrefs
                             jQuery('#prokeyloading').hide();
                             jQuery('#prokeysubmit').removeAttr('disabled');
                         }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
                     });
-                                                                                                                                                                            
+                                                                                                                                                                                                    
                 };
-                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                
             });
         </script>
 
