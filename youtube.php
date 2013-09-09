@@ -459,6 +459,7 @@ class YouTubePrefs
             .pronon {font-weight: bold; color: #f85d00;}
             ul.reglist li {margin-left: 30px; list-style: disc outside none;}
             .procol {width: 420px; float: left;}
+            .smallnote {font-style: italic; font-size: 9px;}
         </style>
 
         <div class="ytindent">
@@ -481,7 +482,7 @@ class YouTubePrefs
                     ?>
 
                     <h3>
-                        Go PRO - Our PRO users help to keep this plugin running and frequently updated.  Go PRO and get enhanced embedding and special perks like: 
+                        Go PRO - Our PRO users help to keep this plugin running and frequently updated.*  Go PRO and get enhanced embedding and special perks like: 
                     </h3>
                     <div class="procol">
                         <ul class="gopro">
@@ -542,6 +543,7 @@ class YouTubePrefs
                 </form>
 
             </div>
+            <div class="smallnote">&nbsp; *The upcoming update will consist of HTML5-first support and no-cookies privacy features.</div>
             <br>
             <form name="form1" method="post" action="" id="ytform">
                 <input type="hidden" name="<?php echo $ytprefs_submitted; ?>" value="Y">
