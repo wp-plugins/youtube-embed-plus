@@ -627,7 +627,8 @@ class YouTubePrefs
                         <p>
                             <input name="<?php echo self::$opt_ssl; ?>" id="<?php echo self::$opt_ssl; ?>" <?php checked($all[self::$opt_ssl], 1); ?> type="checkbox" class="checkbox">
                             <label for="<?php echo self::$opt_ssl; ?>">
-                                <b>(PRO)</b> Use the secure YouTube player for all of your visitors and videos you embed. This will go back and also secure your past embeds as they are loaded on their pages. Read more about the benefits of HTTPS <a target="_blank" href="http://en.wikipedia.org/wiki/HTTP_Secure">here (Wikipedia)</a>.
+                                <b>(PRO)</b> Use the secure YouTube player for all of your visitors and videos you embed. This will go back and also secure your past embeds as they are loaded on their pages. <br>
+                                Read more about the peace of mind offered to you and your visitors with a secure connection <a target="_blank" href="http://en.wikipedia.org/wiki/HTTP_Secure">here (Wikipedia)</a>.
                             </label>
                         </p>
                         <?php
@@ -638,7 +639,8 @@ class YouTubePrefs
                         <p>
                             <input disabled type="checkbox" class="checkbox">
                             <label>
-                                <span class="pronon">(PRO Only)</span> Use the secure YouTube player for all of your visitors and videos you embed. This will go back and also secure your past embeds as they are loaded on their pages. Read more about the benefits <a href="http://en.wikipedia.org/wiki/HTTP_Secure">here (Wikipedia)</a>.
+                                <span class="pronon">(PRO Only)</span> Use the secure YouTube player for all of your visitors and videos you embed. This will go back and also secure your past embeds as they are loaded on their pages. <br>
+                                Read more about the peace of mind offered to you and your visitors with a secure connection <a target="_blank" href="http://en.wikipedia.org/wiki/HTTP_Secure">here (Wikipedia)</a>.
                             </label>
                         </p>
                         <?php
@@ -700,19 +702,19 @@ class YouTubePrefs
         <script type="text/javascript">
             var prokeyval;
             jQuery(document).ready(function($) {
-                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                        
                 jQuery('#showprokey').click(function(){
                     jQuery('.submitpro').show(500);
                     return false;
                 });
-                                                                                                                                                                                                                                                     
+                                                                                                                                                                                                                                                             
                 jQuery('#prokeysubmit').click(function(){
                     jQuery(this).attr('disabled', 'disabled');
                     jQuery('#prokeyfailed').hide();
                     jQuery('#prokeysuccess').hide();
                     jQuery('#prokeyloading').show();
                     prokeyval = jQuery('#opt_pro').val();
-                                                                                                                                                                                                                                                                                    
+                                                                                                                                                                                                                                                                                            
                     var tempscript=document.createElement("script");
                     tempscript.src="//www.embedplus.com/dashboard/wordpress-pro-validatejp.aspx?simple=1&prokey=" + prokeyval;
                     var n=document.getElementsByTagName("head")[0].appendChild(tempscript);
@@ -721,9 +723,9 @@ class YouTubePrefs
                     },500);
                     return false;
                 });
-                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                        
                 window.embedplus_record_prokey = function(good){
-                                                                                                                                                                                                    
+                                                                                                                                                                                                            
                     jQuery.ajax({
                         type : "post",
                         dataType : "json",
@@ -745,11 +747,11 @@ class YouTubePrefs
                             jQuery('#prokeyloading').hide();
                             jQuery('#prokeysubmit').removeAttr('disabled');
                         }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
                     });
-                                                                                                                                                                                                    
+                                                                                                                                                                                                            
                 };
-                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                        
             });
         </script>
 
