@@ -3,7 +3,7 @@
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com
   Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add view tracking and access to your very own analytics dashboard.
-  Version: 3.3
+  Version: 3.5
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
@@ -32,7 +32,7 @@
 class YouTubePrefs
 {
 
-    public static $version = '3.3';
+    public static $version = '3.5';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -48,7 +48,9 @@ class YouTubePrefs
     public static $opt_showinfo = 'showinfo';
     public static $opt_theme = 'theme';
     public static $opt_vq = 'vq';
+    public static $opt_html5 = 'html5';
     public static $opt_ssl = 'ssl';
+    public static $opt_nocookie = 'nocookie';
     public static $opt_pro = 'pro';
     public static $opt_alloptions = 'youtubeprefs_alloptions';
     public static $alloptions = null;
@@ -97,6 +99,7 @@ class YouTubePrefs
             self::$opt_modestbranding,
             self::$opt_rel,
             self::$opt_showinfo,
+            self::$opt_html5,
             self::$opt_theme,
             self::$opt_vq,
             'start',
@@ -117,10 +120,12 @@ class YouTubePrefs
         $_modestbranding = get_option('youtubeprefs_modestbranding', 0);
         $_rel = get_option('youtubeprefs_rel', 1);
         $_showinfo = get_option('youtubeprefs_showinfo', 1);
+        $_html5 = get_option('youtubeprefs_html5', 0);
         $_theme = get_option('youtubeprefs_theme', 'dark');
         $_vq = get_option('youtubeprefs_vq', '');
         $_pro = '';
         $_ssl = 0;
+        $_nocookie = 0;
 
         $arroptions = get_option(self::$opt_alloptions);
 
@@ -134,10 +139,13 @@ class YouTubePrefs
             $_modestbranding = self::tryget($arroptions, self::$opt_modestbranding, 0);
             $_rel = self::tryget($arroptions, self::$opt_rel, 1);
             $_showinfo = self::tryget($arroptions, self::$opt_showinfo, 1);
+            $_html5 = self::tryget($arroptions, self::$opt_html5, 0);
             $_theme = self::tryget($arroptions, self::$opt_theme, 'dark');
             $_vq = self::tryget($arroptions, self::$opt_vq, '');
             $_pro = self::tryget($arroptions, self::$opt_pro, '');
             $_ssl = self::tryget($arroptions, self::$opt_ssl, 0);
+            $_nocookie = self::tryget($arroptions, self::$opt_nocookie, 0);
+            
         }
 
         $all = array(
@@ -150,10 +158,12 @@ class YouTubePrefs
             self::$opt_modestbranding => $_modestbranding,
             self::$opt_rel => $_rel,
             self::$opt_showinfo => $_showinfo,
+            self::$opt_html5 => $_html5,
             self::$opt_theme => $_theme,
             self::$opt_vq => $_vq,
             self::$opt_pro => $_pro,
-            self::$opt_ssl => $_ssl
+            self::$opt_ssl => $_ssl,
+            self::$opt_nocookie => $_nocookie
         );
 
         update_option(self::$opt_alloptions, $all);
@@ -205,17 +215,39 @@ class YouTubePrefs
         self::init_dimensions($link, $linkparams);
 
         $linkscheme = 'http';
+        $youtubebaseurl = 'youtube';
 
-        if (self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0 && self::$alloptions[self::$opt_ssl] == 1)
+        $finalparams = $linkparams + self::$alloptions;
+
+        if (self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0)
         {
-            $linkscheme = 'https';
+            if (self::$alloptions[self::$opt_ssl] == 1)
+            {
+                $linkscheme = 'https';
+            }
+            
+            if (self::$alloptions[self::$opt_nocookie] == 1)
+            {
+                $youtubebaseurl = 'youtube-nocookie';
+            }
+            
+            if (isset($finalparams[self::$opt_html5]) && $finalparams[self::$opt_html5] == 0)
+            {
+                unset($finalparams[self::$opt_html5]);
+            }
+        }
+        else
+        {
+            if (isset($finalparams[self::$opt_html5]))
+            {
+                unset($finalparams[self::$opt_html5]);
+            }
         }
         $code1 = '<iframe id="_ytid_' . rand(10000, 99999) . '" width="' . self::$defaultwidth . '" height="' . self::$defaultheight .
-                '" src="' . $linkscheme . '://www.youtube.com/embed/' . $linkparams['v'] . '?';
+                '" src="' . $linkscheme . '://www.' . $youtubebaseurl . '.com/embed/' . $linkparams['v'] . '?';
         $code2 = '" frameborder="0" allowfullscreen type="text/html" class="__youtube_prefs__"></iframe>';
 
 
-        $finalparams = $linkparams + self::$alloptions;
         $origin = '';
 
         try
@@ -417,9 +449,11 @@ class YouTubePrefs
             $new_options[self::$opt_modestbranding] = $_POST[self::$opt_modestbranding] == (true || 'on') ? 1 : 0;
             $new_options[self::$opt_rel] = $_POST[self::$opt_rel] == (true || 'on') ? 1 : 0;
             $new_options[self::$opt_showinfo] = $_POST[self::$opt_showinfo] == (true || 'on') ? 1 : 0;
+            $new_options[self::$opt_html5] = $_POST[self::$opt_html5] == (true || 'on') ? 1 : 0;
             $new_options[self::$opt_theme] = $_POST[self::$opt_theme] == (true || 'on') ? 'dark' : 'light';
             $new_options[self::$opt_vq] = $_POST[self::$opt_vq] == (true || 'on') ? 'hd720' : '';
             $new_options[self::$opt_ssl] = isset($_POST[self::$opt_ssl]) && $_POST[self::$opt_ssl] == (true || 'on') ? 1 : 0;
+            $new_options[self::$opt_nocookie] = isset($_POST[self::$opt_nocookie]) && $_POST[self::$opt_nocookie] == (true || 'on') ? 1 : 0;
 
             $all = $new_options + $all;
 
@@ -459,7 +493,8 @@ class YouTubePrefs
             .pronon {font-weight: bold; color: #f85d00;}
             ul.reglist li {margin-left: 30px; list-style: disc outside none;}
             .procol {width: 420px; float: left;}
-            .smallnote {font-style: italic; font-size: 9px;}
+            .smallnote {font-style: italic; font-size: 10px;}
+            .italic {font-style: italic;}
         </style>
 
         <div class="ytindent">
@@ -482,7 +517,8 @@ class YouTubePrefs
                     ?>
 
                     <h3>
-                        Go PRO - Our PRO users help to keep this plugin running and frequently updated.*  Go PRO and get enhanced embedding and special perks like: 
+                        Go PRO - Our PRO users help to keep this plugin running and frequently updated.* Go PRO and<br>
+                        get enhanced embedding and special perks like: 
                     </h3>
                     <div class="procol">
                         <ul class="gopro">
@@ -491,8 +527,12 @@ class YouTubePrefs
                                 Visual YouTube Wizard - Easily embed without memorizing codes
                             </li>
                             <li>
+                                <img src="<?php echo plugins_url('images/html5.png', __FILE__) ?>">
+                                HTML5-first to speedup page loads (will even work for your old embeds)
+                            </li>
+                            <li>
                                 <img src="<?php echo plugins_url('images/lock.png', __FILE__) ?>">
-                                Secure YouTube embedded player (will even work for your old links)
+                                Secure YouTube embedded player (will even work for your old embeds)
                             </li>
                             <li>
                                 <img src="<?php echo plugins_url('images/prioritysupport.png', __FILE__) ?>">
@@ -543,12 +583,12 @@ class YouTubePrefs
                 </form>
 
             </div>
-            <div class="smallnote">&nbsp; *The upcoming update will consist of HTML5-first support and no-cookies privacy features.</div>
+            <div class="smallnote">&nbsp; *The upcoming update will provide all users (Free and PRO) with the ability to hide play controls when the embed is loaded. </div>
             <br>
             <form name="form1" method="post" action="" id="ytform">
                 <input type="hidden" name="<?php echo $ytprefs_submitted; ?>" value="Y">
                 <h3>
-                    <?php _e("How to Insert a YouTube Video") ?> <span class="pronon">(For all users - PRO/Free)</span>
+                    <?php _e("How to Insert a YouTube Video") ?> <span class="pronon">(For Free and PRO users)</span>
                 </h3>
                 <p>
                     All you have to do is paste the link to the YouTube video on its own line, as shown below (including the http:// part). Easy, eh?
@@ -575,7 +615,7 @@ class YouTubePrefs
 
 
                 <h3>
-                    <?php _e("Default Options") ?> <span class="pronon">(For all users - PRO/Free)</span>
+                    <?php _e("Default Options") ?> <span class="pronon">(For Free and PRO users)</span>
                 </h3>
                 <p>
                     <?php _e("Below you can set the default options for all your videos. However, you can override them (and more) on a per-video basis. Directions on how to do that are in the next section.") ?>
@@ -622,6 +662,9 @@ class YouTubePrefs
                         <input name="<?php echo self::$opt_vq; ?>" id="<?php echo self::$opt_vq; ?>" <?php checked($all[self::$opt_vq], 'hd720'); ?> type="checkbox" class="checkbox">
                         <label for="<?php echo self::$opt_vq; ?>"><?php _e('Force HD quality when available') ?></label>
                     </p>
+                    
+                    
+                    <p class="smallnote orange">Below are PRO features for enhanced performance, privacy, and security (works for even past embed links):</p>
                     <?php
                     if ($haspro)
                     {
@@ -633,6 +676,19 @@ class YouTubePrefs
                                 Read more about the peace of mind offered to you and your visitors with a secure connection <a target="_blank" href="http://en.wikipedia.org/wiki/HTTP_Secure">here (Wikipedia)</a>.
                             </label>
                         </p>
+                        <p>
+                            <input name="<?php echo self::$opt_nocookie; ?>" id="<?php echo self::$opt_nocookie; ?>" <?php checked($all[self::$opt_nocookie], 1); ?> type="checkbox" class="checkbox">
+                            <label for="<?php echo self::$opt_nocookie; ?>">
+                                <b>(PRO)</b> Prevent YouTube from leaving tracking cookies on your visitors browsers unless they actual play the videos. This is coded to apply this behavior on links in your past post as well.
+                            </label>
+                        </p>
+                        <p>
+                            <input name="<?php echo self::$opt_html5; ?>" id="<?php echo self::$opt_html5; ?>" <?php checked($all[self::$opt_html5], 1); ?> type="checkbox" class="checkbox">
+                            <label for="<?php echo self::$opt_html5; ?>">
+                                <b>(PRO)</b> Speed up your pages containing YouTube videos by using YouTube's HTML5 player instead of the Flash player when available.  It's been noted that using the HTML5 player offers visibly lower page load times than Flash.  Our own internal tests along with data from some beta testers suggest the same thing. In fact, some experiments show that pages (with multiple embeds) can have over four times less size with HTML5 than Flash. <br><span class="italic">So what does this all mean?</span>  Well given that site speed may have an effect on search engine rankings, we suggest checking this option if you typically embed videos in your posts as it may have a site-wide benefit. Our code will even go back and load your older posted videos as HTML5 instead of Flash, where possible.
+                            </label>
+                        </p>
+
                         <?php
                     }
                     else
@@ -645,10 +701,21 @@ class YouTubePrefs
                                 Read more about the peace of mind offered to you and your visitors with a secure connection <a target="_blank" href="http://en.wikipedia.org/wiki/HTTP_Secure">here (Wikipedia)</a>.
                             </label>
                         </p>
+                        <p>
+                            <input disabled type="checkbox" class="checkbox">
+                            <label>
+                                <span class="pronon">(PRO Only)</span> Prevent YouTube from leaving tracking cookies on your visitors browsers unless they actual play the videos. This is coded to apply this behavior on links in your past post as well.
+                            </label>
+                        </p>
+                        <p>
+                            <input disabled type="checkbox" class="checkbox">
+                            <label>
+                                <span class="pronon">(PRO Only)</span> Speed up your pages containing YouTube videos by using YouTube's HTML5 player instead of the Flash player when available.  It's been noted that using the HTML5 player offers visibly lower page load times than Flash.  Our own internal tests along with data from some beta testers suggest the same thing. <b>In fact, some experiments show that pages (with multiple embeds) can have over four times less size with HTML5 than Flash.</b> <br><span class="italic">So what does this all mean?</span>  Well given that site speed may have an effect on search engine rankings, we suggest checking this option if you typically embed videos in your posts. Our code will even go back and load your older posted videos as HTML5 instead of Flash, where possible.
+                            </label>
+                        </p>
                         <?php
                     }
                     ?>
-
 
                     <p class="submit">
                         <input type="submit" name="Submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
@@ -656,7 +723,7 @@ class YouTubePrefs
                 </div>
 
                 <h3>
-                    <?php _e("How To Override Defaults / Other Options") ?> <span class="pronon">(For all users - PRO/Free)</span>
+                    <?php _e("How To Override Defaults / Other Options") ?> <span class="pronon">(For Free and PRO users)</span>
                 </h3>
                 <p>Suppose you have a few videos that need to be different from the above defaults. You can add options to the end of a link as displayed below to override the above defaults. Each option should begin with '&'.
                     <br><span class="pronon">PRO users: You can use the easier wizard instead by clicking on the <img style="width: 16px;height:16px;" src="<?php echo plugins_url('images/youtubewizard.png', __FILE__) ?>"> button in the editor.</span>
@@ -704,19 +771,19 @@ class YouTubePrefs
         <script type="text/javascript">
             var prokeyval;
             jQuery(document).ready(function($) {
-                                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                                        
                 jQuery('#showprokey').click(function(){
                     jQuery('.submitpro').show(500);
                     return false;
                 });
-                                                                                                                                                                                                                                                             
+                                                                                                                                                                                                                                                                             
                 jQuery('#prokeysubmit').click(function(){
                     jQuery(this).attr('disabled', 'disabled');
                     jQuery('#prokeyfailed').hide();
                     jQuery('#prokeysuccess').hide();
                     jQuery('#prokeyloading').show();
                     prokeyval = jQuery('#opt_pro').val();
-                                                                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                                                            
                     var tempscript=document.createElement("script");
                     tempscript.src="//www.embedplus.com/dashboard/wordpress-pro-validatejp.aspx?simple=1&prokey=" + prokeyval;
                     var n=document.getElementsByTagName("head")[0].appendChild(tempscript);
@@ -725,9 +792,9 @@ class YouTubePrefs
                     },500);
                     return false;
                 });
-                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                        
                 window.embedplus_record_prokey = function(good){
-                                                                                                                                                                                                            
+                                                                                                                                                                                                                            
                     jQuery.ajax({
                         type : "post",
                         dataType : "json",
@@ -749,11 +816,11 @@ class YouTubePrefs
                             jQuery('#prokeyloading').hide();
                             jQuery('#prokeysubmit').removeAttr('disabled');
                         }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
                     });
-                                                                                                                                                                                                            
+                                                                                                                                                                                                                            
                 };
-                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                        
             });
         </script>
 

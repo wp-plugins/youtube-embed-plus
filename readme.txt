@@ -1,24 +1,17 @@
 === YouTube ===
 Contributors: embedplus
 Plugin Name: YouTube Embed
-Tags: hd, autohd, auto hd, seo, video analytics, basic analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, plugin, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin
+Tags: hd, autohd, auto hd, seo, video analytics, basic analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, plugin, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin, https, ssl, secure, no-cookie, cookie, html5, youtube html5
 Requires at least: 2.9
-Tested up to: 3.6
-Stable tag: 3.3
+Tested up to: 3.6.1
+Stable tag: 3.5
 License: GPLv3 or later
 
 YouTube embed plugin with basic features and convenient defaults. Upgrade now to add view tracking and access to your very own analytics dashboard.
 
 == Description ==
 
-This YouTube embed plugin for WordPress is very simple.  It provides the basic features of the YouTube embedded player, and will have you posting videos in seconds after installing it. Version 2.0 and after adds view tracking to each embed so that you can gain access to your very own YouTube analytics dashboard. Upgrade if you'd like the feature and get answers to questions like:
-
-* How much are your visitors actually watching the videos you post?
-* How does the view activity on your site compare to other sites like it?
-* What and when are your best and worst performers?
-* How much do the producers of the YouTube videos you embed rely on **your site** for views?
-
-To start using this plugin, simply paste a YouTube link on its own line. You can also make default settings for all your YouTube videos under the YouTube admin menu. You can make additional YouTube embed customizations by adding more to the link as shown below: 
+This YouTube embed plugin for WordPress is simple, but it can be upgraded for enhanced performance, privacy and security for you and your visitors. It provides the basic features of the YouTube embedded player and will have you posting videos in seconds after installing it. **All you have to do is simply paste an unformatted YouTube link on its own line.**  Your YouTube embed will then show up when you preview or publish the post. The settings page has plenty of default options that you can automatically apply to all your embedded YouTube videos. Customizations can be also made to each YouTube embed by adding more to the link as shown below:
 
 * width - Sets the width of your player. If omitted, the default width will be the width of your theme's content. Example: `http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350`
 * height - Sets the height of your player. If omitted, this will be calculated for you automatically. Example: `http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350`
@@ -36,6 +29,15 @@ You can also start and end each individual video at particular times. Like the a
 
 * start - Sets the time (in seconds) to start the video. Example: `http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350&start=20`
 * end - Sets the time (in seconds) to stop the video. Example: `http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350&end=100`
+
+Beyond the above features, you have the option of upgrading to PRO to add enhanced features like a visual embedding wizard (so you can avoid memorizing codes), priority support, and security/performance. You even get an embedder-centric analytics dashboard that adds view tracking to each of your embeds so that you can answers questions like:
+
+* How much are your visitors actually watching the videos you post?
+* How does the view activity on your site compare to other sites like it?
+* What and when are your best and worst performing YouTube embeds?
+* How much do the producers of the YouTube videos you embed rely on **your site**, versus other sites and YouTube.com, for views?
+
+See more details after installing. Enjoy!
 
 == Installation ==
 
