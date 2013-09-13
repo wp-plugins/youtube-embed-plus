@@ -74,6 +74,10 @@ You can also start and end each individual video at particular times. Like the a
 
 == Changelog ==
 
+= YouTube Embed 3.5 =
+Added ability to force HTML5 player for PRO users
+Added ability to use "YouTube no cookie" player for PRO users
+
 = YouTube Embed 3.3 =
 HTTPS: Added secure YouTube embedding for PRO users
 
