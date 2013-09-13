@@ -349,7 +349,7 @@ class YouTubePrefs
     public static function ytprefs_plugin_menu()
     {
         add_menu_page('YouTube Settings', 'YouTube', 'manage_options', 'youtube-my-preferences', 'YouTubePrefs::ytprefs_show_options', plugins_url('images/youtubeicon16.png', __FILE__), '10.00392854349');
-        add_menu_page('YouTube Analytics Dashboard', 'YouTube Pro', 'manage_options', 'youtube-ep-analytics-dashboard', 'YouTubePrefs::epstats_show_options', plugins_url('images/epstats16.png', __FILE__), '10.00492884349');
+        add_menu_page('YouTube Analytics Dashboard', 'YouTube PRO', 'manage_options', 'youtube-ep-analytics-dashboard', 'YouTubePrefs::epstats_show_options', plugins_url('images/epstats16.png', __FILE__), '10.00492884349');
     }
 
     public static function epstats_show_options()
@@ -472,7 +472,7 @@ class YouTubePrefs
 
         // header
 
-        echo "<h2>" . '<img src="' . plugins_url('images/youtubeicon16.png', __FILE__) . '" /> ' . __('YouTube Preferences') . "</h2>";
+        echo "<h2>" . '<img src="' . plugins_url('images/youtubeicon16.png', __FILE__) . '" /> ' . __('YouTube Preferences (For Free and PRO users)') . "</h2>";
 
         // settings form
         ?>
@@ -495,6 +495,7 @@ class YouTubePrefs
             .procol {width: 420px; float: left;}
             .smallnote {font-style: italic; font-size: 10px;}
             .italic {font-style: italic;}
+            .ytindent h3 {font-size: 15px; line-height: 22px; margin-bottom: 10px;}
         </style>
 
         <div class="ytindent">
@@ -517,7 +518,7 @@ class YouTubePrefs
                     ?>
 
                     <h3>
-                        Go PRO - Our PRO users help to keep this plugin running and frequently updated.* Go PRO and<br>
+                        Want To Go PRO? - Our PRO users help to keep this plugin running and frequently updated.* <br>Go PRO and
                         get enhanced embedding and special perks like: 
                     </h3>
                     <div class="procol">
