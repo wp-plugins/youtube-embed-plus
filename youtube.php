@@ -366,27 +366,27 @@ class YouTubePrefs
         // Now display the settings editing screen
         ?>
         <div class="wrap">
-        <?php
-        // header
+            <?php
+            // header
 
-        echo "<h2>" . '<img src="' . plugins_url('images/epstats16.png', __FILE__) . '" /> ' . __('YouTube Analytics Dashboard') . "</h2>";
+            echo "<h2>" . '<img src="' . plugins_url('images/epstats16.png', __FILE__) . '" /> ' . __('YouTube Analytics Dashboard') . "</h2>";
 
-        // settings form
-        ?>
+            // settings form
+            ?>
             <style type="text/css">
                 .epicon { width: 20px; height: 20px; vertical-align: middle; padding-right: 5px;}
                 .epindent {padding-left: 25px;}
                 iframe.shadow {-webkit-box-shadow: 0px 0px 20px 0px #000000; box-shadow: 0px 0px 20px 0px #000000;}
             </style>
             <br>
-        <?php
-        $thishost = (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : "");
-        $thiskey = self::$alloptions[self::$opt_pro];
-        if (self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0)
-        {
-            echo '<p><i>Logging you in...</i></p>';
-        }
-        ?>
+            <?php
+            $thishost = (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : "");
+            $thiskey = self::$alloptions[self::$opt_pro];
+            if (self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0)
+            {
+                echo '<p><i>Logging you in...</i></p>';
+            }
+            ?>
             <iframe class="shadow" src="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx?ref=protab&domain=<?php echo $thishost; ?>&prokey=<?php echo $thiskey; ?>" width="1030" height="2000" scrolling="auto"/>
         </div>
         <?php
@@ -499,21 +499,23 @@ class YouTubePrefs
             .smallnote {font-style: italic; font-size: 10px;}
             .italic {font-style: italic;}
             .ytindent h3 {font-size: 15px; line-height: 22px; margin-bottom: 10px;}
+            #wizleftlink {float: left; display: block; width: 240px; font-style: italic; text-align: center; text-decoration: none;}
+            
         </style>
 
         <div class="ytindent">
 
             <div id="goprobox">
 
-        <?php
-        $haspro = ($all[self::$opt_pro] && strlen(trim($all[self::$opt_pro])) > 0);
+                <?php
+                $haspro = ($all[self::$opt_pro] && strlen(trim($all[self::$opt_pro])) > 0);
 
-        if ($haspro)
-        {
-            echo "<h3>" . __('Thank you for going PRO.');
-            echo ' &nbsp;<input type="submit" name="showkey" class="button-primary" style="vertical-align: 15%;" id="showprokey" value="View my PRO key" />';
-            echo "</h3>";
-            ?>
+                if ($haspro)
+                {
+                    echo "<h3>" . __('Thank you for going PRO.');
+                    echo ' &nbsp;<input type="submit" name="showkey" class="button-primary" style="vertical-align: 15%;" id="showprokey" value="View my PRO key" />';
+                    echo "</h3>";
+                    ?>
                     <?php
                 }
                 else
@@ -565,16 +567,16 @@ class YouTubePrefs
                     <br>
                     <div style="clear: both;"></div>
                     <h3>Enter and save your PRO key (emailed to you):</h3>
-        <?php } ?>
+                <?php } ?>
                 <form name="form2" method="post" action="" id="epform2" class="submitpro" <?php if ($haspro) echo 'style="display: none;"' ?>>
                     <input type="hidden" name="<?php echo $pro_submitted; ?>" value="Y">
 
                     <input style="box-shadow: 0px 0px 5px 0px #1870D5; width: 270px;" name="<?php echo self::$opt_pro; ?>" id="opt_pro" value="<?php echo $all[self::$opt_pro]; ?>" type="text">
                     <input type="submit" name="Submit" class="button-primary" id="prokeysubmit" value="<?php _e('Save Key') ?>" />
-        <?php
-        if (!$haspro)
-        {
-            ?>                    
+                    <?php
+                    if (!$haspro)
+                    {
+                        ?>                    
                         &nbsp; &nbsp; &nbsp; <span style="font-size: 25px; color: #cccccc;">|</span> &nbsp; &nbsp; &nbsp; <a href="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx" class="button-primary" target="_blank">Click here to go PRO &raquo;</a>
                         <?php
                     }
@@ -592,7 +594,7 @@ class YouTubePrefs
             <form name="form1" method="post" action="" id="ytform">
                 <input type="hidden" name="<?php echo $ytprefs_submitted; ?>" value="Y">
                 <h3>
-        <?php _e("How to Insert a YouTube Video") ?> <span class="pronon">(For Free and PRO users)</span>
+                    <?php _e("How to Insert a YouTube Video") ?> <span class="pronon">(For Free and PRO users)</span>
                 </h3>
                 <p>
                     All you have to do is paste the link to the YouTube video on its own line, as shown below (including the http:// part). Easy, eh?
@@ -611,18 +613,21 @@ class YouTubePrefs
 
                 <h3>Visual YouTube Wizard - Easily embed without memorizing special codes <span class="pronon">(PRO Only)</span></h3>
                 <p>
+                    <a id="wizleftlink" class="thickbox" href="<?php echo plugins_url('images/ssprowizard.jpg', __FILE__) ?>">
+                        Click to enlarge
+                        <img src="<?php echo plugins_url('images/ssprowizard-th.jpg', __FILE__) ?>" >
+                    </a>
                     More options are available to PRO users! Simply click the PRO editor button <img style="width: 16px;height:16px;" src="<?php echo plugins_url('images/youtubewizard.png', __FILE__) ?>"> to launch the visual embedding wizard. <br>There, you'll just paste the link to the video, click on options to personalize it, and then get the code to paste in your editor. <br>No memorization needed.
                 </p>
-                <img src="<?php echo plugins_url('images/ssprowizard.jpg', __FILE__) ?>" >
-
+                <div style="clear: both;"></div>
                 <br>
 
 
                 <h3>
-        <?php _e("Default Options") ?> <span class="pronon">(For Free and PRO users)</span>
+                    <?php _e("Default Options") ?> <span class="pronon">(For Free and PRO users)</span>
                 </h3>
                 <p>
-        <?php _e("Below you can set the default options for all your videos. However, you can override them (and more) on a per-video basis. Directions on how to do that are in the next section.") ?>
+                    <?php _e("Below you can set the default options for all your videos. However, you can override them (and more) on a per-video basis. Directions on how to do that are in the next section.") ?>
                 </p>
 
                 <div class="ytindent">
@@ -669,10 +674,10 @@ class YouTubePrefs
 
 
                     <p class="smallnote orange">Below are PRO features for enhanced performance, privacy, and security (works for even past embed links):</p>
-        <?php
-        if ($haspro)
-        {
-            ?>
+                    <?php
+                    if ($haspro)
+                    {
+                        ?>
                         <p>
                             <input name="<?php echo self::$opt_ssl; ?>" id="<?php echo self::$opt_ssl; ?>" <?php checked($all[self::$opt_ssl], 1); ?> type="checkbox" class="checkbox">
                             <label for="<?php echo self::$opt_ssl; ?>">
@@ -693,11 +698,11 @@ class YouTubePrefs
                             </label>
                         </p>
 
-            <?php
-        }
-        else
-        {
-            ?>
+                        <?php
+                    }
+                    else
+                    {
+                        ?>
                         <p>
                             <input disabled type="checkbox" class="checkbox">
                             <label>
@@ -717,9 +722,9 @@ class YouTubePrefs
                                 <span class="pronon">(PRO Only)</span> Speed up your pages containing YouTube videos by using YouTube's HTML5 player instead of the Flash player when available.  It's been noted that using the HTML5 player offers visibly lower page load times than Flash.  Our own internal tests along with data from some beta testers suggest the same thing. <b>In fact, some experiments show that pages (with multiple embeds) can have over four times less size with HTML5 than Flash.</b> <br><span class="italic">So what does this all mean?</span>  Well given that site speed may have an effect on search engine rankings, we suggest checking this option if you typically embed videos in your posts. Our code will even go back and load your older posted videos as HTML5 instead of Flash, where possible.
                             </label>
                         </p>
-            <?php
-        }
-        ?>
+                        <?php
+                    }
+                    ?>
 
                     <p class="submit">
                         <input type="submit" name="Submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
@@ -727,31 +732,31 @@ class YouTubePrefs
                 </div>
 
                 <h3>
-        <?php _e("How To Override Defaults / Other Options") ?> <span class="pronon">(For Free and PRO users)</span>
+                    <?php _e("How To Override Defaults / Other Options") ?> <span class="pronon">(For Free and PRO users)</span>
                 </h3>
                 <p>Suppose you have a few videos that need to be different from the above defaults. You can add options to the end of a link as displayed below to override the above defaults. Each option should begin with '&'.
                     <br><span class="pronon">PRO users: You can use the easier wizard instead by clicking on the <img style="width: 16px;height:16px;" src="<?php echo plugins_url('images/youtubewizard.png', __FILE__) ?>"> button in the editor.</span>
-        <?php
-        _e('<ul>');
-        _e("<li><strong>width</strong> - Sets the width of your player. If omitted, the default width will be the width of your theme's content.<em> Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&width=500</strong>&height=350</em></li>");
-        _e("<li><strong>height</strong> - Sets the height of your player. We do not recommend setting height because best-height will be calculated for you automatically, based on the above height. <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA&width=500<strong>&height=350</strong></em> </li>");
-        _e("<li><strong>autoplay</strong> - Set this to 1 to autoplay the video (or 0 to play the video once). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&autoplay=1</strong></em> </li>");
-        _e("<li><strong>cc_load_policy</strong> - Set this to 1 to turn on closed captioning (or 0 to leave them off). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&cc_load_policy=1</strong></em> </li>");
-        _e("<li><strong>iv_load_policy</strong> - Set this to 3 to turn off annotations (or 1 to show them). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&iv_load_policy=3</strong></em> </li>");
-        _e("<li><strong>loop</strong> - Set this to 1 to loop the video (or 0 to not loop). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&loop=1</strong></em> </li>");
-        _e("<li><strong>modestbranding</strong> - Set this to 1 to remove the YouTube logo while playing (or 0 to show the logo). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&modestbranding=1</strong></em> </li>");
-        _e("<li><strong>rel</strong> - Set this to 0 to not show related videos at the end of playing (or 1 to show them). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&rel=0</strong></em> </li>");
-        _e("<li><strong>showinfo</strong> - Set this to 0 to hide the video title and other info (or 1 to show it). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&showinfo=0</strong></em> </li>");
-        _e("<li><strong>theme</strong> - Set this to 'light' to make the player have the light-colored theme (or 'dark' for the dark theme). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&theme=light</strong></em> </li>");
-        _e("<li><strong>vq</strong> - Set this to 'hd720' or 'hd1080' to force the video to have HD quality. Leave blank to let YouTube decide. <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&vq=hd720</strong></em> </li>");
-        _e('</ul>');
+                    <?php
+                    _e('<ul>');
+                    _e("<li><strong>width</strong> - Sets the width of your player. If omitted, the default width will be the width of your theme's content.<em> Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&width=500</strong>&height=350</em></li>");
+                    _e("<li><strong>height</strong> - Sets the height of your player. We do not recommend setting height because best-height will be calculated for you automatically, based on the above height. <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA&width=500<strong>&height=350</strong></em> </li>");
+                    _e("<li><strong>autoplay</strong> - Set this to 1 to autoplay the video (or 0 to play the video once). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&autoplay=1</strong></em> </li>");
+                    _e("<li><strong>cc_load_policy</strong> - Set this to 1 to turn on closed captioning (or 0 to leave them off). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&cc_load_policy=1</strong></em> </li>");
+                    _e("<li><strong>iv_load_policy</strong> - Set this to 3 to turn off annotations (or 1 to show them). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&iv_load_policy=3</strong></em> </li>");
+                    _e("<li><strong>loop</strong> - Set this to 1 to loop the video (or 0 to not loop). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&loop=1</strong></em> </li>");
+                    _e("<li><strong>modestbranding</strong> - Set this to 1 to remove the YouTube logo while playing (or 0 to show the logo). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&modestbranding=1</strong></em> </li>");
+                    _e("<li><strong>rel</strong> - Set this to 0 to not show related videos at the end of playing (or 1 to show them). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&rel=0</strong></em> </li>");
+                    _e("<li><strong>showinfo</strong> - Set this to 0 to hide the video title and other info (or 1 to show it). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&showinfo=0</strong></em> </li>");
+                    _e("<li><strong>theme</strong> - Set this to 'light' to make the player have the light-colored theme (or 'dark' for the dark theme). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&theme=light</strong></em> </li>");
+                    _e("<li><strong>vq</strong> - Set this to 'hd720' or 'hd1080' to force the video to have HD quality. Leave blank to let YouTube decide. <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&vq=hd720</strong></em> </li>");
+                    _e('</ul>');
 
-        _e("<p>You can also start and end each individual video at particular times. Like the above, each option should begin with '&'</p>");
-        _e('<ul>');
-        _e("<li><strong>start</strong> - Sets the time (in seconds) to start the video. <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350<strong>&start=20</strong></em> </li>");
-        _e("<li><strong>end</strong> - Sets the time (in seconds) to stop the video. <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350<strong>&end=100</strong></em> </li>");
-        _e('</ul>');
-        ?>
+                    _e("<p>You can also start and end each individual video at particular times. Like the above, each option should begin with '&'</p>");
+                    _e('<ul>');
+                    _e("<li><strong>start</strong> - Sets the time (in seconds) to start the video. <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350<strong>&start=20</strong></em> </li>");
+                    _e("<li><strong>end</strong> - Sets the time (in seconds) to stop the video. <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350<strong>&end=100</strong></em> </li>");
+                    _e('</ul>');
+                    ?>
 
             </form>
             <br>
@@ -775,21 +780,21 @@ class YouTubePrefs
         <script type="text/javascript">
             var prokeyval;
             jQuery(document).ready(function($) {
-                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                        
                 jQuery('#showprokey').click(function(){
                     jQuery('.submitpro').show(500);
                     return false;
                 });
-                                                                                                                                                                                                                                                                                     
+                                                                                                                                                                                                                                                                                             
                 jQuery('#prokeysubmit').click(function(){
                     jQuery(this).attr('disabled', 'disabled');
                     jQuery('#prokeyfailed').hide();
                     jQuery('#prokeysuccess').hide();
                     jQuery('#prokeyloading').show();
                     prokeyval = jQuery('#opt_pro').val();
-                    
+                            
                     var mydomain = escape(window.location.toString());
-                                                                                                                                                                                                                                                                                                                    
+                                                                                                                                                                                                                                                                                                                            
                     var tempscript=document.createElement("script");
                     tempscript.src="//www.embedplus.com/dashboard/wordpress-pro-validatejp.aspx?simple=1&prokey=" + prokeyval + "&domain=" + mydomain;
                     var n=document.getElementsByTagName("head")[0].appendChild(tempscript);
@@ -798,9 +803,9 @@ class YouTubePrefs
                     },500);
                     return false;
                 });
-                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                        
                 window.embedplus_record_prokey = function(good){
-                                                                                                                                                                                                                                    
+                                                                                                                                                                                                                                            
                     jQuery.ajax({
                         type : "post",
                         dataType : "json",
@@ -822,14 +827,14 @@ class YouTubePrefs
                             jQuery('#prokeyloading').hide();
                             jQuery('#prokeysubmit').removeAttr('disabled');
                         }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
                     });
-                                                                                                                                                                                                                                    
+                                                                                                                                                                                                                                            
                 };
-                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                        
             });
         </script>
-
+        <?php if (function_exists('add_thickbox')) { add_thickbox();} ?>
 
         <?php
     }
