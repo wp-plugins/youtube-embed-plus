@@ -3,7 +3,7 @@
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com
   Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add view tracking and access to your very own analytics dashboard.
-  Version: 3.5
+  Version: 3.7
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
@@ -32,7 +32,7 @@
 class YouTubePrefs
 {
 
-    public static $version = '3.5';
+    public static $version = '3.7';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -492,10 +492,10 @@ class YouTubePrefs
             .orange {color: #f85d00;}
             .bold {font-weight: bold;}
             .grey{color: #888888;}
-            #goprobox {border-radius: 15px; padding: 0px 0px 20px 20px; margin-top: 15px; border: 3px solid #dddddd; width: 700px;}
+            #goprobox {border-radius: 15px; padding: 0px 0px 20px 20px; margin-top: 15px; border: 3px solid #dddddd; width: 750px;}
             .pronon {font-weight: bold; color: #f85d00;}
             ul.reglist li {margin-left: 30px; list-style: disc outside none;}
-            .procol {width: 420px; float: left;}
+            .procol {width: 470px; float: left;}
             .smallnote {font-style: italic; font-size: 10px;}
             .italic {font-style: italic;}
             .ytindent h3 {font-size: 15px; line-height: 22px; margin-bottom: 10px;}
@@ -530,7 +530,11 @@ class YouTubePrefs
                         <ul class="gopro">
                             <li>
                                 <img src="<?php echo plugins_url('images/youtubewizard.png', __FILE__) ?>">
-                                Visual YouTube Wizard - Easily embed without memorizing codes
+                                Visual YouTube Wizard (Easily embed without memorizing codes)
+                            </li>
+                            <li>
+                                <img src="<?php echo plugins_url('images/deletechecker.png', __FILE__) ?>">
+                                Deleted Video Checker (warns when YouTube deletes videos you embedded)
                             </li>
                             <li>
                                 <img src="<?php echo plugins_url('images/html5.png', __FILE__) ?>">
@@ -540,15 +544,14 @@ class YouTubePrefs
                                 <img src="<?php echo plugins_url('images/lock.png', __FILE__) ?>">
                                 Secure YouTube embedded player (will even work for your old embeds)
                             </li>
-                            <li>
-                                <img src="<?php echo plugins_url('images/prioritysupport.png', __FILE__) ?>">
-                                Priority support (Puts your request in front)
-                            </li>
-
                         </ul>
                     </div>
                     <div class="procol" style="width: 260px;">
                         <ul class="gopro">
+                            <li>
+                                <img src="<?php echo plugins_url('images/prioritysupport.png', __FILE__) ?>">
+                                Priority support (Puts your request in front)
+                            </li>
                             <li>
                                 <img src="<?php echo plugins_url('images/bulletgraph45.png', __FILE__) ?>">
                                 Your own video analytics dashboard
@@ -589,7 +592,7 @@ class YouTubePrefs
                 </form>
 
             </div>
-            <div class="smallnote">&nbsp; *The upcoming update will provide all users (Free and PRO) with the ability to hide play controls when the embed is loaded. </div>
+            <div class="smallnote">&nbsp; *One of the upcoming updates will provide all users (Free and PRO) with the ability to hide play controls when the embed is loaded. </div>
             <br>
             <form name="form1" method="post" action="" id="ytform">
                 <input type="hidden" name="<?php echo $ytprefs_submitted; ?>" value="Y">

@@ -4,7 +4,7 @@ Plugin Name: YouTube Embed
 Tags: hd, autohd, auto hd, seo, video analytics, basic analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, plugin, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin, https, ssl, secure, no-cookie, cookie, html5, youtube html5
 Requires at least: 2.9
 Tested up to: 3.6.1
-Stable tag: 3.5
+Stable tag: 3.7
 License: GPLv3 or later
 
 YouTube embed plugin with basic features and convenient defaults. Upgrade now to add view tracking and access to your very own analytics dashboard.
@@ -30,7 +30,7 @@ You can also start and end each individual video at particular times. Like the a
 * start - Sets the time (in seconds) to start the video. Example: `http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350&start=20`
 * end - Sets the time (in seconds) to stop the video. Example: `http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350&end=100`
 
-Beyond the above features, you have the option of upgrading to PRO to add enhanced features like a visual embedding wizard (so you can avoid memorizing codes), priority support, and security/performance. You even get an embedder-centric analytics dashboard that adds view tracking to each of your embeds so that you can answers questions like:
+Beyond the above features, you have the option of upgrading to PRO to add enhanced features like a visual embedding wizard (so you can avoid memorizing codes), priority support, and security/performance. PRO users also get **warnings you when YouTube has deleted one of your recent popular videos that you've embedded**. You even get an embedder-centric analytics dashboard that adds view tracking to each of your embeds so that you can answers questions like:
 
 * How much are your visitors actually watching the videos you post?
 * How does the view activity on your site compare to other sites like it?
@@ -74,9 +74,11 @@ You can also start and end each individual video at particular times. Like the a
 
 == Changelog ==
 
+= YouTube Embed 3.7 =
+Enhanced deleted video checker for PRO users
+
 = YouTube Embed 3.5 =
-Added ability to force HTML5 player for PRO users
-Added ability to use "YouTube no cookie" player for PRO users
+Added ability to try to force HTML5 player to speed up page loading
 
 = YouTube Embed 3.3 =
 HTTPS: Added secure YouTube embedding for PRO users
