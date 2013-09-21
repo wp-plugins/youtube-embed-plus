@@ -353,6 +353,27 @@ class YouTubePrefs
         {
             add_menu_page('YouTube Analytics Dashboard', 'PRO Analytics', 'manage_options', 'youtube-ep-analytics-dashboard', 'YouTubePrefs::epstats_show_options', plugins_url('images/epstats16.png', __FILE__), '10.00492884349');
         }
+        else
+        {
+            add_submenu_page('youtube-my-preferences', '', '', 'manage_options', 'youtube-my-preferences', 'YouTubePrefs::ytprefs_show_options');
+            add_submenu_page('youtube-my-preferences', 'YouTube PRO', 'YouTube PRO', 'manage_options', 'youtube-go-pro', 'YouTubePrefs::epstats_show_options');
+        }
+
+        try
+        {
+            //remove_submenu_page( 'youtube-my-preferences', 'youtube-my-preferences' );
+            global $submenu;
+            //unset($submenu['youtube-my-preferences'][0]);
+        }
+        catch (Exception $ex)
+        {
+            
+        }
+    }
+
+    public static function epstats_show_options2()
+    {
+        
     }
 
     public static function epstats_show_options()
@@ -366,13 +387,6 @@ class YouTubePrefs
         // Now display the settings editing screen
         ?>
         <div class="wrap">
-            <?php
-            // header
-
-            echo "<h2>" . '<img src="' . plugins_url('images/epstats16.png', __FILE__) . '" /> ' . __('YouTube Analytics Dashboard') . "</h2>";
-
-            // settings form
-            ?>
             <style type="text/css">
                 .epicon { width: 20px; height: 20px; vertical-align: middle; padding-right: 5px;}
                 .epindent {padding-left: 25px;}
@@ -384,10 +398,17 @@ class YouTubePrefs
             $thiskey = self::$alloptions[self::$opt_pro];
             if (self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0)
             {
+                //// header
+                echo "<h2>" . '<img src="' . plugins_url('images/epstats16.png', __FILE__) . '" /> ' . __('YouTube Analytics Dashboard') . "</h2>";
                 echo '<p><i>Logging you in...</i></p>';
             }
+            else
+            {
+                //// header
+                echo "<h2>" . '<img src="' . plugins_url('images/epstats16.png', __FILE__) . '" /> ' . __('YouTube Plugin PRO') . "</h2><br>";
+            }
             ?>
-            <iframe class="shadow" src="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx?ref=protab&domain=<?php echo $thishost; ?>&prokey=<?php echo $thiskey; ?>" width="1030" height="2000" scrolling="auto"/>
+            <iframe class="shadow" src="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx?ref=protab&domain=<?php echo $thishost; ?>&prokey=<?php echo $thiskey; ?>" width="1030" height="2700" scrolling="auto"/>
         </div>
         <?php
     }
@@ -500,7 +521,7 @@ class YouTubePrefs
             .italic {font-style: italic;}
             .ytindent h3 {font-size: 15px; line-height: 22px; margin-bottom: 10px;}
             #wizleftlink {float: left; display: block; width: 240px; font-style: italic; text-align: center; text-decoration: none;}
-            
+
         </style>
 
         <div class="ytindent">
@@ -570,7 +591,7 @@ class YouTubePrefs
                     <br>
                     <div style="clear: both;"></div>
                     <h3>Enter and save your PRO key (emailed to you):</h3>
-                <?php } ?>
+        <?php } ?>
                 <form name="form2" method="post" action="" id="epform2" class="submitpro" <?php if ($haspro) echo 'style="display: none;"' ?>>
                     <input type="hidden" name="<?php echo $pro_submitted; ?>" value="Y">
 
@@ -597,7 +618,7 @@ class YouTubePrefs
             <form name="form1" method="post" action="" id="ytform">
                 <input type="hidden" name="<?php echo $ytprefs_submitted; ?>" value="Y">
                 <h3>
-                    <?php _e("How to Insert a YouTube Video") ?> <span class="pronon">(For Free and PRO users)</span>
+        <?php _e("How to Insert a YouTube Video") ?> <span class="pronon">(For Free and PRO users)</span>
                 </h3>
                 <p>
                     All you have to do is paste the link to the YouTube video on its own line, as shown below (including the http:// part). Easy, eh?
@@ -617,7 +638,7 @@ class YouTubePrefs
                 <h3>Visual YouTube Wizard - Easily embed without memorizing special codes <span class="pronon">(PRO Only)</span></h3>
                 <p>
                     <a id="wizleftlink" class="thickbox" href="<?php echo plugins_url('images/ssprowizard.jpg', __FILE__) ?>">
-                        Click to enlarge
+                        <b>Click to enlarge</b>
                         <img src="<?php echo plugins_url('images/ssprowizard-th.jpg', __FILE__) ?>" >
                     </a>
                     More options are available to PRO users! Simply click the PRO editor button <img style="width: 16px;height:16px;" src="<?php echo plugins_url('images/youtubewizard.png', __FILE__) ?>"> to launch the visual embedding wizard. <br>There, you'll just paste the link to the video, click on options to personalize it, and then get the code to paste in your editor. <br>No memorization needed.
@@ -630,7 +651,7 @@ class YouTubePrefs
                     <?php _e("Default Options") ?> <span class="pronon">(For Free and PRO users)</span>
                 </h3>
                 <p>
-                    <?php _e("Below you can set the default options for all your videos. However, you can override them (and more) on a per-video basis. Directions on how to do that are in the next section.") ?>
+        <?php _e("Below you can set the default options for all your videos. However, you can override them (and more) on a per-video basis. Directions on how to do that are in the next section.") ?>
                 </p>
 
                 <div class="ytindent">
@@ -735,7 +756,7 @@ class YouTubePrefs
                 </div>
 
                 <h3>
-                    <?php _e("How To Override Defaults / Other Options") ?> <span class="pronon">(For Free and PRO users)</span>
+        <?php _e("How To Override Defaults / Other Options") ?> <span class="pronon">(For Free and PRO users)</span>
                 </h3>
                 <p>Suppose you have a few videos that need to be different from the above defaults. You can add options to the end of a link as displayed below to override the above defaults. Each option should begin with '&'.
                     <br><span class="pronon">PRO users: You can use the easier wizard instead by clicking on the <img style="width: 16px;height:16px;" src="<?php echo plugins_url('images/youtubewizard.png', __FILE__) ?>"> button in the editor.</span>
@@ -783,21 +804,21 @@ class YouTubePrefs
         <script type="text/javascript">
             var prokeyval;
             jQuery(document).ready(function($) {
-                                                                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                                                                                        
                 jQuery('#showprokey').click(function(){
                     jQuery('.submitpro').show(500);
                     return false;
                 });
-                                                                                                                                                                                                                                                                                             
+                                                                                                                                                                                                                                                                                                                             
                 jQuery('#prokeysubmit').click(function(){
                     jQuery(this).attr('disabled', 'disabled');
                     jQuery('#prokeyfailed').hide();
                     jQuery('#prokeysuccess').hide();
                     jQuery('#prokeyloading').show();
                     prokeyval = jQuery('#opt_pro').val();
-                            
+                                                            
                     var mydomain = escape(window.location.toString());
-                                                                                                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                                                                                                            
                     var tempscript=document.createElement("script");
                     tempscript.src="//www.embedplus.com/dashboard/wordpress-pro-validatejp.aspx?simple=1&prokey=" + prokeyval + "&domain=" + mydomain;
                     var n=document.getElementsByTagName("head")[0].appendChild(tempscript);
@@ -806,9 +827,9 @@ class YouTubePrefs
                     },500);
                     return false;
                 });
-                                                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                                                                        
                 window.embedplus_record_prokey = function(good){
-                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                            
                     jQuery.ajax({
                         type : "post",
                         dataType : "json",
@@ -830,14 +851,19 @@ class YouTubePrefs
                             jQuery('#prokeyloading').hide();
                             jQuery('#prokeysubmit').removeAttr('disabled');
                         }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
                     });
-                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                            
                 };
-                                                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                                                                        
             });
         </script>
-        <?php if (function_exists('add_thickbox')) { add_thickbox();} ?>
+        <?php
+        if (function_exists('add_thickbox'))
+        {
+            add_thickbox();
+        }
+        ?>
 
         <?php
     }
