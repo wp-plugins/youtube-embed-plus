@@ -1,7 +1,7 @@
 === YouTube ===
 Contributors: embedplus
 Plugin Name: YouTube Embed
-Tags: hd, autohd, auto hd, seo, video analytics, basic analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, plugin, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin, https, ssl, secure, no-cookie, cookie, html5, youtube html5
+Tags: autohd, auto hd, seo, video analytics, basic analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, plugin, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin, https, ssl, secure, no-cookie, cookie, html5, youtube html5, hd
 Requires at least: 2.9
 Tested up to: 3.6.1
 Stable tag: 3.7
