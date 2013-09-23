@@ -355,25 +355,9 @@ class YouTubePrefs
         }
         else
         {
-            add_submenu_page('youtube-my-preferences', '', '', 'manage_options', 'youtube-my-preferences', 'YouTubePrefs::ytprefs_show_options');
-            add_submenu_page('youtube-my-preferences', 'YouTube PRO', 'YouTube PRO', 'manage_options', 'youtube-go-pro', 'YouTubePrefs::epstats_show_options');
+            add_menu_page('YouTube Analytics Dashboard', 'YouTube PRO', 'manage_options', 'youtube-ep-analytics-dashboard', 'YouTubePrefs::epstats_show_options', plugins_url('images/epstats16.png', __FILE__), '10.00492884349');
         }
 
-        try
-        {
-            //remove_submenu_page( 'youtube-my-preferences', 'youtube-my-preferences' );
-            global $submenu;
-            //unset($submenu['youtube-my-preferences'][0]);
-        }
-        catch (Exception $ex)
-        {
-            
-        }
-    }
-
-    public static function epstats_show_options2()
-    {
-        
     }
 
     public static function epstats_show_options()
