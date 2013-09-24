@@ -488,22 +488,24 @@ class YouTubePrefs
         <style type="text/css">
             #ytform p { line-height: 20px; }
             #ytform ul li {margin-left: 30px; list-style: disc outside none;}
-            .ytindent {padding: 0px 0px 0px 20px;}
+            .ytindent {padding: 0px 0px 0px 20px; font-size: 11px;}
             .shadow {-webkit-box-shadow: 0px 0px 20px 0px #000000; box-shadow: 0px 0px 20px 0px #000000;}
+            .gopro {margin: 0px;}
             .gopro img {vertical-align: middle;
-                        width: 20px;
-                        height: 20px;
+                        width: 19px;
+                        height: 19px;
                         padding-bottom: 4px;}
+            .gopro li {margin-bottom: 0px;}
             .orange {color: #f85d00;}
             .bold {font-weight: bold;}
             .grey{color: #888888;}
-            #goprobox {border-radius: 15px; padding: 0px 0px 20px 20px; margin-top: 15px; border: 3px solid #dddddd; width: 750px;}
+            #goprobox {border-radius: 15px; padding: 0px 0px 15px 15px; margin-top: 15px; border: 3px solid #dddddd; width: 700px;}
             .pronon {font-weight: bold; color: #f85d00;}
             ul.reglist li {margin-left: 30px; list-style: disc outside none;}
-            .procol {width: 470px; float: left;}
+            .procol {width: 430px; float: left;}
             .smallnote {font-style: italic; font-size: 10px;}
             .italic {font-style: italic;}
-            .ytindent h3 {font-size: 15px; line-height: 22px; margin-bottom: 10px;}
+            .ytindent h3 {font-size: 15px; line-height: 22px; margin: 5px 0px 10px 0px;}
             #wizleftlink {float: left; display: block; width: 240px; font-style: italic; text-align: center; text-decoration: none;}
 
         </style>
@@ -539,7 +541,7 @@ class YouTubePrefs
                             </li>
                             <li>
                                 <img src="<?php echo plugins_url('images/deletechecker.png', __FILE__) ?>">
-                                Deleted Video Checker (warns when YouTube deletes videos you embedded)
+                                Deleted Video Checker (alerts if YouTube deletes videos you embedded)
                             </li>
                             <li>
                                 <img src="<?php echo plugins_url('images/html5.png', __FILE__) ?>">
@@ -551,7 +553,7 @@ class YouTubePrefs
                             </li>
                         </ul>
                     </div>
-                    <div class="procol" style="width: 260px;">
+                    <div class="procol" style="width: 240px;">
                         <ul class="gopro">
                             <li>
                                 <img src="<?php echo plugins_url('images/prioritysupport.png', __FILE__) ?>">
@@ -613,7 +615,7 @@ class YouTubePrefs
                     <li>Make sure you did <strong>not</strong> format or align the url in any way. If your url still appears in your actual post instead of a video, highlight it and click the "remove formatting" button (formatting can be invisible sometimes): <img src="<?php echo plugins_url('images/erase.png', __FILE__) ?>"/></li>
                 </ul>       
                 <p>
-                    <img class="shadow" src="<?php echo plugins_url('images/ownline.jpg', __FILE__) ?>" />
+                    <img style="width: 375px; height: auto;" class="shadow" src="<?php echo plugins_url('images/ownline.jpg', __FILE__) ?>" />
                 </p>
                 <br>
 
@@ -621,11 +623,9 @@ class YouTubePrefs
 
                 <h3>Visual YouTube Wizard - Easily embed without memorizing special codes <span class="pronon">(PRO Only)</span></h3>
                 <p>
-                    <a id="wizleftlink" class="thickbox" href="<?php echo plugins_url('images/ssprowizard.jpg', __FILE__) ?>">
-                        <b>Click to enlarge</b>
-                        <img src="<?php echo plugins_url('images/ssprowizard-th.jpg', __FILE__) ?>" >
-                    </a>
                     More options are available to PRO users! Simply click the PRO editor button <img style="width: 16px;height:16px;" src="<?php echo plugins_url('images/youtubewizard.png', __FILE__) ?>"> to launch the visual embedding wizard. <br>There, you'll just paste the link to the video, click on options to personalize it, and then get the code to paste in your editor. <br>No memorization needed.
+                    <br>
+                    <img src="<?php echo plugins_url('images/ssprowizard.jpg', __FILE__) ?>" >
                 </p>
                 <div style="clear: both;"></div>
                 <br>
