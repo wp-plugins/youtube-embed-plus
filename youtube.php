@@ -794,8 +794,12 @@ class YouTubePrefs
                 <li>Make sure you did <strong>not</strong> format or align the url in any way. If your url still appears in your actual post instead of a video, highlight it and click the "remove formatting" button (formatting can be invisible sometimes): <img src="<?php echo plugins_url('images/erase.png', __FILE__) ?>"/></li>
             </ul>                
         </p>
-        <iframe src="<?php echo self::$epbase ?>/dashboard/prosupport.aspx?simple=1&prokey=<?php echo $all[self::$opt_pro]; ?>&domain=<?php echo site_url(); ?>" width="500" height="600"></iframe>
+        <iframe src="<?php echo self::$epbase ?>/dashboard/prosupport.aspx?simple=1&prokey=<?php echo $all[self::$opt_pro]; ?>&domain=<?php echo site_url(); ?>" width="500" height="500"></iframe>
 
+        <h3 class="orange">What's next for us? Take this survey.</h3>
+        
+        <div id="surveyMonkeyInfo" style="width:700px;font-size:10px;color:#666;border:1px solid #ccc;padding:4px;"><div><iframe id="sm_e_s" src="http://www.surveymonkey.com/jsEmbed.aspx?sm=uYXvJKm2UNLkrpXHzLJ57Q_3d_3d" width="700" height="800" style="border:0px;padding-bottom:4px;" frameborder="0" allowtransparency="true" ></iframe></div>
+        
         </div>
         <script type="text/javascript">
             var prokeyval;
