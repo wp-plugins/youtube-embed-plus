@@ -47,6 +47,13 @@ See more details after installing. Enjoy!
 1. In your editor, start pasting the links with any desired additional codes needed for your YouTube embed. Make sure the link is on its own line.
 1. To get an analytics dashboard, [sign up for one of the options here >>](https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx)
 
+Always follow these rules when pasting a link:
+
+* Make sure the url is really on its own line by itself.
+* Make sure the url is not an active hyperlink (i.e., it should just be plain text). Otherwise, highlight the url and click the "unlink" button in your editor.
+* Make sure you did **not** format or align the url in any way. If your url still appears in your actual post instead of a video, highlight it and click the "remove formatting" button (formatting can be invisible sometimes).
+* Finally, there's a slight chance your custom theme is the issue, if you have one. To know for sure, we suggest temporarily switching to one of the default WordPress themes (e.g., "Twenty Thirteen") just to see if your video does appear. If it suddenly works, then your custom theme is the issue. You can switch back when done testing.
+
 Additional codes (adding these will override the default settings in the admin):
 
 * width - Sets the width of your player. If omitted, the default width will be the width of your theme's content. Example: `http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350`
