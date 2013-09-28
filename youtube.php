@@ -505,6 +505,7 @@ class YouTubePrefs
             .bold {font-weight: bold;}
             .grey{color: #888888;}
             #goprobox {border-radius: 15px; padding: 0px 0px 15px 15px; margin-top: 15px; border: 3px solid #CCE5EC; width: 700px;}
+            #nonprosupport {border-radius: 15px; padding: 5px 10px 10px 10px;  border: 3px solid #ff6655; width: 800px;}
             .pronon {font-weight: bold; color: #f85d00;}
             ul.reglist li {margin: 0px 0px 0px 30px; list-style: disc outside none;}
             .procol {width: 430px; float: left;}
@@ -700,8 +701,7 @@ class YouTubePrefs
                         <p>
                             <input name="<?php echo self::$opt_ssl; ?>" id="<?php echo self::$opt_ssl; ?>" <?php checked($all[self::$opt_ssl], 1); ?> type="checkbox" class="checkbox">
                             <label for="<?php echo self::$opt_ssl; ?>">
-                                <b>(PRO)</b> Use the secure YouTube player for all of your visitors and videos you embed. This will go back and also secure your past embeds as they are loaded on their pages. <br>
-                                Read more about the peace of mind offered to you and your visitors with a secure connection <a target="_blank" href="http://en.wikipedia.org/wiki/HTTP_Secure">here (Wikipedia)</a>.
+                                <b>(PRO)</b> Use the secure YouTube player for all of your visitors and videos you embed. This will go back and also secure your past embeds as they are loaded on their pages.
                             </label>
                         </p>
                         <p>
@@ -725,8 +725,7 @@ class YouTubePrefs
                         <p>
                             <input disabled type="checkbox" class="checkbox">
                             <label>
-                                <span class="pronon">(PRO Users)</span> Use the secure YouTube player for all of your visitors and videos you embed. This will go back and also secure your past embeds as they are loaded on their pages. <br>
-                                Read more about the peace of mind offered to you and your visitors with a secure connection <a target="_blank" href="http://en.wikipedia.org/wiki/HTTP_Secure">here (Wikipedia)</a>.
+                                <span class="pronon">(PRO Users)</span> Use the secure YouTube player for all of your visitors and videos you embed. This will go back and also secure your past embeds as they are loaded on their pages.
                             </label>
                         </p>
                         <p>
@@ -786,219 +785,223 @@ class YouTubePrefs
             <p>
                 <strong>PRO users:</strong> Below, We've enabled the ability to have priority support with our team.  Use this to get one-on-one help with any issues you might have or to send us suggestions for future features.  We typically respond within minutes during normal work hours.  
             </p>
-            <p>
-                <strong>Tip for non-PRO users:</strong> We've found that a common support request has been from users that are pasting video links on single lines, as required, but are not seeing the video embed show up. One of these two suggestions is usually the fix:
-            <ul class="reglist">
-                <li>Make sure the url is really on its own line by itself</li>
-                <li>Make sure the url is not an active hyperlink (i.e., it should just be plain text). Otherwise, highlight the url and click the "unlink" button in your editor: <img src="<?php echo plugins_url('images/unlink.png', __FILE__) ?>"/>.</li>
-                <li>Make sure you did <strong>not</strong> format or align the url in any way. If your url still appears in your actual post instead of a video, highlight it and click the "remove formatting" button (formatting can be invisible sometimes): <img src="<?php echo plugins_url('images/erase.png', __FILE__) ?>"/></li>
-            </ul>                
-        </p>
-        <iframe src="<?php echo self::$epbase ?>/dashboard/prosupport.aspx?simple=1&prokey=<?php echo $all[self::$opt_pro]; ?>&domain=<?php echo site_url(); ?>" width="500" height="500"></iframe>
 
-        <h3 class="orange">What's next for us? Take this survey.</h3>
-        
-        <div id="surveyMonkeyInfo" style="width:700px;font-size:10px;color:#666;border:1px solid #ccc;padding:4px;"><div><iframe id="sm_e_s" src="http://www.surveymonkey.com/jsEmbed.aspx?sm=uYXvJKm2UNLkrpXHzLJ57Q_3d_3d" width="700" height="800" style="border:0px;padding-bottom:4px;" frameborder="0" allowtransparency="true" ></iframe></div>
-        
-        </div>
-        <script type="text/javascript">
-            var prokeyval;
-            jQuery(document).ready(function($) {
-                                                                                                                                                                                                                                                                                                                                                
-                jQuery('#showprokey').click(function(){
-                    jQuery('.submitpro').show(500);
-                    return false;
-                });
-                                                                                                                                                                                                                                                                                                                                     
-                jQuery('#prokeysubmit').click(function(){
-                    jQuery(this).attr('disabled', 'disabled');
-                    jQuery('#prokeyfailed').hide();
-                    jQuery('#prokeysuccess').hide();
-                    jQuery('#prokeyloading').show();
-                    prokeyval = jQuery('#opt_pro').val();
-                                                                    
-                    var mydomain = escape(window.location.toString());
-                                                                                                                                                                                                                                                                                                                                                                    
-                    var tempscript=document.createElement("script");
-                    tempscript.src="//www.embedplus.com/dashboard/wordpress-pro-validatejp.aspx?simple=1&prokey=" + prokeyval + "&domain=" + mydomain;
-                    var n=document.getElementsByTagName("head")[0].appendChild(tempscript);
-                    setTimeout(function(){
-                        n.parentNode.removeChild(n)
-                    },500);
-                    return false;
-                });
-                                                                                                                                                                                                                                                                                                                                
-                window.embedplus_record_prokey = function(good){
-                                                                                                                                                                                                                                                                                    
-                    jQuery.ajax({
-                        type : "post",
-                        dataType : "json",
-                        timeout: 30000,
-                        url : "<?php echo admin_url('admin-ajax.php') ?>",
-                        data : { action: 'my_embedplus_pro_record', <?php echo self::$opt_pro; ?>:  (good? prokeyval : "")},
-                        success: function(response) {
-                            if(response.type == "success") {
-                                jQuery("#prokeysuccess").show();
-                            }
-                            else {
-                                jQuery("#prokeyfailed").show();
-                            }
-                        },
-                        error: function(xhr, ajaxOptions, thrownError){
-                            jQuery('#prokeyfailed').show();
-                        },
-                        complete: function() {
-                            jQuery('#prokeyloading').hide();
-                            jQuery('#prokeysubmit').removeAttr('disabled');
-                        }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+            <div id="nonprosupport">
+                <h3>Support tips for non-PRO users</h3>
+                We've found that a common support request has been from users that are pasting video links on single lines, as required, but are not seeing the video embed show up. One of these suggestions is usually the fix:
+                <ul class="reglist">
+                    <li>Make sure the url is really on its own line by itself</li>
+                    <li>Make sure the url is not an active hyperlink (i.e., it should just be plain text). Otherwise, highlight the url and click the "unlink" button in your editor: <img src="<?php echo plugins_url('images/unlink.png', __FILE__) ?>"/>.</li>
+                    <li>Make sure you did <strong>not</strong> format or align the url in any way. If your url still appears in your actual post instead of a video, highlight it and click the "remove formatting" button (formatting can be invisible sometimes): <img src="<?php echo plugins_url('images/erase.png', __FILE__) ?>"/></li>
+                    <li>Finally, there's a slight chance your custom theme is the issue, if you have one. To know for sure, we suggest temporarily switching to one of the default WordPress themes (e.g., "Twenty Thirteen") just to see if your video does appear. If it suddenly works, then your custom theme is the issue. You can switch back when done testing.</li>
+                </ul>                
+                </p>
+            </div>
+            <iframe src="<?php echo self::$epbase ?>/dashboard/prosupport.aspx?simple=1&prokey=<?php echo $all[self::$opt_pro]; ?>&domain=<?php echo site_url(); ?>" width="500" height="500"></iframe>
+
+            <h3 class="orange">What's next for us? Take this survey.</h3>
+
+            <div id="surveyMonkeyInfo" style="width:700px;font-size:10px;color:#666;border:1px solid #ccc;padding:4px;"><div><iframe id="sm_e_s" src="http://www.surveymonkey.com/jsEmbed.aspx?sm=uYXvJKm2UNLkrpXHzLJ57Q_3d_3d" width="700" height="800" style="border:0px;padding-bottom:4px;" frameborder="0" allowtransparency="true" ></iframe></div>
+
+            </div>
+            <script type="text/javascript">
+                var prokeyval;
+                jQuery(document).ready(function($) {
+                                                                                                                                                                                                                                                                                                                                                                        
+                    jQuery('#showprokey').click(function(){
+                        jQuery('.submitpro').show(500);
+                        return false;
                     });
-                                                                                                                                                                                                                                                                                    
-                };
-                                                                                                                                                                                                                                                                                                                                
-            });
-        </script>
-        <?php
-        if (function_exists('add_thickbox'))
-        {
-            add_thickbox();
+                                                                                                                                                                                                                                                                                                                                                             
+                    jQuery('#prokeysubmit').click(function(){
+                        jQuery(this).attr('disabled', 'disabled');
+                        jQuery('#prokeyfailed').hide();
+                        jQuery('#prokeysuccess').hide();
+                        jQuery('#prokeyloading').show();
+                        prokeyval = jQuery('#opt_pro').val();
+                                                                                            
+                        var mydomain = escape(window.location.toString());
+                                                                                                                                                                                                                                                                                                                                                                                            
+                        var tempscript=document.createElement("script");
+                        tempscript.src="//www.embedplus.com/dashboard/wordpress-pro-validatejp.aspx?simple=1&prokey=" + prokeyval + "&domain=" + mydomain;
+                        var n=document.getElementsByTagName("head")[0].appendChild(tempscript);
+                        setTimeout(function(){
+                            n.parentNode.removeChild(n)
+                        },500);
+                        return false;
+                    });
+                                                                                                                                                                                                                                                                                                                                                        
+                    window.embedplus_record_prokey = function(good){
+                                                                                                                                                                                                                                                                                                            
+                        jQuery.ajax({
+                            type : "post",
+                            dataType : "json",
+                            timeout: 30000,
+                            url : "<?php echo admin_url('admin-ajax.php') ?>",
+                            data : { action: 'my_embedplus_pro_record', <?php echo self::$opt_pro; ?>:  (good? prokeyval : "")},
+                            success: function(response) {
+                                if(response.type == "success") {
+                                    jQuery("#prokeysuccess").show();
+                                }
+                                else {
+                                    jQuery("#prokeyfailed").show();
+                                }
+                            },
+                            error: function(xhr, ajaxOptions, thrownError){
+                                jQuery('#prokeyfailed').show();
+                            },
+                            complete: function() {
+                                jQuery('#prokeyloading').hide();
+                                jQuery('#prokeysubmit').removeAttr('disabled');
+                            }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+                        });
+                                                                                                                                                                                                                                                                                                            
+                    };
+                                                                                                                                                                                                                                                                                                                                                        
+                });
+            </script>
+            <?php
+            if (function_exists('add_thickbox'))
+            {
+                add_thickbox();
+            }
+            ?>
+
+            <?php
         }
-        ?>
 
-        <?php
+        public static function ytprefsscript()
+        {
+            wp_enqueue_script('__ytprefs__', plugins_url('scripts/ytprefs.min.js', __FILE__));
+        }
+
     }
-
-    public static function ytprefsscript()
-    {
-        wp_enqueue_script('__ytprefs__', plugins_url('scripts/ytprefs.min.js', __FILE__));
-    }
-
-}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //class start
-class Add_new_tinymce_btn_Youtubeprefs
-{
-
-    public $btn_arr;
-    public $js_file;
-
-    /*
-     * call the constructor and set class variables
-     * From the constructor call the functions via wordpress action/filter
-     */
-
-    function __construct($seperator, $btn_name, $javascrip_location)
+    class Add_new_tinymce_btn_Youtubeprefs
     {
-        $this->btn_arr = array("Seperator" => $seperator, "Name" => $btn_name);
-        $this->js_file = $javascrip_location;
-        add_action('init', array($this, 'add_tinymce_button'));
-        add_filter('tiny_mce_version', array($this, 'refresh_mce_version'));
-    }
 
-    /*
-     * create the buttons only if the user has editing privs.
-     * If so we create the button and add it to the tinymce button array
-     */
+        public $btn_arr;
+        public $js_file;
 
-    function add_tinymce_button()
-    {
-        if (!current_user_can('edit_posts') && !current_user_can('edit_pages'))
-            return;
-        if (get_user_option('rich_editing') == 'true')
+        /*
+         * call the constructor and set class variables
+         * From the constructor call the functions via wordpress action/filter
+         */
+
+        function __construct($seperator, $btn_name, $javascrip_location)
         {
-            //the function that adds the javascript
-            add_filter('mce_external_plugins', array($this, 'add_new_tinymce_plugin'));
-            //adds the button to the tinymce button array
-            add_filter('mce_buttons', array($this, 'register_new_button'));
+            $this->btn_arr = array("Seperator" => $seperator, "Name" => $btn_name);
+            $this->js_file = $javascrip_location;
+            add_action('init', array($this, 'add_tinymce_button'));
+            add_filter('tiny_mce_version', array($this, 'refresh_mce_version'));
         }
+
+        /*
+         * create the buttons only if the user has editing privs.
+         * If so we create the button and add it to the tinymce button array
+         */
+
+        function add_tinymce_button()
+        {
+            if (!current_user_can('edit_posts') && !current_user_can('edit_pages'))
+                return;
+            if (get_user_option('rich_editing') == 'true')
+            {
+                //the function that adds the javascript
+                add_filter('mce_external_plugins', array($this, 'add_new_tinymce_plugin'));
+                //adds the button to the tinymce button array
+                add_filter('mce_buttons', array($this, 'register_new_button'));
+            }
+        }
+
+        /*
+         * add the new button to the tinymce array
+         */
+
+        function register_new_button($buttons)
+        {
+            array_push($buttons, $this->btn_arr["Seperator"], $this->btn_arr["Name"]);
+            return $buttons;
+        }
+
+        /*
+         * Call the javascript file that loads the
+         * instructions for the new button
+         */
+
+        function add_new_tinymce_plugin($plugin_array)
+        {
+            $plugin_array[$this->btn_arr['Name']] = $this->js_file;
+            return $plugin_array;
+        }
+
+        /*
+         * This function tricks tinymce in thinking
+         * it needs to refresh the buttons
+         */
+
+        function refresh_mce_version($ver)
+        {
+            $ver += 3;
+            return $ver;
+        }
+
     }
-
-    /*
-     * add the new button to the tinymce array
-     */
-
-    function register_new_button($buttons)
-    {
-        array_push($buttons, $this->btn_arr["Seperator"], $this->btn_arr["Name"]);
-        return $buttons;
-    }
-
-    /*
-     * Call the javascript file that loads the
-     * instructions for the new button
-     */
-
-    function add_new_tinymce_plugin($plugin_array)
-    {
-        $plugin_array[$this->btn_arr['Name']] = $this->js_file;
-        return $plugin_array;
-    }
-
-    /*
-     * This function tricks tinymce in thinking
-     * it needs to refresh the buttons
-     */
-
-    function refresh_mce_version($ver)
-    {
-        $ver += 3;
-        return $ver;
-    }
-
-}
 
 //class end
 
 
-register_activation_hook(__FILE__, array('YouTubePrefs', 'initoptions'));
-add_action('wp_enqueue_scripts', array('YouTubePrefs', 'ytprefsscript'));
-add_action("wp_ajax_my_embedplus_pro_record", array('YouTubePrefs', 'my_embedplus_pro_record'));
+    register_activation_hook(__FILE__, array('YouTubePrefs', 'initoptions'));
+    add_action('wp_enqueue_scripts', array('YouTubePrefs', 'ytprefsscript'));
+    add_action("wp_ajax_my_embedplus_pro_record", array('YouTubePrefs', 'my_embedplus_pro_record'));
 
 
-$youtubeplg = new YouTubePrefs();
+    $youtubeplg = new YouTubePrefs();
 
-$embedplusmce_youtubeprefs = new Add_new_tinymce_btn_Youtubeprefs('|', 'embedpluswiz_youtubeprefs', plugins_url() . '/youtube-embed-plus/scripts/embedplus_mce.js');
+    $embedplusmce_youtubeprefs = new Add_new_tinymce_btn_Youtubeprefs('|', 'embedpluswiz_youtubeprefs', plugins_url() . '/youtube-embed-plus/scripts/embedplus_mce.js');
 //$epstatsmce_youtubeprefs = new Add_new_tinymce_btn_Youtubeprefs('|', 'embedplusstats_youtubeprefs', plugins_url() . '/youtube-embed-plus/scripts/embedplusstats_mce.js');
 
-add_action('admin_enqueue_scripts', 'youtubeprefs_admin_enqueue_scripts');
+    add_action('admin_enqueue_scripts', 'youtubeprefs_admin_enqueue_scripts');
 
-function youtubeprefs_admin_enqueue_scripts()
-{
-    add_action('wp_print_scripts', 'youtubeprefs_output_scriptvars');
-    wp_enqueue_style('embedplusyoutube', plugins_url() . '/youtube-embed-plus/scripts/embedplus_mce.css');
-}
-
-function youtubeprefs_output_scriptvars()
-{
-    $blogwidth = null;
-    try
+    function youtubeprefs_admin_enqueue_scripts()
     {
-        $embed_size_w = intval(get_option('embed_size_w'));
-
-        global $content_width;
-        if (empty($content_width))
-            $content_width = $GLOBALS['content_width'];
-        if (empty($content_width))
-            $content_width = $_GLOBALS['content_width'];
-
-        $blogwidth = $embed_size_w ? $embed_size_w : ($content_width ? $content_width : 450);
-    }
-    catch (Exception $ex)
-    {
-        
+        add_action('wp_print_scripts', 'youtubeprefs_output_scriptvars');
+        wp_enqueue_style('embedplusyoutube', plugins_url() . '/youtube-embed-plus/scripts/embedplus_mce.css');
     }
 
-    $epprokey = YouTubePrefs::$alloptions[YouTubePrefs::$opt_pro];
+    function youtubeprefs_output_scriptvars()
+    {
+        $blogwidth = null;
+        try
+        {
+            $embed_size_w = intval(get_option('embed_size_w'));
 
-    $myytdefaults = http_build_query(YouTubePrefs::$alloptions);
-    ?>
-    <script type="text/javascript">
-        var epblogwidth = <?php echo $blogwidth; ?>;
-        var epprokey = '<?php echo $epprokey; ?>';
-        var epbasesite = '<?php echo YouTubePrefs::$epbase; ?>';
-        var epversion = '<?php echo YouTubePrefs::$version; ?>';
-        var myytdefaults = '<?php echo $myytdefaults; ?>';
-    </script>
-    <?php
-}
+            global $content_width;
+            if (empty($content_width))
+                $content_width = $GLOBALS['content_width'];
+            if (empty($content_width))
+                $content_width = $_GLOBALS['content_width'];
+
+            $blogwidth = $embed_size_w ? $embed_size_w : ($content_width ? $content_width : 450);
+        }
+        catch (Exception $ex)
+        {
+            
+        }
+
+        $epprokey = YouTubePrefs::$alloptions[YouTubePrefs::$opt_pro];
+
+        $myytdefaults = http_build_query(YouTubePrefs::$alloptions);
+        ?>
+        <script type="text/javascript">
+            var epblogwidth = <?php echo $blogwidth; ?>;
+            var epprokey = '<?php echo $epprokey; ?>';
+            var epbasesite = '<?php echo YouTubePrefs::$epbase; ?>';
+            var epversion = '<?php echo YouTubePrefs::$version; ?>';
+            var myytdefaults = '<?php echo $myytdefaults; ?>';
+        </script>
+        <?php
+    }
