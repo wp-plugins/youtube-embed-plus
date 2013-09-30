@@ -72,7 +72,7 @@ class YouTubePrefs
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     public static $oldytregex = '@^\s*https?://(?:www\.)?(?:(?:youtube.com/watch\?)|(?:youtu.be/))([^\s"]+)\s*$@im';
-    public static $ytregex = '@^[[:blank:]]*https?://(?:www\.)?(?:(?:youtube.com/watch\?)|(?:youtu.be/))([^\s"]+)[[:blank:]]*$@im';
+    public static $ytregex = '@^[\r\n]{0,1}[[:blank:]]*https?://(?:www\.)?(?:(?:youtube.com/watch\?)|(?:youtu.be/))([^\s"]+)[[:blank:]]*[\r\n]{0,1}$@im';
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -259,7 +259,14 @@ class YouTubePrefs
                 unset($finalparams[self::$opt_html5]);
             }
         }
-        $code1 = '<iframe id="_ytid_' . rand(10000, 99999) . '" width="' . self::$defaultwidth . '" height="' . self::$defaultheight .
+        
+        $centercode = '';
+        if ($finalparams[self::$opt_center] == 1)
+        {
+            $centercode = ' style="display: block; margin: 0px auto;" ';
+        }
+        
+        $code1 = '<iframe ' . $centercode . ' id="_ytid_' . rand(10000, 99999) . '" width="' . self::$defaultwidth . '" height="' . self::$defaultheight .
                 '" src="' . $linkscheme . '://www.' . $youtubebaseurl . '.com/embed/' . $linkparams['v'] . '?';
         $code2 = '" frameborder="0" allowfullscreen type="text/html" class="__youtube_prefs__"></iframe>';
 
@@ -294,11 +301,6 @@ class YouTubePrefs
         }
 
         $code = $code1 . $finalsrc . $code2;
-
-        if ($finalparams[self::$opt_center] == 1)
-        {
-            $code = '<div style="text-align: center; display: block;">' . $code . '</div>';
-        }
 
         // reset static vals for next embed
         self::$defaultheight = null;
