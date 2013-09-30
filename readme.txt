@@ -4,7 +4,7 @@ Plugin Name: YouTube Embed
 Tags: hd, autohd, auto hd, seo, video analytics, basic analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, plugin, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin, https, ssl, secure, no-cookie, cookie, html5, youtube html5
 Requires at least: 2.9
 Tested up to: 3.6.1
-Stable tag: 4.1
+Stable tag: 4.0
 License: GPLv3 or later
 
 YouTube embed plugin with basic features and convenient defaults. Upgrade now to add view tracking and access to your very own analytics dashboard.
