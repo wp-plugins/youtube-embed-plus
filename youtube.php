@@ -53,6 +53,7 @@ class YouTubePrefs
     public static $opt_ssl = 'ssl';
     public static $opt_nocookie = 'nocookie';
     public static $opt_pro = 'pro';
+    public static $opt_oldspacing = 'oldspacing';
     public static $opt_alloptions = 'youtubeprefs_alloptions';
     public static $alloptions = null;
     public static $yt_options = array();
@@ -70,7 +71,7 @@ class YouTubePrefs
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////
-    //public static $ytregex = '@^\s*https?://(?:www\.)?(?:(?:youtube.com/watch\?)|(?:youtu.be/))([^\s"]+)\s*$@im';
+    public static $oldytregex = '@^\s*https?://(?:www\.)?(?:(?:youtube.com/watch\?)|(?:youtu.be/))([^\s"]+)\s*$@im';
     public static $ytregex = '@^[[:blank:]]*https?://(?:www\.)?(?:(?:youtube.com/watch\?)|(?:youtu.be/))([^\s"]+)[[:blank:]]*$@im';
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -87,6 +88,12 @@ class YouTubePrefs
         {
             self::initoptions();
         }
+        
+        if (self::$alloptions[self::$opt_oldspacing] == 1)
+        {
+            self::$ytregex = self::$oldytregex;
+        }
+        
         self::$optembedwidth = intval(get_option('embed_size_w'));
         self::$optembedheight = intval(get_option('embed_size_h'));
 
@@ -127,6 +134,7 @@ class YouTubePrefs
         $_ssl = 0;
         $_nocookie = 0;
         $_controls = 2;
+        $_oldspacing = 1;
 
         $arroptions = get_option(self::$opt_alloptions);
 
@@ -147,6 +155,11 @@ class YouTubePrefs
             $_ssl = self::tryget($arroptions, self::$opt_ssl, 0);
             $_nocookie = self::tryget($arroptions, self::$opt_nocookie, 0);
             $_controls = self::tryget($arroptions, self::$opt_controls, 2);
+            $_oldspacing = self::tryget($arroptions, self::$opt_oldspacing, 1);
+        }
+        else
+        {
+            $_oldspacing = 0;
         }
 
         $all = array(
@@ -165,7 +178,8 @@ class YouTubePrefs
             self::$opt_pro => $_pro,
             self::$opt_ssl => $_ssl,
             self::$opt_nocookie => $_nocookie,
-            self::$opt_controls => $_controls
+            self::$opt_controls => $_controls,
+            self::$opt_oldspacing => $_oldspacing
         );
 
         update_option(self::$opt_alloptions, $all);
@@ -465,6 +479,7 @@ class YouTubePrefs
             $new_options[self::$opt_vq] = $_POST[self::$opt_vq] == (true || 'on') ? 'hd720' : '';
             $new_options[self::$opt_ssl] = isset($_POST[self::$opt_ssl]) && $_POST[self::$opt_ssl] == (true || 'on') ? 1 : 0;
             $new_options[self::$opt_nocookie] = isset($_POST[self::$opt_nocookie]) && $_POST[self::$opt_nocookie] == (true || 'on') ? 1 : 0;
+            $new_options[self::$opt_oldspacing] = isset($_POST[self::$opt_oldspacing]) && $_POST[self::$opt_oldspacing] == (true || 'on') ? 1 : 0;
 
             $all = $new_options + $all;
 
@@ -483,7 +498,7 @@ class YouTubePrefs
 
         // header
 
-        echo "<h2>" . '<img src="' . plugins_url('images/youtubeicon16.png', __FILE__) . '" /> ' . __('YouTube Preferences (For Free and PRO Users)') . "</h2>";
+        echo "<h2>" . '<img src="' . plugins_url('images/youtubeicon16.png', __FILE__) . '" /> ' . __('YouTube Settings (For Free and PRO Users)') . "</h2>";
 
         // settings form
         ?>
@@ -646,6 +661,12 @@ class YouTubePrefs
                 </p>
 
                 <div class="ytindent chx">
+                    <p>
+                        <input name="<?php echo self::$opt_oldspacing; ?>" id="<?php echo self::$opt_oldspacing; ?>" <?php checked($all[self::$opt_oldspacing], 1); ?> type="checkbox" class="checkbox">
+                        <label for="<?php echo self::$opt_oldspacing; ?>">
+                        Continue the spacing style from version 4.0 and older. Those versions required you to manually add spacing above and below your video. Unchecking this will automatically add the spacing for you.
+                        </label>
+                    </p>
                     <p>
                         <input name="<?php echo self::$opt_center; ?>" id="<?php echo self::$opt_center; ?>" <?php checked($all[self::$opt_center], 1); ?> type="checkbox" class="checkbox">
                         <label for="<?php echo self::$opt_center; ?>"><?php _e('Automatically center all your videos (not necessary if all you\'re videos span the whole width of your blog)') ?></label>

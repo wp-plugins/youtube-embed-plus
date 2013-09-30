@@ -82,7 +82,7 @@ You can also start and end each individual video at particular times. Like the a
 == Changelog ==
 
 = YouTube Embed 4.1 =
-Fixed spacing issue.
+Fixed spacing issue. Also added ability to fall back to old spacing format.
 
 = YouTube Embed 4.0 =
 New features for all users: lazy loading for the flash player by default and the ability to hide player controls for a cleaner look.
