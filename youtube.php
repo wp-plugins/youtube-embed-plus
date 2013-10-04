@@ -3,7 +3,7 @@
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com
   Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add view tracking and access to your very own analytics dashboard.
-  Version: 4.1
+  Version: 4.5
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
@@ -32,7 +32,7 @@
 class YouTubePrefs
 {
 
-    public static $version = '4.1';
+    public static $version = '4.5';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -48,6 +48,7 @@ class YouTubePrefs
     public static $opt_showinfo = 'showinfo';
     public static $opt_controls = 'controls';
     public static $opt_theme = 'theme';
+    public static $opt_wmode = 'wmode';
     public static $opt_vq = 'vq';
     public static $opt_html5 = 'html5';
     public static $opt_ssl = 'ssl';
@@ -62,9 +63,6 @@ class YouTubePrefs
     /*
       color
       autohide
-      list
-      listType
-      playlist
      */
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -72,7 +70,8 @@ class YouTubePrefs
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     public static $oldytregex = '@^\s*https?://(?:www\.)?(?:(?:youtube.com/watch\?)|(?:youtu.be/))([^\s"]+)\s*$@im';
-    public static $ytregex = '@^[\r\n]{0,1}[[:blank:]]*https?://(?:www\.)?(?:(?:youtube.com/watch\?)|(?:youtu.be/))([^\s"]+)[[:blank:]]*[\r\n]{0,1}$@im';
+    //public static $ytregex = '@^[\r\n]{0,1}[[:blank:]]*https?://(?:www\.)?(?:(?:youtube.com/watch\?)|(?:youtu.be/))([^\s"]+)[[:blank:]]*[\r\n]{0,1}$@im';
+    public static $ytregex = '@^[\r\t ]*https?://(?:www\.)?(?:(?:youtube.com/watch\?)|(?:youtu.be/))([^\s"]+)[\r\t ]*$@im';
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -88,12 +87,12 @@ class YouTubePrefs
         {
             self::initoptions();
         }
-        
+
         if (self::$alloptions[self::$opt_oldspacing] == 1)
         {
             self::$ytregex = self::$oldytregex;
         }
-        
+
         self::$optembedwidth = intval(get_option('embed_size_w'));
         self::$optembedheight = intval(get_option('embed_size_h'));
 
@@ -108,7 +107,9 @@ class YouTubePrefs
             self::$opt_controls,
             self::$opt_html5,
             self::$opt_theme,
+            self::$opt_wmode,
             self::$opt_vq,
+            'list',
             'start',
             'end'
         );
@@ -135,6 +136,7 @@ class YouTubePrefs
         $_nocookie = 0;
         $_controls = 2;
         $_oldspacing = 1;
+        $_wmode = 'opaque';
 
         $arroptions = get_option(self::$opt_alloptions);
 
@@ -150,6 +152,7 @@ class YouTubePrefs
             $_showinfo = self::tryget($arroptions, self::$opt_showinfo, 1);
             $_html5 = self::tryget($arroptions, self::$opt_html5, 0);
             $_theme = self::tryget($arroptions, self::$opt_theme, 'dark');
+            $_wmode = self::tryget($arroptions, self::$opt_wmode, 'opaque');
             $_vq = self::tryget($arroptions, self::$opt_vq, '');
             $_pro = self::tryget($arroptions, self::$opt_pro, '');
             $_ssl = self::tryget($arroptions, self::$opt_ssl, 0);
@@ -174,6 +177,7 @@ class YouTubePrefs
             self::$opt_showinfo => $_showinfo,
             self::$opt_html5 => $_html5,
             self::$opt_theme => $_theme,
+            self::$opt_wmode => $_wmode,
             self::$opt_vq => $_vq,
             self::$opt_pro => $_pro,
             self::$opt_ssl => $_ssl,
@@ -259,13 +263,13 @@ class YouTubePrefs
                 unset($finalparams[self::$opt_html5]);
             }
         }
-        
+
         $centercode = '';
         if ($finalparams[self::$opt_center] == 1)
         {
             $centercode = ' style="display: block; margin: 0px auto;" ';
         }
-        
+
         $code1 = '<iframe ' . $centercode . ' id="_ytid_' . rand(10000, 99999) . '" width="' . self::$defaultwidth . '" height="' . self::$defaultheight .
                 '" src="' . $linkscheme . '://www.' . $youtubebaseurl . '.com/embed/' . $linkparams['v'] . '?';
         $code2 = '" frameborder="0" allowfullscreen type="text/html" class="__youtube_prefs__"></iframe>';
@@ -294,8 +298,10 @@ class YouTubePrefs
                 if (in_array($key, self::$yt_options))
                 {
                     $finalsrc .= htmlspecialchars($key) . '=' . htmlspecialchars($value) . '&';
-                    if ($key == 'loop' && $value == 1)
+                    if ($key == 'loop' && $value == 1 && !isset($finalparams['list']))
+                    {
                         $finalsrc .= 'playlist=' . $finalparams['v'] . '&';
+                    }
                 }
             }
         }
@@ -374,7 +380,8 @@ class YouTubePrefs
         }
         else
         {
-            add_menu_page('YouTube Analytics Dashboard', 'YouTube PRO', 'manage_options', 'youtube-ep-analytics-dashboard', 'YouTubePrefs::epstats_show_options', plugins_url('images/epstats16.png', __FILE__), '10.00492884349');
+            add_submenu_page('youtube-my-preferences', '', '', 'manage_options', 'youtube-my-preferences', 'YouTubePrefs::ytprefs_show_options');
+            add_submenu_page('youtube-my-preferences', 'YouTube PRO', 'YouTube PRO', 'manage_options', 'youtube-ep-analytics-dashboard', 'YouTubePrefs::epstats_show_options');
         }
     }
 
@@ -478,6 +485,7 @@ class YouTubePrefs
             $new_options[self::$opt_controls] = $_POST[self::$opt_controls] == (true || 'on') ? 2 : 0;
             $new_options[self::$opt_html5] = $_POST[self::$opt_html5] == (true || 'on') ? 1 : 0;
             $new_options[self::$opt_theme] = $_POST[self::$opt_theme] == (true || 'on') ? 'dark' : 'light';
+            $new_options[self::$opt_wmode] = $_POST[self::$opt_wmode] == (true || 'on') ? 'opaque' : 'transparent';
             $new_options[self::$opt_vq] = $_POST[self::$opt_vq] == (true || 'on') ? 'hd720' : '';
             $new_options[self::$opt_ssl] = isset($_POST[self::$opt_ssl]) && $_POST[self::$opt_ssl] == (true || 'on') ? 1 : 0;
             $new_options[self::$opt_nocookie] = isset($_POST[self::$opt_nocookie]) && $_POST[self::$opt_nocookie] == (true || 'on') ? 1 : 0;
@@ -631,15 +639,19 @@ class YouTubePrefs
                     <?php _e("How to Insert a YouTube Video") ?> <span class="pronon">(For Free and PRO Users)</span>
                 </h3>
                 <p>
-                    All you have to do is paste the link to the YouTube video on its own line, as shown below (including the http:// part). Easy, eh?
+                    All you have to do is paste the URL to the YouTube video on its own line, as shown below (including the http:// part). Easy, eh?<br>
+                    For playlists: Go to the page for the playlist that lists all of its videos (<a target="_blank" href="http://www.youtube.com/playlist?list=PL70DEC2B0568B5469">Example &raquo;</a>). Click on the video that you want the playlist to start with. Copy and paste that browser URL into your blog on its own line.
+                </p>
+                <p>
+                    Always follow these rules for any URL:
                 </p>
                 <ul class="reglist">
-                    <li>Make sure the url is really on its own line by itself</li>
-                    <li>Make sure the url is <strong>not</strong> an active hyperlink (i.e., it should just be plain text). Otherwise, highlight the url and click the "unlink" button in your editor: <img src="<?php echo plugins_url('images/unlink.png', __FILE__) ?>"/></li>
-                    <li>Make sure you did <strong>not</strong> format or align the url in any way. If your url still appears in your actual post instead of a video, highlight it and click the "remove formatting" button (formatting can be invisible sometimes): <img src="<?php echo plugins_url('images/erase.png', __FILE__) ?>"/></li>
+                    <li>Make sure the URL is really on its own line by itself</li>
+                    <li>Make sure the URL is <strong>not</strong> an active hyperlink (i.e., it should just be plain text). Otherwise, highlight the URL and click the "unlink" button in your editor: <img src="<?php echo plugins_url('images/unlink.png', __FILE__) ?>"/></li>
+                    <li>Make sure you did <strong>not</strong> format or align the URL in any way. If your URL still appears in your actual post instead of a video, highlight it and click the "remove formatting" button (formatting can be invisible sometimes): <img src="<?php echo plugins_url('images/erase.png', __FILE__) ?>"/></li>
                 </ul>       
                 <p>
-                    <img style="width: 375px; height: auto;" class="shadow" src="<?php echo plugins_url('images/ownline.jpg', __FILE__) ?>" />
+                    <img style="width: 400px; height: auto;" class="shadow" src="<?php echo plugins_url('images/howto.png', __FILE__) ?>" />
                 </p>
                 <br>
 
@@ -647,7 +659,7 @@ class YouTubePrefs
 
                 <h3>Visual YouTube Wizard - Easily embed without memorizing special codes <span class="pronon">(PRO Users)</span></h3>
                 <p>
-                    More options are available to PRO users! Simply click the PRO editor button <img style="width: 16px;height:16px;" src="<?php echo plugins_url('images/youtubewizard.png', __FILE__) ?>"> to launch the visual embedding wizard. <br>There, you'll just paste the link to the video, click on options to personalize it, and then get the code to paste in your editor. <br>No memorization needed.
+                    More options are available to PRO users! Simply click the PRO editor button <img style="width: 16px;height:16px;" src="<?php echo plugins_url('images/youtubewizard.png', __FILE__) ?>"> to launch the visual embedding wizard. <br>There, you'll just paste the link to the video or playlist, click on options to personalize it, and then get the code to paste in your editor. <br>No memorization needed.
                     <br>
                     <img src="<?php echo plugins_url('images/ssprowizard.jpg', __FILE__) ?>" >
                 </p>
@@ -666,7 +678,7 @@ class YouTubePrefs
                     <p>
                         <input name="<?php echo self::$opt_oldspacing; ?>" id="<?php echo self::$opt_oldspacing; ?>" <?php checked($all[self::$opt_oldspacing], 1); ?> type="checkbox" class="checkbox">
                         <label for="<?php echo self::$opt_oldspacing; ?>">
-                        Continue the spacing style from version 4.0 and older. Those versions required you to manually add spacing above and below your video. Unchecking this will automatically add the spacing for you.
+                            Continue the spacing style from version 4.0 and older. Those versions required you to manually add spacing above and below your video. Unchecking this will automatically add the spacing for you.
                         </label>
                     </p>
                     <p>
@@ -712,6 +724,10 @@ class YouTubePrefs
                     <p>
                         <input name="<?php echo self::$opt_controls; ?>" id="<?php echo self::$opt_controls; ?>" <?php checked($all[self::$opt_controls], 2); ?> type="checkbox" class="checkbox">
                         <label for="<?php echo self::$opt_controls; ?>"><?php _e('Show player controls. Checking this also speeds up page loading (the Flash player will "lazy load," which means it will load the player after clicking play). Uncheck this to hide the player controls for a cleaner look.') ?></label>
+                    </p>
+                    <p>
+                        <input name="<?php echo self::$opt_wmode; ?>" id="<?php echo self::$opt_wmode; ?>" <?php checked($all[self::$opt_wmode], 'opaque'); ?> type="checkbox" class="checkbox">
+                        <label for="<?php echo self::$opt_wmode; ?>"><?php _e('Use "opaque" wmode (uncheck to use "transparent"). Opaque may have higher performance.') ?></label>
                     </p>
 
                     <p class="smallnote orange">Below are PRO features for enhanced performance, privacy, and security (works for even past embed links):</p>
@@ -811,9 +827,9 @@ class YouTubePrefs
                 <h3>Support tips for non-PRO users</h3>
                 We've found that a common support request has been from users that are pasting video links on single lines, as required, but are not seeing the video embed show up. One of these suggestions is usually the fix:
                 <ul class="reglist">
-                    <li>Make sure the url is really on its own line by itself</li>
-                    <li>Make sure the url is not an active hyperlink (i.e., it should just be plain text). Otherwise, highlight the url and click the "unlink" button in your editor: <img src="<?php echo plugins_url('images/unlink.png', __FILE__) ?>"/>.</li>
-                    <li>Make sure you did <strong>not</strong> format or align the url in any way. If your url still appears in your actual post instead of a video, highlight it and click the "remove formatting" button (formatting can be invisible sometimes): <img src="<?php echo plugins_url('images/erase.png', __FILE__) ?>"/></li>
+                    <li>Make sure the URL is really on its own line by itself</li>
+                    <li>Make sure the URL is not an active hyperlink (i.e., it should just be plain text). Otherwise, highlight the URL and click the "unlink" button in your editor: <img src="<?php echo plugins_url('images/unlink.png', __FILE__) ?>"/>.</li>
+                    <li>Make sure you did <strong>not</strong> format or align the URL in any way. If your URL still appears in your actual post instead of a video, highlight it and click the "remove formatting" button (formatting can be invisible sometimes): <img src="<?php echo plugins_url('images/erase.png', __FILE__) ?>"/></li>
                     <li>Finally, there's a slight chance your custom theme is the issue, if you have one. To know for sure, we suggest temporarily switching to one of the default WordPress themes (e.g., "Twenty Thirteen") just to see if your video does appear. If it suddenly works, then your custom theme is the issue. You can switch back when done testing.</li>
                 </ul>                
                 </p>
@@ -828,21 +844,21 @@ class YouTubePrefs
             <script type="text/javascript">
                 var prokeyval;
                 jQuery(document).ready(function($) {
-                                                                                                                                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                                                                                                                                
                     jQuery('#showprokey').click(function(){
                         jQuery('.submitpro').show(500);
                         return false;
                     });
-                                                                                                                                                                                                                                                                                                                                                             
+                                                                                                                                                                                                                                                                                                                                                                     
                     jQuery('#prokeysubmit').click(function(){
                         jQuery(this).attr('disabled', 'disabled');
                         jQuery('#prokeyfailed').hide();
                         jQuery('#prokeysuccess').hide();
                         jQuery('#prokeyloading').show();
                         prokeyval = jQuery('#opt_pro').val();
-                                                                                            
+                                                                                                    
                         var mydomain = escape(window.location.toString());
-                                                                                                                                                                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                                                                                                                                                    
                         var tempscript=document.createElement("script");
                         tempscript.src="//www.embedplus.com/dashboard/wordpress-pro-validatejp.aspx?simple=1&prokey=" + prokeyval + "&domain=" + mydomain;
                         var n=document.getElementsByTagName("head")[0].appendChild(tempscript);
@@ -851,9 +867,9 @@ class YouTubePrefs
                         },500);
                         return false;
                     });
-                                                                                                                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                                                                                                                
                     window.embedplus_record_prokey = function(good){
-                                                                                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                                                                    
                         jQuery.ajax({
                             type : "post",
                             dataType : "json",
@@ -875,11 +891,11 @@ class YouTubePrefs
                                 jQuery('#prokeyloading').hide();
                                 jQuery('#prokeysubmit').removeAttr('disabled');
                             }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
                         });
-                                                                                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                                                                    
                     };
-                                                                                                                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                                                                                                                
                 });
             </script>
             <?php
