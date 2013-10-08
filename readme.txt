@@ -52,7 +52,7 @@ You can also start and end each individual video at particular times. Like the a
 * start - Sets the time (in seconds) to start the video. Example: `http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350&start=20`
 * end - Sets the time (in seconds) to stop the video. Example: `http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350&end=100`
 
-Beyond the above features, you have the option of upgrading to PRO to add enhanced features like a visual embedding wizard (so you can avoid memorizing codes), priority support, and security/performance. PRO users also get **warnings you when YouTube has deleted one of your recent popular videos that you've embedded**. You even get an embedder-centric analytics dashboard that adds view tracking to each of your embeds so that you can answers questions like:
+Beyond the above features, you have the option of upgrading to PRO to add enhanced features like a visual embedding wizard (so you can avoid memorizing codes), priority support, and security/performance. As a PRO user, you also get access to our deleted video alerts to help avoid showing embedded videos that are later removed from YouTube.com. You even get an embedder-centric analytics dashboard that adds view tracking to each of your embeds so that you can answers questions like:
 
 * How much are your visitors actually watching the videos you post?
 * How does the view activity on your site compare to other sites like it?
