@@ -1,19 +1,39 @@
 === YouTube ===
 Contributors: embedplus
 Plugin Name: YouTube Embed
-Tags: youtube playlist, playlists, playlist, wmode, hd, autohd, auto hd, seo, video analytics, basic analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, plugin, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin, https, ssl, secure, no-cookie, cookie, html5, youtube html5
+Tags: responsive, fluid, iphone, mobile, android, tablet, ipad, youtube playlist, playlists, playlist, wmode, hd, autohd, auto hd, seo, video analytics, basic analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin, https, ssl, secure, no-cookie, cookie, html5, youtube html5
 Requires at least: 2.9
 Tested up to: 3.6.1
-Stable tag: 4.5
+Stable tag: 4.6
 License: GPLv3 or later
 
 YouTube embed plugin with basic features and convenient defaults. Upgrade now to add view tracking and access to your very own analytics dashboard.
 
 == Description ==
 
-**New: Now supports playlists! Also, due to frequent requests, we've now enhanced the deleted video warnings to work with past YouTube videos that you embedded with many other YouTube plugins.**
+**New:**
 
-This YouTube embed plugin for WordPress keeps things simple, but it can be upgraded for enhanced performance, privacy and security for you and your visitors. It provides the basic features of the YouTube embedded player and will have you posting videos in seconds after installing it. **All you have to do is simply paste an unformatted YouTube link on its own line.**  Your YouTube embed will then show up when you preview or publish the post. The settings page has plenty of default options that you can automatically apply to all your embedded YouTube videos. Customizations can be also made to each YouTube embed by adding more to the link as shown below:
+* Responsive, fluid video sizes to dynamically fit all screen sizes (smart phone, PC and tablet)
+* Now supports playlists!
+* Due to frequent requests, we've now enhanced the deleted video alerts to work with past YouTube videos that you embedded with many other YouTube plugins.
+
+This YouTube embed plugin for WordPress keeps things simple, but it can be upgraded for enhanced performance, privacy and security for you and your visitors. It provides the basic features of the YouTube embedded player and will have you posting videos in seconds after installing it. **All you have to do is simply paste an unformatted YouTube link on its own line.**  Your YouTube embed will then show up when you preview or publish the post. The settings page has plenty of default options that you can automatically apply to all your embedded YouTube videos:
+
+* Automatically center all your videos
+* Automatically start playing your videos
+* Turn on/off closed captions by default
+* Show/hide annotations by default
+* Loop your videos
+* Modest branding - hide YouTube logo while playing
+* Show/hide related videos at the end
+* Show/hide the video title and other info
+* Use the light theme
+* Force HD quality when available
+* Show/hide player controls
+* Use "opaque" wmode
+* Make your videos responsive so that they dynamically fit in all screen sizes (smart phone, PC and tablet)
+
+Customizations can be also made to each YouTube embed by adding more to the link as shown below. Adding these will override the above global defaults that you set:
 
 * width - Sets the width of your player. If omitted, the default width will be the width of your theme's content. Example: `http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350`
 * height - Sets the height of your player. If omitted, this will be calculated for you automatically. Example: `http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350`
@@ -82,6 +102,9 @@ You can also start and end each individual video at particular times. Like the a
 3. YouTube Embed Screenshot 3: PRO Visual YouTube Wizard
 
 == Changelog ==
+
+= YouTube Embed 4.6 =
+Added optional responsive video layout to fit all screen sizes. (smart phone, PC and tablet)
 
 = YouTube Embed 4.5 =
 Added support for playlists.
