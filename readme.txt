@@ -4,7 +4,7 @@ Plugin Name: YouTube Embed
 Tags: responsive, fluid, iphone, mobile, android, tablet, ipad, youtube playlist, playlists, playlist, wmode, hd, autohd, auto hd, seo, video analytics, basic analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin, https, ssl, secure, no-cookie, cookie, html5, youtube html5
 Requires at least: 2.9
 Tested up to: 3.6.1
-Stable tag: 4.6
+Stable tag: 4.7
 License: GPLv3 or later
 
 YouTube embed plugin with basic features and convenient defaults. Upgrade now to add view tracking and access to your very own analytics dashboard.
@@ -102,6 +102,9 @@ You can also start and end each individual video at particular times. Like the a
 3. YouTube Embed Screenshot 3: PRO Visual YouTube Wizard
 
 == Changelog ==
+
+= YouTube Embed 4.7 =
+Improved separation of PRO and Free features in the UI
 
 = YouTube Embed 4.6 =
 Added optional responsive video layout to fit all screen sizes. (smart phone, PC and tablet)
