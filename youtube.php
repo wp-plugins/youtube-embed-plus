@@ -115,11 +115,8 @@ class YouTubePrefs
             'end'
         );
 
-        if (self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0)
-        {
-            $embedplusmce = new Add_new_tinymce_btn_Youtubeprefs('|', 'embedpluswiz_youtubeprefs', plugins_url() . '/youtube-embed-plus/scripts/embedplus_mce.js');
-            //$epstatsmce_youtubeprefs = new Add_new_tinymce_btn_Youtubeprefs('|', 'embedplusstats_youtubeprefs', plugins_url() . '/youtube-embed-plus/scripts/embedplusstats_mce.js');
-        }
+        $embedplusmce = new Add_new_tinymce_btn_Youtubeprefs('|', 'embedpluswiz_youtubeprefs', plugins_url() . '/youtube-embed-plus/scripts/embedplus_mce.js');
+        //$epstatsmce_youtubeprefs = new Add_new_tinymce_btn_Youtubeprefs('|', 'embedplusstats_youtubeprefs', plugins_url() . '/youtube-embed-plus/scripts/embedplusstats_mce.js');
 
         self::do_ytprefs();
         add_action('admin_menu', 'YouTubePrefs::ytprefs_plugin_menu');
@@ -146,6 +143,7 @@ class YouTubePrefs
 
     static function initoptions()
     {
+        //vanilla defaults
         $_center = 0;
         $_autoplay = get_option('youtubeprefs_autoplay', 0);
         $_cc_load_policy = get_option('youtubeprefs_cc_load_policy', 0);
@@ -167,6 +165,7 @@ class YouTubePrefs
 
         $arroptions = get_option(self::$opt_alloptions);
 
+        //update vanilla to previous settings if exists
         if ($arroptions !== false)
         {
             $_center = self::tryget($arroptions, self::$opt_center, 0);
@@ -561,7 +560,7 @@ class YouTubePrefs
             .orange {color: #f85d00;}
             .bold {font-weight: bold;}
             .grey{color: #888888;}
-            #goprobox {border-radius: 15px; padding: 0px 0px 15px 15px; margin-top: 15px; border: 3px solid #CCE5EC; width: 700px;}
+            #goprobox {border-radius: 15px; padding: 0px 0px 15px 15px; margin-top: 15px; border: 3px solid #CCE5EC; width: 770px;}
             #nonprosupport {border-radius: 15px; padding: 5px 10px 10px 10px;  border: 3px solid #ff6655; width: 800px;}
             .pronon {font-weight: bold; color: #f85d00;}
             ul.reglist li {margin: 0px 0px 0px 30px; list-style: disc outside none;}
@@ -619,7 +618,7 @@ class YouTubePrefs
                             </li>
                         </ul>
                     </div>
-                    <div class="procol" style="width: 240px;">
+                    <div class="procol" style="width: 310px;">
                         <ul class="gopro">
                             <li>
                                 <img src="<?php echo plugins_url('images/prioritysupport.png', __FILE__) ?>">
@@ -634,8 +633,8 @@ class YouTubePrefs
                                 Unlimited PRO upgrades and downloads
                             </li>
                             <li>
-                                <img src="<?php echo plugins_url('images/questionsale.png', __FILE__) ?>">
-                                What else? You tell us!
+                                <img src="<?php echo plugins_url('images/showcase.png', __FILE__) ?>">
+                                A chance to showcase your site right from our homepage
                             </li>
                         </ul>
                     </div>
@@ -665,7 +664,8 @@ class YouTubePrefs
                 </form>
 
             </div>
-            <!--            <div class="smallnote">&nbsp; *One of the upcoming updates will provide all users (Free and PRO) with the ability to hide play controls when the embed is loaded. </div>-->
+            <div class="smallnote">&nbsp; *Upcoming: We've started developing a feature that will recommend YouTube embeds that you might want to include in a post while you're actually<br>
+                writing/editing. It will apply some experimental artificial intelligence techniques on your post content for these recommendations, all at the click of a button. </div>
             <br>
             <form name="form1" method="post" action="" id="ytform">
                 <input type="hidden" name="<?php echo $ytprefs_submitted; ?>" value="Y">
@@ -791,7 +791,6 @@ class YouTubePrefs
                                 <b>(PRO)</b> Speed up your pages containing YouTube videos by using YouTube's HTML5 player instead of the Flash player when available.  It's been noted that using the HTML5 player offers visibly lower page load times than Flash.  Our own internal tests along with data from some beta testers suggest the same thing. In fact, some experiments show that pages (with multiple embeds) can have over four times less size with HTML5 than Flash. <br><span class="italic">So what does this all mean?</span>  Well given that site speed may have an effect on search engine rankings, we suggest checking this option if you typically embed videos in your posts as it may have a site-wide benefit. Our code will even go back and load your older posted videos as HTML5 instead of Flash, where possible.
                             </label>
                         </p>
-
                         <?php
                     }
                     else
@@ -822,8 +821,25 @@ class YouTubePrefs
                     <p class="submit">
                         <input type="submit" name="Submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
                     </p>
-                </div>
+                    <?php
+                    if ($haspro)
+                    {
+                        ?>
+                        <p>
+                            <b>(PRO)</b> We'll soon be promoting this plugin right from our <a target="_blank" href="<?php echo self::$epbase; ?>">embedplus.com</a> homepage. For this, we'll be linking to examples of sites using this plugin. It will also give you a chance to promote your quality site.  <a id="showcase-validate" class="button-primary" target="_blank">Click this button</a> to automatically include your site for evaluation.  <span class="italic">Note: We've received multiple requests as to what kind of inbound link to your blog. It will be a natural follow link that will count :) </span>
+                        </p>
+                        <?php
+                    }
+                    else
+                    {
+                        ?>
 
+                        <p>
+                            <span class="pronon">(PRO Users)</span> We'll soon be promoting this plugin right from our <a target="_blank" href="<?php echo self::$epbase; ?>">embedplus.com</a> homepage. For this, we'll be linking to examples of sites using this plugin. It will also give you a chance to promote your quality site.   <a class="button-primary" disabled>Click this button</a> to automatically include your site for evaluation.  <span class="italic">Note: We've received multiple requests as to what kind of inbound link to your blog. It will be a natural follow link that will count :)</span>
+                        </p>
+                    <?php } ?>
+                </div>
+                <br>
                 <h3>
                     <?php _e("How To Override Defaults / Other Options") ?> <span class="pronon">(For Free and PRO Users)</span>
                 </h3>
@@ -881,22 +897,26 @@ class YouTubePrefs
             </div>
             <script type="text/javascript">
                 var prokeyval;
+                var mydomain = escape("http://" + window.location.host.toString());
+
                 jQuery(document).ready(function($) {
-                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                
+                    jQuery("#showcase-validate").click(function() {
+                        window.open("<?php echo self::$epbase . "/showcase-validate.aspx?prokey=" . self::$alloptions[self::$opt_pro] ?>" + "&domain=" + mydomain);
+                    });
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
                     jQuery('#showprokey').click(function(){
                         jQuery('.submitpro').show(500);
                         return false;
                     });
-                                                                                                                                                                                                                                                                                                                                                                                                     
+                                                                                                                                                                                                                                                                                                                                                                                                                                                             
                     jQuery('#prokeysubmit').click(function(){
                         jQuery(this).attr('disabled', 'disabled');
                         jQuery('#prokeyfailed').hide();
                         jQuery('#prokeysuccess').hide();
                         jQuery('#prokeyloading').show();
                         prokeyval = jQuery('#opt_pro').val();
-                                                                                                                                    
-                        var mydomain = escape(window.location.toString());
-                                                                                                                                                                                                                                                                                                                                                                                                                                    
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
                         var tempscript=document.createElement("script");
                         tempscript.src="//www.embedplus.com/dashboard/wordpress-pro-validatejp.aspx?simple=1&prokey=" + prokeyval + "&domain=" + mydomain;
                         var n=document.getElementsByTagName("head")[0].appendChild(tempscript);
@@ -905,9 +925,9 @@ class YouTubePrefs
                         },500);
                         return false;
                     });
-                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        
                     window.embedplus_record_prokey = function(good){
-                                                                                                                                                                                                                                                                                                                                                    
+                                                                                                                                                                                                                                                                                                                                                                                                            
                         jQuery.ajax({
                             type : "post",
                             dataType : "json",
@@ -929,11 +949,11 @@ class YouTubePrefs
                                 jQuery('#prokeyloading').hide();
                                 jQuery('#prokeysubmit').removeAttr('disabled');
                             }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
                         });
-                                                                                                                                                                                                                                                                                                                                                    
+                                                                                                                                                                                                                                                                                                                                                                                                            
                     };
-                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        
                 });
             </script>
             <?php
@@ -1074,6 +1094,7 @@ class YouTubePrefs
             var epbasesite = '<?php echo YouTubePrefs::$epbase; ?>';
             var epversion = '<?php echo YouTubePrefs::$version; ?>';
             var myytdefaults = '<?php echo $myytdefaults; ?>';
+            var eppluginadminurl = '<?php echo admin_url('admin.php?page=youtube-my-preferences'); ?>';
         </script>
         <?php
     }
