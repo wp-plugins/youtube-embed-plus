@@ -3,7 +3,7 @@
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com
   Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add view tracking and access to your very own analytics dashboard.
-  Version: 4.7
+  Version: 4.8
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
@@ -32,7 +32,7 @@
 class YouTubePrefs
 {
 
-    public static $version = '4.7';
+    public static $version = '4.8';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -120,7 +120,7 @@ class YouTubePrefs
 
         self::do_ytprefs();
         add_action('admin_menu', 'YouTubePrefs::ytprefs_plugin_menu');
-        if (!is_admin() && self::$alloptions[self::$opt_responsive] == 1)
+        if (!is_admin())
         {
             add_action('wp_print_scripts', array('YouTubePrefs', 'jsvars'));
             add_action('wp_enqueue_scripts', array('YouTubePrefs', 'fitvids'));
@@ -129,9 +129,15 @@ class YouTubePrefs
 
     static function jsvars()
     {
+        $responsiveselector = '["iframe.__youtube_prefs_widget__"]';
+        if (self::$alloptions[self::$opt_responsive] == 1)
+        {
+            $responsiveselector = '["iframe[src*=\'youtube.com\']","iframe[src*=\'youtube-nocookie.com\']"]';
+        }
         ?>
         <script type="text/javascript">
             var eppathtoscripts = "<?php echo plugins_url('scripts/', __FILE__); ?>";
+            var epresponsiveselector = <?php echo $responsiveselector; ?>;
         </script>
         <?php
     }
@@ -238,17 +244,34 @@ class YouTubePrefs
     {
         if (!is_admin())
         {
-            add_filter('the_content', 'YouTubePrefs::apply_prefs', 1);
+            add_filter('the_content', 'YouTubePrefs::apply_prefs_content', 1);
+            add_filter('widget_text', 'YouTubePrefs::apply_prefs_widget', 1);
         }
     }
 
-    public static function apply_prefs($content)
+    public static function apply_prefs_content($content)
     {
-        $content = preg_replace_callback(self::$ytregex, "YouTubePrefs::get_html", $content);
+        $content = preg_replace_callback(self::$ytregex, "YouTubePrefs::get_html_content", $content);
         return $content;
     }
 
-    public static function get_html($m)
+    public static function apply_prefs_widget($content)
+    {
+        $content = preg_replace_callback(self::$ytregex, "YouTubePrefs::get_html_widget", $content);
+        return $content;
+    }
+    
+    public static function get_html_content($m)
+    {
+        return self::get_html($m, true);
+    }    
+
+    public static function get_html_widget($m)
+    {
+        return self::get_html($m, false);
+    }    
+
+    public static function get_html($m, $iscontent)
     {
         $link = trim(preg_replace('/&amp;/i', '&', $m[0]));
         $link = preg_replace('/\s/', '', $link);
@@ -300,8 +323,7 @@ class YouTubePrefs
 
         $code1 = '<iframe ' . $centercode . ' id="_ytid_' . rand(10000, 99999) . '" width="' . self::$defaultwidth . '" height="' . self::$defaultheight .
                 '" src="' . $linkscheme . '://www.' . $youtubebaseurl . '.com/embed/' . $linkparams['v'] . '?';
-        $code2 = '" frameborder="0" allowfullscreen type="text/html" class="__youtube_prefs__"></iframe>';
-
+        $code2 = '" frameborder="0" allowfullscreen type="text/html" class="__youtube_prefs__' . ($iscontent ? '' : ' __youtube_prefs_widget__') . '"></iframe>';
 
         $origin = '';
 
