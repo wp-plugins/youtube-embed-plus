@@ -1,0 +1,23 @@
+.wp_themeSkin span.mce_embedpluswiz_youtubeprefs, span.mce_embedpluswiz_youtubeprefs
+{
+    background: transparent url("../images/wizbuttonoff.png") no-repeat scroll center center !important;
+}
+
+.wp_themeSkin span.mce_embedpluswiz_youtubeprefs:hover, span.mce_embedpluswiz_youtubeprefs:hover
+{
+    background-image: url("../images/wizbutton.png") !important;
+}
+
+.wp_themeSkin span.mce_embedplusstats, span.mce_embedplusstats,
+.wp_themeSkin span.mce_embedplusstats_youtubeprefs, span.mce_embedplusstats_youtubeprefs
+
+{
+    background: transparent url("../images/btn_embedplusstatsoff.png") no-repeat scroll center center !important;
+}
+
+.wp_themeSkin span.mce_embedplusstats:hover, span.mce_embedplusstats:hover,
+.wp_themeSkin span.mce_embedplusstats_youtubeprefs:hover, span.mce_embedplusstats_youtubeprefs:hover
+{
+    background-image: url("../images/btn_embedplusstats.png") !important;
+}
+
