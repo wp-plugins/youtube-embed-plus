@@ -391,7 +391,8 @@ class YouTubePrefs
                 $content_width = $GLOBALS['content_width'];
 
             self::$defaultwidth = $urlkvp['width'] ? $urlkvp['width'] : (self::$optembedwidth ? self::$optembedwidth : ($content_width ? $content_width : 480));
-            self::$defaultheight = $urlkvp['height'] ? $urlkvp['height'] + 30 : self::get_aspect_height($url, $urlkvp);
+            //self::$defaultheight = $urlkvp['height'] ? $urlkvp['height'] + 28 : self::get_aspect_height($url, $urlkvp);
+            self::$defaultheight = $urlkvp['height'] ? $urlkvp['height'] : self::get_aspect_height($url, $urlkvp);
         }
     }
 
@@ -416,8 +417,8 @@ class YouTubePrefs
             }
         }
 
-        //add 30 for YouTube's own bar
-        return $aspectheight + 30;
+        //add 28 for YouTube's own bar
+        return $aspectheight + 28;
     }
 
     public static function ytprefs_plugin_menu()
