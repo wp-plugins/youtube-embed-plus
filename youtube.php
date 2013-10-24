@@ -3,7 +3,7 @@
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com
   Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add view tracking and access to your very own analytics dashboard.
-  Version: 4.8
+  Version: 5.0
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
@@ -32,7 +32,7 @@
 class YouTubePrefs
 {
 
-    public static $version = '4.8';
+    public static $version = '5.0';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -60,7 +60,7 @@ class YouTubePrefs
     public static $alloptions = null;
     public static $yt_options = array();
     //public static $epbase = 'http://localhost:2346';
-    public static $epbase = 'http://www.embedplus.com';
+    public static $epbase = '//www.embedplus.com';
     /*
       color
       autohide
@@ -83,6 +83,11 @@ class YouTubePrefs
 
     public function __construct()
     {
+        If (is_plugin_active('embedplus-for-wordpress/embedplus.php'))
+        {
+            add_action('admin_notices', array("YouTubePrefs", "double_plugin_warning"));
+        }
+
         self::$alloptions = get_option(self::$opt_alloptions);
         if (self::$alloptions == false || version_compare(self::$alloptions[self::$opt_version], self::$version, '<'))
         {
@@ -115,7 +120,8 @@ class YouTubePrefs
             'end'
         );
 
-        $embedplusmce = new Add_new_tinymce_btn_Youtubeprefs('|', 'embedpluswiz_youtubeprefs', plugins_url() . '/youtube-embed-plus/scripts/embedplus_mce.js');
+        $embedplusmce_wiz = new Add_new_tinymce_btn_Youtubeprefs('|', 'embedplus_youtubeprefs_wiz', plugins_url() . '/youtube-embed-plus/scripts/embedplus_mce_wiz.js');
+        $embedplusmce_prefs = new Add_new_tinymce_btn_Youtubeprefs('|', 'embedplus_youtubeprefs', plugins_url() . '/youtube-embed-plus/scripts/embedplus_mce_prefs.js');
         //$epstatsmce_youtubeprefs = new Add_new_tinymce_btn_Youtubeprefs('|', 'embedplusstats_youtubeprefs', plugins_url() . '/youtube-embed-plus/scripts/embedplusstats_mce.js');
 
         self::do_ytprefs();
@@ -125,6 +131,20 @@ class YouTubePrefs
             add_action('wp_print_scripts', array('YouTubePrefs', 'jsvars'));
             add_action('wp_enqueue_scripts', array('YouTubePrefs', 'fitvids'));
         }
+    }
+
+    function double_plugin_warning()
+    {
+        ?>
+<style type="text/css">
+    .embedpluswarning img{
+        vertical-align: text-bottom;
+    }
+</style>
+        <div class="error">
+            <p class="embedpluswarning">Seems like you have two different YouTube plugins by the EmbedPlus Team installed: <b><img src="<?php echo plugins_url('images/youtubeicon16.png', __FILE__) ?>" /> YouTube</b> and <b><img src="<?php echo plugins_url('images/btn_embedpluswiz.png', __FILE__) ?>" /> Advanced YouTube Embed.</b> So that they don't conflict with each other, we suggest only keeping the one you prefer.</p>
+        </div>
+        <?php
     }
 
     static function jsvars()
@@ -260,16 +280,16 @@ class YouTubePrefs
         $content = preg_replace_callback(self::$ytregex, "YouTubePrefs::get_html_widget", $content);
         return $content;
     }
-    
+
     public static function get_html_content($m)
     {
         return self::get_html($m, true);
-    }    
+    }
 
     public static function get_html_widget($m)
     {
         return self::get_html($m, false);
-    }    
+    }
 
     public static function get_html($m, $iscontent)
     {
@@ -427,12 +447,12 @@ class YouTubePrefs
 
         if (self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0)
         {
-            add_menu_page('YouTube Settings', 'YouTube PRO', 'manage_options', 'youtube-my-preferences', 'YouTubePrefs::ytprefs_show_options', plugins_url('images/youtubeicon16.png', __FILE__), '10.00392854349');
-            add_menu_page('YouTube Analytics Dashboard', 'PRO Analytics', 'manage_options', 'youtube-ep-analytics-dashboard', 'YouTubePrefs::epstats_show_options', plugins_url('images/epstats16.png', __FILE__), '10.00492884349');
+            add_menu_page('YouTube Settings', 'YouTube PRO', 'manage_options', 'youtube-my-preferences', 'YouTubePrefs::ytprefs_show_options', plugins_url('images/youtubeicon16.png', __FILE__), '10.000392854349');
+            add_menu_page('YouTube Analytics Dashboard', 'PRO Analytics', 'manage_options', 'youtube-ep-analytics-dashboard', 'YouTubePrefs::epstats_show_options', plugins_url('images/epstats16.png', __FILE__), '10.000492884349');
         }
         else
         {
-            add_menu_page('YouTube Settings', 'YouTube Free', 'manage_options', 'youtube-my-preferences', 'YouTubePrefs::ytprefs_show_options', plugins_url('images/youtubeicon16.png', __FILE__), '10.00392854349');
+            add_menu_page('YouTube Settings', 'YouTube Free', 'manage_options', 'youtube-my-preferences', 'YouTubePrefs::ytprefs_show_options', plugins_url('images/youtubeicon16.png', __FILE__), '10.000392854349');
             add_submenu_page('youtube-my-preferences', '', '', 'manage_options', 'youtube-my-preferences', 'YouTubePrefs::ytprefs_show_options');
             add_submenu_page('youtube-my-preferences', 'YouTube PRO', 'YouTube PRO', 'manage_options', 'youtube-ep-analytics-dashboard', 'YouTubePrefs::epstats_show_options');
         }
@@ -923,23 +943,23 @@ class YouTubePrefs
                 var mydomain = escape("http://" + window.location.host.toString());
 
                 jQuery(document).ready(function($) {
-                                                
+                                                                                                                                        
                     jQuery("#showcase-validate").click(function() {
                         window.open("<?php echo self::$epbase . "/showcase-validate.aspx?prokey=" . self::$alloptions[self::$opt_pro] ?>" + "&domain=" + mydomain);
                     });
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
                     jQuery('#showprokey').click(function(){
                         jQuery('.submitpro').show(500);
                         return false;
                     });
-                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
                     jQuery('#prokeysubmit').click(function(){
                         jQuery(this).attr('disabled', 'disabled');
                         jQuery('#prokeyfailed').hide();
                         jQuery('#prokeysuccess').hide();
                         jQuery('#prokeyloading').show();
                         prokeyval = jQuery('#opt_pro').val();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
                         var tempscript=document.createElement("script");
                         tempscript.src="//www.embedplus.com/dashboard/wordpress-pro-validatejp.aspx?simple=1&prokey=" + prokeyval + "&domain=" + mydomain;
                         var n=document.getElementsByTagName("head")[0].appendChild(tempscript);
@@ -948,9 +968,9 @@ class YouTubePrefs
                         },500);
                         return false;
                     });
-                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
                     window.embedplus_record_prokey = function(good){
-                                                                                                                                                                                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
                         jQuery.ajax({
                             type : "post",
                             dataType : "json",
@@ -972,11 +992,11 @@ class YouTubePrefs
                                 jQuery('#prokeyloading').hide();
                                 jQuery('#prokeysubmit').removeAttr('disabled');
                             }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
                         });
-                                                                                                                                                                                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
                     };
-                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
                 });
             </script>
             <?php
@@ -1118,6 +1138,47 @@ class YouTubePrefs
             var epversion = '<?php echo YouTubePrefs::$version; ?>';
             var myytdefaults = '<?php echo $myytdefaults; ?>';
             var eppluginadminurl = '<?php echo admin_url('admin.php?page=youtube-my-preferences'); ?>';
+
+
+            // Create IE + others compatible event handler
+            var epeventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
+            var epeventer = window[epeventMethod];
+            var epmessageEvent = epeventMethod == "attachEvent" ? "onmessage" : "message";
+
+            // Listen to message from child window
+            epeventer(epmessageEvent,function(e)
+            {
+                var embedcode = "";
+                try
+                {
+                    if (e.data.indexOf("youtubeembedplus") == 0)
+                    {
+                        embedcode = "<p>" + e.data.split("|")[1] + "</p>";
+                        
+//                        window.tinyMCE.execInstanceCommand(
+//                        window.tinyMCE.activeEditor.id,
+//                        'restoreSelection',
+//                        false,
+//                        null);
+                        
+                        window.tinyMCE.execInstanceCommand(
+                        window.tinyMCE.activeEditor.id,
+                        'mceInsertContent',
+                        false,
+                        embedcode);
+                        //wintoclose = window.tinyMCE.activeEditor.windowManager;
+                        jQuery(".mceClose, #mceModalBlocker").mousedown().click();
+                    }
+                }
+                catch (err)
+                {
+                    if (typeof console != 'undefined') console.log(err.message);
+                }
+                                                    
+                                
+            },false);
+                                                        
         </script>
         <?php
     }
+    
