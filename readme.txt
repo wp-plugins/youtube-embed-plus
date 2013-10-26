@@ -70,7 +70,7 @@ See more details after installing. Enjoy!
 1. To embed videos in your post, start pasting the links with any desired additional codes needed for your YouTube embed (see below section for additional codes). Make sure each link is on its own line. If you don't know exactly which video you want to embed, use the free built-in search feature to find and insert one.
 1. To get an analytics dashboard and many other premium features, [sign up for one of the options here >>](https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx)
 
-Additional codes (adding these will override the default settings in the admin):
+**Additional codes (adding these will override the default settings in the admin):**
 
 * width - Sets the width of your player. If omitted, the default width will be the width of your theme's content. Example: `http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350`
 * height - Sets the height of your player. If omitted, this will be calculated for you automatically. Example: `http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350`
@@ -100,7 +100,7 @@ You can also start and end each individual video at particular times. Like the a
 
 1. YouTube Embed Screenshot 1: Paste a YouTube link on its own line and it will become a YouTube embed on your website.
 2. YouTube Embed Screenshot 2: YouTube's admin settings.
-3. YouTube Embed Screenshot 3: PRO Visual YouTube Wizard
+3. YouTube Embed Screenshot 3: PRO Visual YouTube Wizard (customize your embed)
 
 == Changelog ==
 
