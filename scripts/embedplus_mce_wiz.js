@@ -13,7 +13,7 @@
                     window.ytembedplus_wizard_window =
                     ed.windowManager.open({
                         title : "Visual YouTube Search Tool and Wizard - An easier embedding option",
-                        file : epbasesite + '/wpembedcode-simple.aspx?version=' + epversion + '&blogwidth=' + epblogwidth + '&domain=' + escape(window.location.toString()) + '&prokey=' + escape(epprokey) + '&myytdefaults=' + escape(myytdefaults),
+                        file : epbasesite + '/wpembedcode-simple-search.aspx?pluginversion=' + epversion + '&blogwidth=' + epblogwidth + '&domain=' + escape(window.location.toString()) + '&prokey=' + escape(epprokey) + '&myytdefaults=' + escape(myytdefaults),
                         width : 950,
                         height : modalh,
                         inline : true,

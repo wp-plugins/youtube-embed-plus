@@ -1,22 +1,22 @@
 === YouTube ===
 Contributors: embedplus
 Plugin Name: YouTube Embed
-Tags: widget, sidebar, responsive, fluid, iphone, mobile, android, tablet, ipad, youtube playlist, playlists, playlist, wmode, hd, autohd, auto hd, seo, video analytics, basic analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin, https, ssl, secure, no-cookie, cookie, html5, youtube html5
+Tags: reddit, google+, google plus, comments, search, widget, sidebar, responsive, fluid, iphone, mobile, android, tablet, ipad, youtube playlist, playlists, playlist, wmode, hd, autohd, auto hd, seo, video analytics, analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin, https, ssl, secure, no-cookie, cookie, html5, youtube html5
 Requires at least: 2.9
-Tested up to: 3.6.1
-Stable tag: 4.8
+Tested up to: 3.7
+Stable tag: 5.0
 License: GPLv3 or later
 
 YouTube embed plugin with basic features and convenient defaults. Upgrade now to add view tracking and access to your very own analytics dashboard.
 
 == Description ==
 
-**New:**
+**Celebrating over 200,000 downloads with new features:**
 
-* Embed URLs now work inside sidebar text widgets
-* Responsive, fluid video sizes to dynamically fit all screen sizes (smart phone, PC and tablet)
-* Supports playlists
-* Due to frequent requests, we've now enhanced the deleted video alerts to work with past YouTube videos that you embedded with many other YouTube plugins.
+* Built-in YouTube video search, viewing, and insertion right from your editor.
+* Analytics and deleted video alerts work with past YouTube videos that you embedded with many other YouTube plugins.
+* Review the latest web discussions about a video you want to embed before embedding it.
+* And more...
 
 This YouTube embed plugin for WordPress keeps things simple, but it can be upgraded for enhanced performance, privacy and security for you and your visitors. It provides the basic features of the YouTube embedded player and will have you posting videos in seconds after installing it. **All you have to do is simply paste an unformatted YouTube link on its own line.**  Your YouTube embed will then show up when you preview or publish the post. The settings page has plenty of default options that you can automatically apply to all your embedded YouTube videos:
 
@@ -53,7 +53,7 @@ You can also start and end each individual video at particular times. Like the a
 * start - Sets the time (in seconds) to start the video. Example: `http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350&start=20`
 * end - Sets the time (in seconds) to stop the video. Example: `http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350&end=100`
 
-Beyond the above features, you have the option of upgrading to PRO to add enhanced features like a visual embedding wizard (so you can avoid memorizing codes), priority support, and security/performance. As a PRO user, you also get access to our deleted video alerts to help avoid showing embedded videos that are later removed from YouTube.com. You even get an embedder-centric analytics dashboard that adds view tracking to each of your embeds so that you can answers questions like:
+Beyond the above features, you have the option of upgrading to PRO to add enhanced features like the full visual embedding wizard (so you can avoid memorizing codes), priority support, and security/performance. As a PRO user, you also get access to our deleted video alerts to help avoid showing embedded videos that are later removed from YouTube.com. You even get an embedder-centric analytics dashboard that adds view tracking to each of your embeds so that you can answers questions like:
 
 * How much are your visitors actually watching the videos you post?
 * How does the view activity on your site compare to other sites like it?
@@ -67,15 +67,8 @@ See more details after installing. Enjoy!
 1. Use the WordPress plugin installer to install the plugin.  Alternatively, you can just extract the folder in our download package and upload it to your plugin directory.
 1. Access the Plugins admin menu to activate the YouTube embed plugin.
 1. Make your default settings after clicking the new YouTube menu item that shows up in your admin panel.
-1. In your editor, start pasting the links with any desired additional codes needed for your YouTube embed. Make sure the link is on its own line.
-1. To get an analytics dashboard, [sign up for one of the options here >>](https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx)
-
-Always follow these rules when pasting a link:
-
-* Make sure the url is really on its own line by itself.
-* Make sure the url is not an active hyperlink (i.e., it should just be plain text). Otherwise, highlight the url and click the "unlink" button in your editor.
-* Make sure you did **not** format or align the url in any way. If your url still appears in your actual post instead of a video, highlight it and click the "remove formatting" button (formatting can be invisible sometimes).
-* Finally, there's a slight chance your custom theme is the issue, if you have one. To know for sure, we suggest temporarily switching to one of the default WordPress themes (e.g., "Twenty Thirteen") just to see if your video does appear. If it suddenly works, then your custom theme is the issue. You can switch back when done testing.
+1. To embed videos in your post, start pasting the links with any desired additional codes needed for your YouTube embed (see below section for additional codes). Make sure each link is on its own line. If you don't know exactly which video you want to embed, use the free built-in search feature to find and insert one.
+1. To get an analytics dashboard and many other premium features, [sign up for one of the options here >>](https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx)
 
 Additional codes (adding these will override the default settings in the admin):
 
@@ -96,6 +89,13 @@ You can also start and end each individual video at particular times. Like the a
 * start - Sets the time (in seconds) to start the video. Example: `http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350&start=20`
 * end - Sets the time (in seconds) to stop the video. Example: `http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350&end=100`
 
+**Always follow these rules when pasting a link:**
+
+* Make sure the url is really on its own line by itself.
+* Make sure the url is not an active hyperlink (i.e., it should just be plain text). Otherwise, highlight the url and click the "unlink" button in your editor.
+* Make sure you did **not** format or align the url in any way. If your url still appears in your actual post instead of a video, highlight it and click the "remove formatting" button (formatting can be invisible sometimes).
+* Finally, there's a slight chance your custom theme is the issue, if you have one. To know for sure, we suggest temporarily switching to one of the default WordPress themes (e.g., "Twenty Thirteen") just to see if your video does appear. If it suddenly works, then your custom theme is the issue. You can switch back when done testing.
+
 == Screenshots ==
 
 1. YouTube Embed Screenshot 1: Paste a YouTube link on its own line and it will become a YouTube embed on your website.
@@ -103,6 +103,11 @@ You can also start and end each individual video at particular times. Like the a
 3. YouTube Embed Screenshot 3: PRO Visual YouTube Wizard
 
 == Changelog ==
+
+= YouTube Embed 5.0 =
+Built-in YouTube video search, viewing, and insertion right from your editor tab (for all users).
+The ability to review the latest web discussions about a video you want to embed before embedding it (PRO users).
+Other minor optimizations.
 
 = YouTube Embed 4.8 =
 Works when pasting embed link in sidebar text widgets
