@@ -3,7 +3,7 @@
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add view tracking and access to your very own analytics dashboard.
-  Version: 5.0
+  Version: 5.1
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
@@ -32,7 +32,7 @@
 class YouTubePrefs
 {
 
-    public static $version = '5.0';
+    public static $version = '5.1';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -56,6 +56,9 @@ class YouTubePrefs
     public static $opt_pro = 'pro';
     public static $opt_oldspacing = 'oldspacing';
     public static $opt_responsive = 'responsive';
+    public static $opt_defaultdims = 'defaultdims';
+    public static $opt_defaultwidth = 'width';
+    public static $opt_defaultheight = 'height';
     public static $opt_alloptions = 'youtubeprefs_alloptions';
     public static $alloptions = null;
     public static $yt_options = array();
@@ -196,6 +199,9 @@ class YouTubePrefs
         $_oldspacing = 1;
         $_responsive = 0;
         $_wmode = 'opaque';
+        $_defaultdims = 0;
+        $_defaultwidth = '';
+        $_defaultheight = '';
 
         $arroptions = get_option(self::$opt_alloptions);
 
@@ -220,6 +226,9 @@ class YouTubePrefs
             $_controls = self::tryget($arroptions, self::$opt_controls, 2);
             $_oldspacing = self::tryget($arroptions, self::$opt_oldspacing, 1);
             $_responsive = self::tryget($arroptions, self::$opt_responsive, 0);
+            $_defaultdims = self::tryget($arroptions, self::$opt_defaultdims, 0);
+            $_defaultwidth = self::tryget($arroptions, self::$opt_defaultwidth, '');
+            $_defaultheight = self::tryget($arroptions, self::$opt_defaultheight, '');
         }
         else
         {
@@ -245,7 +254,10 @@ class YouTubePrefs
             self::$opt_nocookie => $_nocookie,
             self::$opt_controls => $_controls,
             self::$opt_oldspacing => $_oldspacing,
-            self::$opt_responsive => $_responsive
+            self::$opt_responsive => $_responsive,
+            self::$opt_defaultdims => $_defaultdims,
+            self::$opt_defaultwidth => $_defaultwidth,
+            self::$opt_defaultheight => $_defaultheight
         );
 
         update_option(self::$opt_alloptions, $all);
@@ -384,8 +396,7 @@ class YouTubePrefs
             }
         }
 
-        $code = $code1 . $finalsrc . $code2;
-
+        $code = $code1 . $finalsrc . $code2; //. '<!--' . $m[0] . '-->';
         // reset static vals for next embed
         self::$defaultheight = null;
         self::$defaultwidth = null;
@@ -418,9 +429,9 @@ class YouTubePrefs
             if (empty($content_width))
                 $content_width = $GLOBALS['content_width'];
 
-            self::$defaultwidth = $urlkvp['width'] ? $urlkvp['width'] : (self::$optembedwidth ? self::$optembedwidth : ($content_width ? $content_width : 480));
+            self::$defaultwidth = $urlkvp['width'] ? $urlkvp['width'] : (self::$alloptions[self::$opt_defaultwidth] ? self::$alloptions[self::$opt_defaultwidth] : (self::$optembedwidth ? self::$optembedwidth : ($content_width ? $content_width : 480)));
             //self::$defaultheight = $urlkvp['height'] ? $urlkvp['height'] + 28 : self::get_aspect_height($url, $urlkvp);
-            self::$defaultheight = $urlkvp['height'] ? $urlkvp['height'] : self::get_aspect_height($url, $urlkvp);
+            self::$defaultheight = $urlkvp['height'] ? $urlkvp['height'] : (self::$alloptions[self::$opt_defaultheight] ? self::$alloptions[self::$opt_defaultheight] : self::get_aspect_height($url, $urlkvp));
         }
     }
 
@@ -589,6 +600,29 @@ class YouTubePrefs
             $new_options[self::$opt_nocookie] = isset($_POST[self::$opt_nocookie]) && $_POST[self::$opt_nocookie] == (true || 'on') ? 1 : 0;
             $new_options[self::$opt_oldspacing] = isset($_POST[self::$opt_oldspacing]) && $_POST[self::$opt_oldspacing] == (true || 'on') ? 1 : 0;
             $new_options[self::$opt_responsive] = isset($_POST[self::$opt_responsive]) && $_POST[self::$opt_responsive] == (true || 'on') ? 1 : 0;
+            $new_options[self::$opt_defaultdims] = isset($_POST[self::$opt_defaultdims]) && $_POST[self::$opt_defaultdims] == (true || 'on') ? 1 : 0;
+
+            $_defaultwidth = '';
+            try
+            {
+                $_defaultwidth = is_numeric(trim($_POST[self::$opt_defaultwidth])) ? intval(trim($_POST[self::$opt_defaultwidth])) : $_defaultwidth;
+            }
+            catch (Exception $ex)
+            {
+                
+            }
+            $new_options[self::$opt_defaultwidth] = $_defaultwidth;
+
+            $_defaultheight = '';
+            try
+            {
+                $_defaultheight = is_numeric(trim($_POST[self::$opt_defaultheight])) ? intval(trim($_POST[self::$opt_defaultheight])) : $_defaultheight;
+            }
+            catch (Exception $ex)
+            {
+                
+            }
+            $new_options[self::$opt_defaultheight] = $_defaultheight;
 
             $all = $new_options + $all;
 
@@ -641,6 +675,8 @@ class YouTubePrefs
             #goprobox h3 {font-size: 13px;}
             .chx p {margin: 0px 0px 5px 0px;}
             .cuz {background-image: linear-gradient(to bottom,#4983FF,#0C5597) !important; color: #ffffff;}
+            #boxdefaultdims {font-weight: bold; padding: 0px 10px; <?php echo $all[self::$opt_defaultdims] ? '' : 'display: none;' ?>}
+            .textinput {border-width: 2px !important;}
         </style>
 
         <div class="ytindent">
@@ -849,6 +885,16 @@ class YouTubePrefs
                         <label for="<?php echo self::$opt_responsive; ?>"><?php _e('Make my videos responsive so that they dynamically fit in all screen sizes. (smart phone, PC and tablet)') ?></label>
                     </p>
 
+                    <p>
+                        <input name="<?php echo self::$opt_defaultdims; ?>" id="<?php echo self::$opt_defaultdims; ?>" <?php checked($all[self::$opt_defaultdims], 1); ?> type="checkbox" class="checkbox">                        
+                        <span id="boxdefaultdims">
+                            Width: <input type="text" name="<?php echo self::$opt_defaultwidth; ?>" id="<?php echo self::$opt_defaultwidth; ?>" value="<?php echo trim($all[self::$opt_defaultwidth]); ?>" class="textinput" style="width: 50px;"> &nbsp;
+                            Height: <input type="text" name="<?php echo self::$opt_defaultheight; ?>" id="<?php echo self::$opt_defaultheight; ?>" value="<?php echo trim($all[self::$opt_defaultheight]); ?>" class="textinput" style="width: 50px;">
+                        </span>
+
+                        <label for="<?php echo self::$opt_defaultdims; ?>"><?php _e('Make my videos have a default size (NOTE: Checking the responsive option will override this size setting) ') ?></label>
+                    </p>
+
                     <p class="smallnote orange">Below are PRO features for enhanced performance, privacy, and security (works for even past embed links):</p>
                     <?php
                     if ($haspro)
@@ -900,7 +946,7 @@ class YouTubePrefs
                     ?>
 
                     <p class="submit">
-                        <input type="submit" name="Submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
+                        <input type="submit" onclick="return savevalidate();" name="Submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
                     </p>
                     <?php
                     if ($haspro)
@@ -977,27 +1023,59 @@ class YouTubePrefs
 
             </div>
             <script type="text/javascript">
+                                                
+                function savevalidate()
+                {
+                    var valid = true;
+                                                    
+                    if (jQuery("#<?php echo self::$opt_defaultdims; ?>").is(":checked"))
+                    {
+                        if (!(jQuery.isNumeric(jQuery.trim(jQuery("#<?php echo self::$opt_defaultwidth; ?>").val())) && 
+                            jQuery.isNumeric(jQuery.trim(jQuery("#<?php echo self::$opt_defaultheight; ?>").val()))))
+                        {
+                            alert("Please enter valid numbers for default height and width, or uncheck the option.");
+                            jQuery("#boxdefaultdims input").css("background-color", "#ffcccc").css("border", "2px solid #000000");
+                            valid = false;
+                        }
+                    }
+                                                    
+                                                    
+                    return valid;
+                }
+                                                
                 var prokeyval;
                 var mydomain = escape("http://" + window.location.host.toString());
 
                 jQuery(document).ready(function($) {
-                                                                                                                                                                                        
+                    jQuery('#<?php echo self::$opt_defaultdims; ?>').change(function()
+                    {
+                        if(jQuery(this).is(":checked"))
+                        {
+                            jQuery("#boxdefaultdims").show(500);
+                        }
+                        else
+                        {
+                            jQuery("#boxdefaultdims").hide(500);
+                        }
+                                                                                                
+                    });
+                                                                                                                                                                                                                                                                                        
                     jQuery("#showcase-validate").click(function() {
                         window.open("<?php echo self::$epbase . "/showcase-validate.aspx?prokey=" . self::$alloptions[self::$opt_pro] ?>" + "&domain=" + mydomain);
                     });
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
                     jQuery('#showprokey').click(function(){
                         jQuery('.submitpro').show(500);
                         return false;
                     });
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
                     jQuery('#prokeysubmit').click(function(){
                         jQuery(this).attr('disabled', 'disabled');
                         jQuery('#prokeyfailed').hide();
                         jQuery('#prokeysuccess').hide();
                         jQuery('#prokeyloading').show();
                         prokeyval = jQuery('#opt_pro').val();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
                         var tempscript=document.createElement("script");
                         tempscript.src="//www.embedplus.com/dashboard/wordpress-pro-validatejp.aspx?simple=1&prokey=" + prokeyval + "&domain=" + mydomain;
                         var n=document.getElementsByTagName("head")[0].appendChild(tempscript);
@@ -1006,14 +1084,20 @@ class YouTubePrefs
                         },500);
                         return false;
                     });
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
                     window.embedplus_record_prokey = function(good){
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+                                                                                
+                        var wpajaxurl = "<?php echo admin_url('admin-ajax.php') ?>";
+                        if (window.location.toString().indexOf('https://') == 0)
+                        {
+                            wpajaxurl = wpajaxurl.replace("http://", "https://");
+                        }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
                         jQuery.ajax({
                             type : "post",
                             dataType : "json",
                             timeout: 30000,
-                            url : "<?php echo admin_url('admin-ajax.php') ?>",
+                            url : wpajaxurl,
                             data : { action: 'my_embedplus_pro_record', <?php echo self::$opt_pro; ?>:  (good? prokeyval : "")},
                             success: function(response) {
                                 if(response.type == "success") {
@@ -1030,11 +1114,11 @@ class YouTubePrefs
                                 jQuery('#prokeyloading').hide();
                                 jQuery('#prokeysubmit').removeAttr('disabled');
                             }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
                         });
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
                     };
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
                 });
             </script>
             <?php
@@ -1197,21 +1281,21 @@ class YouTubePrefs
                         if (e.data.indexOf("youtubeembedplus") == 0)
                         {
                             embedcode = "<p>" + e.data.split("|")[1] + "</p>";
-                                                        
+                                                                                                                                                        
                             //                        window.tinyMCE.execInstanceCommand(
                             //                        window.tinyMCE.activeEditor.id,
                             //                        'restoreSelection',
                             //                        false,
                             //                        null);
-                                                        
+                                                                                                                                                        
                             window.tinyMCE.execInstanceCommand(
                             window.tinyMCE.activeEditor.id,
                             'mceInsertContent',
                             false,
                             embedcode);
-                            
+                                                                                                                            
                             var $mceclose = jQuery(".mceClose");
-                            
+                                                                                                                            
                             $mceclose.get(0).click();
                             //wintoclose = window.tinyMCE.activeEditor.windowManager;
                             jQuery(".mceClose, #mceModalBlocker").mousedown().click();
@@ -1221,10 +1305,10 @@ class YouTubePrefs
                     {
                         if (typeof console != 'undefined') console.log(err.message);
                     }
-                                                                                    
-                                                                
+                                                                                                                                                                                    
+                                                                                                                                                                
                 },false);
-                                                                                        
+                                                                                                                                                                                        
             </script>
             <?php
         }
