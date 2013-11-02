@@ -105,8 +105,8 @@ You can also start and end each individual video at particular times. Like the a
 == Changelog ==
 
 = YouTube Embed 5.1 =
-Added ability to set default dimensions
-Enhanced compatibility with SSL sites
+Added ability to set default dimensions.
+Enhanced compatibility with SSL sites.
 
 = YouTube Embed 5.0 =
 Built-in YouTube video search, viewing, and insertion right from your editor tab (for all users).
