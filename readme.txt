@@ -1,24 +1,25 @@
 === YouTube ===
 Contributors: embedplus
 Plugin Name: YouTube Embed
-Tags: reddit, google+, google plus, comments, search, widget, sidebar, responsive, fluid, iphone, mobile, android, tablet, ipad, youtube playlist, playlists, playlist, wmode, hd, autohd, auto hd, seo, video analytics, analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin, https, ssl, secure, no-cookie, cookie, html5, youtube html5
+Tags: seo, video seo, rich snippets, reddit, google+, google plus, comments, search, widget, sidebar, responsive, fluid, iphone, mobile, android, tablet, ipad, youtube playlist, playlists, playlist, wmode, hd, autohd, auto hd, video analytics, analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin, https, ssl, secure, no-cookie, cookie, html5, youtube html5
 Requires at least: 2.9
 Tested up to: 3.7.1
-Stable tag: 5.1
+Stable tag: 6.0
 License: GPLv3 or later
 
-YouTube embed plugin with basic features and convenient defaults. Upgrade now to add view tracking and access to your very own analytics dashboard.
+YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
 
 == Description ==
 
-**Celebrating over 200,000 downloads with new features:**
+**Celebrating over 250,000 downloads with new features:**
 
 * Built-in YouTube video search, viewing, and insertion right from your editor.
+* One-click Video SEO.
 * Analytics and deleted video alerts work with past YouTube videos that you embedded with many other YouTube plugins.
 * Review the latest web discussions about a video you want to embed before embedding it.
 * And more...
 
-This YouTube embed plugin for WordPress keeps things simple, but it can be upgraded for enhanced performance, privacy and security for you and your visitors. It provides the basic features of the YouTube embedded player and will have you posting videos in seconds after installing it. **All you have to do is simply paste an unformatted YouTube link on its own line.**  Your YouTube embed will then show up when you preview or publish the post. The settings page has plenty of default options that you can automatically apply to all your embedded YouTube videos:
+This YouTube embed plugin for WordPress keeps things simple, but it can be upgraded for enhanced SEO, performance, privacy and security for you and your visitors. It provides the basic features of the YouTube embedded player and will have you posting videos in seconds after installing it. **All you have to do is simply paste an unformatted YouTube link on its own line.**  Your YouTube embed will then show up when you preview or publish the post. The settings page has plenty of default options that you can automatically apply to all your embedded YouTube videos:
 
 * Automatically center all your videos
 * Automatically start playing your videos
@@ -60,6 +61,8 @@ Beyond the above features, you have the option of upgrading to PRO to add enhanc
 * What and when are your best and worst performing YouTube embeds?
 * How much do the producers of the YouTube videos you embed rely on **your site**, versus other sites and YouTube.com, for views?
 
+Recently, we also added One-Click Video SEO, which adds markup that can improve your click rates and video SERP rankings.
+
 See more details after installing. Enjoy!
 
 == Installation ==
@@ -68,7 +71,7 @@ See more details after installing. Enjoy!
 1. Access the Plugins admin menu to activate the YouTube embed plugin.
 1. Make your default settings after clicking the new YouTube menu item that shows up in your admin panel.
 1. To embed videos in your post, start pasting the links with any desired additional codes needed for your YouTube embed (see below section for additional codes). Make sure each link is on its own line. If you don't know exactly which video you want to embed, use the free built-in search feature to find and insert one.
-1. To get an analytics dashboard and many other premium features, [sign up for one of the options here >>](https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx)
+1. To get video SEO, an analytics dashboard and many other premium features, [sign up for one of the options here >>](https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx)
 
 **Additional codes (adding these will override the default settings in the admin):**
 
@@ -99,10 +102,15 @@ You can also start and end each individual video at particular times. Like the a
 == Screenshots ==
 
 1. YouTube Embed Screenshot 1: Paste a YouTube link on its own line and it will become a YouTube embed on your website.
-2. YouTube Embed Screenshot 2: YouTube's admin settings.
-3. YouTube Embed Screenshot 3: PRO Visual YouTube Wizard (customize your embed)
+2. YouTube Embed Screenshot 2: How to get to YouTube's admin settings.
+3. YouTube Embed Screenshot 3: Visual YouTube Wizard and Search Tool
 
 == Changelog ==
+
+= YouTube Embed 6.0 =
+This version opens up the ability to view Internet video discussions to all wizard users.
+Also, due to numerous users being unable to find the wizard button, we moved it up next to the "Add Media" button. 
+Finally, we added One-Click Video SEO as a PRO option. 
 
 = YouTube Embed 5.1 =
 Added ability to set default dimensions.
@@ -188,4 +196,4 @@ First release uploaded to the plugin repository.
 
 == Other Notes ==
 
-This YouTube plugin includes [YouTube embed analytics](https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx) to help you learn a lot about the videos you post.
+This YouTube plugin includes premium features like [one-click video SEO, YouTube embed analytics, and deleted video checking](https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx).
