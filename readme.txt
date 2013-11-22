@@ -109,7 +109,7 @@ You can also start and end each individual video at particular times. Like the a
 
 = YouTube Embed 6.0 =
 This version opens up the ability to view Internet video discussions to all wizard users.
-Also, due to numerous users being unable to find the wizard button, we moved it up next to the "Add Media" button. 
+**Also, due to numerous users being unable to find the wizard button, we moved it up next to the "Add Media" button.**
 Finally, we added One-Click Video SEO as a PRO option. 
 
 = YouTube Embed 5.1 =
@@ -186,7 +186,7 @@ This upgrade specifically integrates a user-friendly YouTube Analytics Dashboard
 * What and when are your best and worst performers?
 * How much do the producers of the YouTube videos you embed rely on **your site** for views?
 
-We think these are all interesting questions; however, note that there's no need to upgrade if you don't.  
+We think these are all interesting questions; however, note that there's no need to upgrade if you don't.
 
 = YouTube Embed 1.1 =
 Fixed minor bug.
