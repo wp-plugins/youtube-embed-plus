@@ -14,9 +14,9 @@ YouTube embed plugin with basic features and convenient defaults. Upgrade now to
 **Celebrating over 250,000 downloads with new features:**
 
 * Built-in YouTube video search, viewing, and insertion right from your editor.
-* One-click Video SEO.
+* One-click Video SEO tags.
 * Analytics and deleted video alerts work with past YouTube videos that you embedded with many other YouTube plugins.
-* Review the latest web discussions about a video you want to embed before embedding it.
+* Review the latest web discussions about videos you want to embed before embedding.
 * And more...
 
 This YouTube embed plugin for WordPress keeps things simple, but it can be upgraded for enhanced SEO, performance, privacy and security for you and your visitors. It provides the basic features of the YouTube embedded player and will have you posting videos in seconds after installing it. **All you have to do is simply paste an unformatted YouTube link on its own line.**  Your YouTube embed will then show up when you preview or publish the post. The settings page has plenty of default options that you can automatically apply to all your embedded YouTube videos:
@@ -110,7 +110,7 @@ You can also start and end each individual video at particular times. Like the a
 = YouTube Embed 6.0 =
 This version opens up the ability to view Internet video discussions to all wizard users.
 **Also, due to numerous users being unable to find the wizard button, we moved it up next to the "Add Media" button.**
-Finally, we added One-Click Video SEO as a PRO option. 
+Finally, we added One-Click Video SEO tags as a PRO option. 
 
 = YouTube Embed 5.1 =
 Added ability to set default dimensions.
@@ -196,4 +196,4 @@ First release uploaded to the plugin repository.
 
 == Other Notes ==
 
-This YouTube plugin includes premium features like [one-click video SEO, YouTube embed analytics, and deleted video checking](https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx).
+This YouTube plugin includes premium features like [one-click video SEO tags, YouTube embed analytics, and deleted video checking](https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx).
