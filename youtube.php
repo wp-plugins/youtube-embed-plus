@@ -2,8 +2,8 @@
 /*
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
-  Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add view tracking and access to your very own analytics dashboard.
-  Version: 5.1
+  Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
+  Version: 6.0
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
