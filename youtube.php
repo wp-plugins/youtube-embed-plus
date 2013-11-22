@@ -1075,7 +1075,7 @@ class YouTubePrefs
                             </li>
                             <li>
                                 <img src="<?php echo plugins_url('images/vseo.png', __FILE__) ?>">
-                                One-Click Video SEO (adds markup that can improve clicks and video SERP rankings)
+                                One-Click Video SEO Tags (markup that can help drive more traffic)
                             </li>
                             <li>
                                 <img src="<?php echo plugins_url('images/html5.png', __FILE__) ?>">
