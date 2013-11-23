@@ -757,7 +757,7 @@ class YouTubePrefs
 
         // header
 
-        echo "<h2>" . '<img src="' . plugins_url('images/youtubeicon16.png', __FILE__) . '" /> ' . __('YouTube Settings (For Free and PRO Users)') . "</h2>";
+        echo "<h2>" . '<img src="' . plugins_url('images/youtubeicon16.png', __FILE__) . '" /> ' . __('YouTube Settings') . "</h2>";
 
         // settings form
         ?>
@@ -819,7 +819,7 @@ class YouTubePrefs
                 <input type="hidden" name="<?php echo $ytprefs_submitted; ?>" value="Y">
 
                 <h3 class="sect">
-                    <?php _e("How to Insert a YouTube Video or Playlist") ?> <span class="pronon">(For Free and <a href="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx" target="_blank">PRO Users &raquo;</a>)</span>
+                    <?php _e("How to Insert a YouTube Video or Playlist") ?> <!--<span class="pronon">(For Free and <a href="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx" target="_blank">PRO Users &raquo;</a>)</span>-->
                 </h3>
                 <p>
                     Do you already have a URL to the video you want to embed? All you have to do is paste it on its own line, as shown below (including the http:// part). Easy, eh?<br>
@@ -838,7 +838,7 @@ class YouTubePrefs
                 </p>
 
                 <div class="jumper" id="jumpwiz"></div>
-                <h3 class="sect">Visual YouTube Wizard <span class="pronon">(For Free and <a href="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx" target="_blank">PRO Users &raquo;</a>)</span></h3>
+                <h3 class="sect">Visual YouTube Wizard</h3>
 
                 <p>
                     Let's say you don't know the exact URL of the video you wish to embed.  Well, we've made the ability to directly search YouTube and insert videos right from your editor tab as a free feature to all users.  
@@ -858,7 +858,7 @@ class YouTubePrefs
                 </p>
                 <div class="jumper" id="jumpdefaults"></div>
                 <h3 class="sect">
-                    <?php _e("Default Options") ?> <span class="pronon">(For Free and <a href="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx" target="_blank">PRO Users &raquo;</a>)</span>
+                    <?php _e("Default Options") ?> 
                 </h3>
                 <p>
                     <?php _e("Below you can set the default options for all your videos. However, you can override them (and more) on a per-video basis. Directions on how to do that are in the next section.") ?>
@@ -1021,7 +1021,7 @@ class YouTubePrefs
                 <div class="jumper" id="jumpoverride"></div>
 
                 <h3 class="sect">
-                    <?php _e("How To Override Defaults / Other Options") ?> <span class="pronon">(For Free and <a href="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx" target="_blank">PRO Users &raquo;</a>)</span>
+                    <?php _e("How To Override Defaults / Other Options") ?> 
                 </h3>
                 <p>Suppose you have a few videos that need to be different from the above defaults. You can add options to the end of a link as displayed below to override the above defaults. Each option should begin with '&'.
                     <br><span class="pronon">PRO users: You can use the <span class="button-primary cuz">&#9658; Customize</span> button in the wizard instead of memorizing the following.</span>
