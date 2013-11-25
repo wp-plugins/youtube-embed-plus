@@ -4,7 +4,7 @@ Plugin Name: YouTube Embed
 Tags: seo, video seo, rich snippets, reddit, google+, google plus, comments, search, widget, sidebar, responsive, fluid, iphone, mobile, android, tablet, ipad, youtube playlist, playlists, playlist, wmode, hd, autohd, auto hd, video analytics, analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin, https, ssl, secure, no-cookie, cookie, html5, youtube html5
 Requires at least: 2.9
 Tested up to: 3.7.1
-Stable tag: 6.0
+Stable tag: 6.1
 License: GPLv3 or later
 
 YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
@@ -106,6 +106,8 @@ You can also start and end each individual video at particular times. Like the a
 3. YouTube Embed Screenshot 3: Visual YouTube Wizard and Search Tool
 
 == Changelog ==
+= YouTube Embed 6.1 =
+Easier access to general settings and dashboard.
 
 = YouTube Embed 6.0 =
 This version opens up the ability to view Internet video discussions to all wizard users.

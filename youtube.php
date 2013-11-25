@@ -3,7 +3,7 @@
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
-  Version: 6.0
+  Version: 6.1
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
@@ -32,7 +32,7 @@
 class YouTubePrefs
 {
 
-    public static $version = '6.0';
+    public static $version = '6.1';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -142,6 +142,9 @@ class YouTubePrefs
         add_thickbox();
 
         $wizhref = self::$epbase . '/wpembedcode-simple-search.aspx?pluginversion=' . YouTubePrefs::$version .
+                '&wpversion=' . get_bloginfo('version') .
+                '&settingsurl=' . urlencode(admin_url('admin.php?page=youtube-my-preferences#jumpdefaults')) .
+                '&dashurl=' . urlencode(admin_url('admin.php?page=youtube-ep-analytics-dashboard')) .
                 '&blogwidth=' . YouTubePrefs::get_blogwidth() .
                 '&domain=' . urlencode(site_url()) .
                 '&prokey=' . urlencode(YouTubePrefs::$alloptions[YouTubePrefs::$opt_pro]) .
@@ -631,7 +634,7 @@ class YouTubePrefs
                 echo "<h2>" . '<img src="' . plugins_url('images/epstats16.png', __FILE__) . '" /> ' . __('YouTube Plugin PRO') . "</h2><p class='bold orange'>This tab is here to provide direct access to analytics. Graphs and other data about your site will show below after you activate PRO.</p><br>";
             }
             ?>
-            <iframe class="shadow" src="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx?ref=protab&domain=<?php echo $thishost; ?>&prokey=<?php echo $thiskey; ?>" width="1030" height="2700" scrolling="auto"/>
+            <iframe class="shadow" src="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx?ref=protab&domain=<?php echo $thishost; ?>&prokey=<?php echo $thiskey; ?>" width="1060" height="2700" scrolling="auto"/>
         </div>
         <?php
     }
@@ -858,10 +861,10 @@ class YouTubePrefs
                 </p>
                 <div class="jumper" id="jumpdefaults"></div>
                 <h3 class="sect">
-                    <?php _e("Default Options") ?> 
+                    <?php _e("Default YouTube Options") ?> 
                 </h3>
                 <p>
-                    <?php _e("Below you can set the default options for all your videos. However, you can override them (and more) on a per-video basis. Directions on how to do that are in the next section.") ?>
+                    <?php _e("Below you can set the default options for all your videos (click \"Save Changes\" when finished). However, you can override them (and more) on a per-video basis. Directions on how to do that are in the next section.") ?>
                 </p>
 
                 <div class="ytindent chx">
