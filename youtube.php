@@ -936,7 +936,7 @@ class YouTubePrefs
                     <p>
                         <input name="<?php echo self::$opt_nocookie; ?>" id="<?php echo self::$opt_nocookie; ?>" <?php checked($all[self::$opt_nocookie], 1); ?> type="checkbox" class="checkbox">
                         <label for="<?php echo self::$opt_nocookie; ?>">
-                            Prevent YouTube from leaving tracking cookies on your visitors browsers unless they actual play the videos. This is coded to apply this behavior on links in your past post as well.
+                            Prevent YouTube from leaving tracking cookies on your visitors browsers unless they actual play the videos. This is coded to apply this behavior on links in your past post as well. (checking this might affect YouTube API behavior)
                         </label>
                     </p>
 
