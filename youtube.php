@@ -3,7 +3,7 @@
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
-  Version: 6.1
+  Version: 6.2
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
@@ -32,7 +32,7 @@
 class YouTubePrefs
 {
 
-    public static $version = '6.1';
+    public static $version = '6.2';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -368,16 +368,16 @@ class YouTubePrefs
 
         $finalparams = $linkparams + self::$alloptions;
 
+        if (self::$alloptions[self::$opt_nocookie] == 1)
+        {
+            $youtubebaseurl = 'youtube-nocookie';
+        }
+
         if (self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0)
         {
             if (self::$alloptions[self::$opt_ssl] == 1)
             {
                 $linkscheme = 'https';
-            }
-
-            if (self::$alloptions[self::$opt_nocookie] == 1)
-            {
-                $youtubebaseurl = 'youtube-nocookie';
             }
 
             if (isset($finalparams[self::$opt_html5]) && $finalparams[self::$opt_html5] == 0)
@@ -711,8 +711,8 @@ class YouTubePrefs
             $new_options[self::$opt_theme] = $_POST[self::$opt_theme] == (true || 'on') ? 'dark' : 'light';
             $new_options[self::$opt_wmode] = $_POST[self::$opt_wmode] == (true || 'on') ? 'opaque' : 'transparent';
             $new_options[self::$opt_vq] = $_POST[self::$opt_vq] == (true || 'on') ? 'hd720' : '';
+            $new_options[self::$opt_nocookie] = $_POST[self::$opt_nocookie] == (true || 'on') ? 1 : 0;
             $new_options[self::$opt_ssl] = isset($_POST[self::$opt_ssl]) && $_POST[self::$opt_ssl] == (true || 'on') ? 1 : 0;
-            $new_options[self::$opt_nocookie] = isset($_POST[self::$opt_nocookie]) && $_POST[self::$opt_nocookie] == (true || 'on') ? 1 : 0;
             $new_options[self::$opt_oldspacing] = isset($_POST[self::$opt_oldspacing]) && $_POST[self::$opt_oldspacing] == (true || 'on') ? 1 : 0;
             $new_options[self::$opt_responsive] = isset($_POST[self::$opt_responsive]) && $_POST[self::$opt_responsive] == (true || 'on') ? 1 : 0;
             $new_options[self::$opt_schemaorg] = isset($_POST[self::$opt_schemaorg]) && $_POST[self::$opt_schemaorg] == (true || 'on') ? 1 : 0;
@@ -746,8 +746,6 @@ class YouTubePrefs
 
             update_option(self::$opt_alloptions, $all);
             // Put a settings updated message on the screen
-
-            
             ?>
             <div class="updated"><p><strong><?php _e('Settings saved.'); ?></strong></p></div>
             <?php
@@ -814,7 +812,7 @@ class YouTubePrefs
                 <a href="#jumpwiz">Visual YouTube Wizard</a>
                 <a href="#jumpdefaults">Set Defaults</a>
                 <a href="#jumpoverride">How To Override Defaults</a>
-                <a href="#jumppro">Go PRO!</a>
+                <a href="#jumppro" style="border-color: #888888;">Go PRO!</a>
                 <a href="#jumpsupport">Support</a>
             </div>
 
@@ -926,7 +924,6 @@ class YouTubePrefs
                         <input name="<?php echo self::$opt_responsive; ?>" id="<?php echo self::$opt_responsive; ?>" <?php checked($all[self::$opt_responsive], 1); ?> type="checkbox" class="checkbox">
                         <label for="<?php echo self::$opt_responsive; ?>"><?php _e('Make my videos responsive so that they dynamically fit in all screen sizes. (smart phone, PC and tablet)') ?></label>
                     </p>
-
                     <p>
                         <input name="<?php echo self::$opt_defaultdims; ?>" id="<?php echo self::$opt_defaultdims; ?>" <?php checked($all[self::$opt_defaultdims], 1); ?> type="checkbox" class="checkbox">                        
                         <span id="boxdefaultdims">
@@ -936,6 +933,13 @@ class YouTubePrefs
 
                         <label for="<?php echo self::$opt_defaultdims; ?>"><?php _e('Make my videos have a default size (NOTE: Checking the responsive option will override this size setting) ') ?></label>
                     </p>
+                    <p>
+                        <input name="<?php echo self::$opt_nocookie; ?>" id="<?php echo self::$opt_nocookie; ?>" <?php checked($all[self::$opt_nocookie], 1); ?> type="checkbox" class="checkbox">
+                        <label for="<?php echo self::$opt_nocookie; ?>">
+                            Prevent YouTube from leaving tracking cookies on your visitors browsers unless they actual play the videos. This is coded to apply this behavior on links in your past post as well.
+                        </label>
+                    </p>
+
 
                     <p class="smallnote orange">Below are PRO features for enhanced SEO, performance, privacy, and security (works for even past embed links):</p>
                     <?php
@@ -946,12 +950,6 @@ class YouTubePrefs
                             <input name="<?php echo self::$opt_ssl; ?>" id="<?php echo self::$opt_ssl; ?>" <?php checked($all[self::$opt_ssl], 1); ?> type="checkbox" class="checkbox">
                             <label for="<?php echo self::$opt_ssl; ?>">
                                 <b>(PRO)</b> Use the secure YouTube player for all of your visitors and videos you embed. This will go back and also secure your past embeds as they are loaded on their pages.
-                            </label>
-                        </p>
-                        <p>
-                            <input name="<?php echo self::$opt_nocookie; ?>" id="<?php echo self::$opt_nocookie; ?>" <?php checked($all[self::$opt_nocookie], 1); ?> type="checkbox" class="checkbox">
-                            <label for="<?php echo self::$opt_nocookie; ?>">
-                                <b>(PRO)</b> Prevent YouTube from leaving tracking cookies on your visitors browsers unless they actual play the videos. This is coded to apply this behavior on links in your past post as well.
                             </label>
                         </p>
                         <p>
@@ -975,12 +973,6 @@ class YouTubePrefs
                             <input disabled type="checkbox" class="checkbox">
                             <label>
                                 <span class="pronon">(PRO Users)</span> Use the secure YouTube player for all of your visitors and videos you embed. This will go back and also secure your past embeds as they are loaded on their pages.
-                            </label>
-                        </p>
-                        <p>
-                            <input disabled type="checkbox" class="checkbox">
-                            <label>
-                                <span class="pronon">(PRO Users)</span> Prevent YouTube from leaving tracking cookies on your visitors browsers unless they actual play the videos. This is coded to apply this behavior on links in your past post as well.
                             </label>
                         </p>
                         <p>
@@ -1111,6 +1103,10 @@ class YouTubePrefs
                                 User-friendly video analytics dashboard
                             </li>
                             <li>
+                                <img src="<?php echo plugins_url('images/iconythealth.png', __FILE__) ?>">
+                                Instant YouTube embed diagnostic reports
+                            </li>                            
+                            <li>
                                 <img src="<?php echo plugins_url('images/infinity.png', __FILE__) ?>">
                                 Unlimited PRO upgrades and downloads
                             </li>
@@ -1119,10 +1115,10 @@ class YouTubePrefs
                                 A chance to showcase your site right from our homepage
                             </li>
 
-                            <li>
+<!--                            <li>
                                 <img src="<?php echo plugins_url('images/questionsale.png', __FILE__) ?>">
                                 What else? You tell us!                                
-                            </li>                            
+                            </li>                            -->
                         </ul>
                     </div>
                     <br>
@@ -1190,11 +1186,11 @@ class YouTubePrefs
             -->
 
             <script type="text/javascript">
-                                                                                                                                                                
+                                                                                                                                                                                
                 function savevalidate()
                 {
                     var valid = true;
-                                                                                                                                                                    
+                                                                                                                                                                                    
                     if (jQuery("#<?php echo self::$opt_defaultdims; ?>").is(":checked"))
                     {
                         if (!(jQuery.isNumeric(jQuery.trim(jQuery("#<?php echo self::$opt_defaultwidth; ?>").val())) && 
@@ -1205,11 +1201,11 @@ class YouTubePrefs
                             valid = false;
                         }
                     }
-                                                                                                                                                                    
-                                                                                                                                                                    
+                                                                                                                                                                                    
+                                                                                                                                                                                    
                     return valid;
                 }
-                                                                                                                                                                
+                                                                                                                                                                                
                 var prokeyval;
                 var mydomain = escape("http://" + window.location.host.toString());
 
@@ -1224,25 +1220,25 @@ class YouTubePrefs
                         {
                             jQuery("#boxdefaultdims").hide(500);
                         }
-                                                                                                                                                                                                                
+                                                                                                                                                                                                                                
                     });
-                                                                                                                                                                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                                                                                                                                                                        
                     jQuery("#showcase-validate").click(function() {
                         window.open("<?php echo self::$epbase . "/showcase-validate.aspx?prokey=" . self::$alloptions[self::$opt_pro] ?>" + "&domain=" + mydomain);
                     });
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
                     jQuery('#showprokey').click(function(){
                         jQuery('.submitpro').show(500);
                         return false;
                     });
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
                     jQuery('#prokeysubmit').click(function(){
                         jQuery(this).attr('disabled', 'disabled');
                         jQuery('#prokeyfailed').hide();
                         jQuery('#prokeysuccess').hide();
                         jQuery('#prokeyloading').show();
                         prokeyval = jQuery('#opt_pro').val();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
                         var tempscript=document.createElement("script");
                         tempscript.src="//www.embedplus.com/dashboard/wordpress-pro-validatejp.aspx?simple=1&prokey=" + prokeyval + "&domain=" + mydomain;
                         var n=document.getElementsByTagName("head")[0].appendChild(tempscript);
@@ -1251,15 +1247,15 @@ class YouTubePrefs
                         },500);
                         return false;
                     });
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
                     window.embedplus_record_prokey = function(good){
-                                                                                                                                                                                                
+                                                                                                                                                                                                                
                         var wpajaxurl = "<?php echo admin_url('admin-ajax.php') ?>";
                         if (window.location.toString().indexOf('https://') == 0)
                         {
                             wpajaxurl = wpajaxurl.replace("http://", "https://");
                         }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
                         jQuery.ajax({
                             type : "post",
                             dataType : "json",
@@ -1281,11 +1277,11 @@ class YouTubePrefs
                                 jQuery('#prokeyloading').hide();
                                 jQuery('#prokeysubmit').removeAttr('disabled');
                             }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
                         });
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
                     };
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
                 });
             </script>
             <?php
@@ -1450,13 +1446,13 @@ class YouTubePrefs
                         if (e.data.indexOf("youtubeembedplus") == 0)
                         {
                             embedcode = "<p>" + e.data.split("|")[1] + "</p>";
-                                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                                        
                             //                        window.tinyMCE.execInstanceCommand(
                             //                        window.tinyMCE.activeEditor.id,
                             //                        'restoreSelection',
                             //                        false,
                             //                        null);
-                                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                                        
                             window.tinyMCE.execInstanceCommand(
                             window.tinyMCE.activeEditor.id,
                             'mceInsertContent',
@@ -1475,10 +1471,10 @@ class YouTubePrefs
                     {
                         if (typeof console != 'undefined') console.log(err.message);
                     }
-                                                                                                                                                                                                                                                                                                    
-                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                    
+                                                                                                                                                                                                                                                                                                
                 },false);
-                                                                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                                                                        
             </script>
             <?php
         }
