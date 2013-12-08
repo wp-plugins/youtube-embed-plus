@@ -802,6 +802,7 @@ class YouTubePrefs
             #ytnav a {font-weight: bold; display: inline-block; padding: 5px 10px; margin: 0px 20px 0px 0px; border: 1px solid #cccccc; border-radius: 6px;
                       text-decoration: none;}
             .jumper {height: 25px;}
+            .ssschema {float: right; width: 350px; height: auto;}
         </style>
 
         <div class="ytindent">
@@ -959,10 +960,12 @@ class YouTubePrefs
                             </label>
                         </p>
                         <p>
+                            <img class="ssschema" src="<?php echo plugins_url('images/ssschemaorg.jpg', __FILE__) ?>" />
                             <input name="<?php echo self::$opt_schemaorg; ?>" id="<?php echo self::$opt_schemaorg; ?>" <?php checked($all[self::$opt_schemaorg], 1); ?> type="checkbox" class="checkbox">
                             <label for="<?php echo self::$opt_schemaorg; ?>">
-                                <b>(PRO)</b> Automatically add Google, Bing, and Yahoo friendly markup so that your pages with video embeds can be indexed to have a greater chance of showing up in search engine results for those particular videos, even if you aren't the owner. Just check the PRO setting and we'll handle the SEO.
+                                <b>(PRO)</b> Automatically add Google, Bing, and Yahoo friendly markup so that your pages with video embeds can be indexed to have a greater chance of showing up in search engine results for those particular videos, even if you aren't the owner. This markup also promotes the chances of your pages showing up with actual video thumbnails within search results (see example on the right). Just check the PRO setting and we'll handle the SEO.
                             </label>
+                            
                         </p>
                         <?php
                     }
@@ -982,9 +985,10 @@ class YouTubePrefs
                             </label>
                         </p>
                         <p>
+                            <img class="ssschema" src="<?php echo plugins_url('images/ssschemaorg.jpg', __FILE__) ?>" />
                             <input disabled type="checkbox" class="checkbox">
                             <label>
-                                <span class="pronon">(NEW: PRO Users)</span> Automatically add Google, Bing, and Yahoo friendly markup so that your pages with video embeds can be indexed to have a greater chance of showing up in search engine results for those particular videos, <b>even if you aren't the owner</b>. Just check the PRO setting and we'll handle the SEO.
+                                <span class="pronon">(NEW: PRO Users)</span> Automatically add Google, Bing, and Yahoo friendly markup so that your pages with video embeds can be indexed to have a greater chance of showing up in search engine results for those particular videos, even if you aren't the owner. This markup also promotes the chances of your pages showing up with actual video thumbnails within search results (see example on the right). Just check the PRO setting and we'll handle the SEO.
                             </label>
                         </p>
 
@@ -995,6 +999,9 @@ class YouTubePrefs
                     <p class="submit">
                         <input type="submit" onclick="return savevalidate();" name="Submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
                     </p>
+                    
+                    <hr>
+                    
                     <?php
                     if ($haspro)
                     {
