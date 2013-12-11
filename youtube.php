@@ -937,7 +937,7 @@ class YouTubePrefs
                     <p>
                         <input name="<?php echo self::$opt_nocookie; ?>" id="<?php echo self::$opt_nocookie; ?>" <?php checked($all[self::$opt_nocookie], 1); ?> type="checkbox" class="checkbox">
                         <label for="<?php echo self::$opt_nocookie; ?>">
-                            Prevent YouTube from leaving tracking cookies on your visitors browsers unless they actual play the videos. This is coded to apply this behavior on links in your past post as well. (checking this might affect YouTube API behavior)
+                            Prevent YouTube from leaving tracking cookies on your visitors browsers unless they actual play the videos. This is coded to apply this behavior on links in your past post as well. (Checking this might affect YouTube API behavior)
                         </label>
                     </p>
 
@@ -1007,7 +1007,7 @@ class YouTubePrefs
                     {
                         ?>
                         <p>
-                            <b>(PRO)</b> We'll soon be promoting this plugin right from our <a target="_blank" href="<?php echo self::$epbase; ?>">embedplus.com</a> homepage. For this, we'll be linking to examples of sites using this plugin. It will also give you a chance to promote your quality site.  <a id="showcase-validate" class="button-primary" target="_blank">Click this button</a> to automatically include your site for evaluation.  
+                            <b>(PRO)</b> We plan to promote this plugin right from our <a target="_blank" href="<?php echo self::$epbase; ?>">embedplus.com</a> homepage by listing example sites that use it. <a id="showcase-validate" class="button-primary" target="_blank">Click this button</a> to automatically include your site for evaluation. It will give you a chance to promote your quality site.
                         </p>
                         <?php
                     }
@@ -1016,7 +1016,7 @@ class YouTubePrefs
                         ?>
 
                         <p>
-                            <span class="pronon">(PRO Users)</span> We'll soon be promoting this plugin right from our <a target="_blank" href="<?php echo self::$epbase; ?>">embedplus.com</a> homepage. For this, we'll be linking to examples of sites using this plugin. It will also give you a chance to promote your quality site.   <a class="button-primary" disabled>Click this button</a> to automatically include your site for evaluation.
+                            <span class="pronon">(PRO Users)</span> We plan to promote this plugin right from our <a target="_blank" href="<?php echo self::$epbase; ?>">embedplus.com</a> homepage by listing example sites that use it. <a class="button-primary" disabled>Click this button</a> to automatically include your site for evaluation. It will give you a chance to promote your quality site.
                         </p>
                     <?php } ?>
                 </div>
