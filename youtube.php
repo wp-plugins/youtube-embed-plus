@@ -544,9 +544,9 @@ class YouTubePrefs
             if (empty($content_width))
                 $content_width = $GLOBALS['content_width'];
 
-            self::$defaultwidth = $urlkvp['width'] ? $urlkvp['width'] : (self::$alloptions[self::$opt_defaultwidth] ? self::$alloptions[self::$opt_defaultwidth] : (self::$optembedwidth ? self::$optembedwidth : ($content_width ? $content_width : 480)));
+            self::$defaultwidth = isset($urlkvp['width']) ? $urlkvp['width'] : (isset(self::$alloptions[self::$opt_defaultwidth]) ? self::$alloptions[self::$opt_defaultwidth] : (self::$optembedwidth ? self::$optembedwidth : ($content_width ? $content_width : 480)));
             //self::$defaultheight = $urlkvp['height'] ? $urlkvp['height'] + 28 : self::get_aspect_height($url, $urlkvp);
-            self::$defaultheight = $urlkvp['height'] ? $urlkvp['height'] : (self::$alloptions[self::$opt_defaultheight] ? self::$alloptions[self::$opt_defaultheight] : self::get_aspect_height($url, $urlkvp));
+            self::$defaultheight = isset($urlkvp['height']) ? $urlkvp['height'] : (isset(self::$alloptions[self::$opt_defaultheight]) ? self::$alloptions[self::$opt_defaultheight] : self::get_aspect_height($url, $urlkvp));
         }
     }
 
