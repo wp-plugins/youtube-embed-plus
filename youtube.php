@@ -3,7 +3,7 @@
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
-  Version: 6.3
+  Version: 6.4
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
@@ -32,7 +32,7 @@
 class YouTubePrefs
 {
 
-    public static $version = '6.3';
+    public static $version = '6.4';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -541,12 +541,44 @@ class YouTubePrefs
         if (self::$defaultwidth == null)
         {
             global $content_width;
-            if (empty($content_width))
+            if (empty($content_width)) {
                 $content_width = $GLOBALS['content_width'];
-
-            self::$defaultwidth = isset($urlkvp['width']) ? $urlkvp['width'] : (isset(self::$alloptions[self::$opt_defaultwidth]) ? self::$alloptions[self::$opt_defaultwidth] : (self::$optembedwidth ? self::$optembedwidth : ($content_width ? $content_width : 480)));
+            }
+            
+            if (isset($urlkvp['width']) && is_numeric($urlkvp['width']))
+            {
+                self::$defaultwidth = $urlkvp['width'];
+            }
+            else if (isset(self::$alloptions[self::$opt_defaultwidth]) && is_numeric(self::$alloptions[self::$opt_defaultwidth]))
+            {
+                self::$defaultwidth = self::$alloptions[self::$opt_defaultwidth];
+            }
+            else if (self::$optembedwidth)
+            {
+                self::$defaultwidth = self::$optembedwidth;
+            }
+            else if ($content_width)
+            {
+                self::$defaultwidth = $content_width;
+            }
+            else
+            {
+                self::$defaultwidth = 480;
+            }
             //self::$defaultheight = $urlkvp['height'] ? $urlkvp['height'] + 28 : self::get_aspect_height($url, $urlkvp);
-            self::$defaultheight = isset($urlkvp['height']) ? $urlkvp['height'] : (isset(self::$alloptions[self::$opt_defaultheight]) ? self::$alloptions[self::$opt_defaultheight] : self::get_aspect_height($url, $urlkvp));
+            
+            if (isset($urlkvp['height']) && is_numeric($urlkvp['height']))
+            {
+                self::$defaultheight = $urlkvp['height'];
+            }
+            else if (isset(self::$alloptions[self::$opt_defaultheight]) && is_numeric(self::$alloptions[self::$opt_defaultheight]))
+            {
+                self::$defaultheight = self::$alloptions[self::$opt_defaultheight];
+            }
+            else
+            {
+                self::$defaultheight = self::get_aspect_height($url, $urlkvp);
+            }
         }
     }
 
