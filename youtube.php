@@ -3,7 +3,7 @@
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
-  Version: 6.4
+  Version: 7.0
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
@@ -32,7 +32,7 @@
 class YouTubePrefs
 {
 
-    public static $version = '6.4';
+    public static $version = '7.0';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -79,6 +79,7 @@ class YouTubePrefs
     public static $oldytregex = '@^\s*https?://(?:www\.)?(?:(?:youtube.com/watch\?)|(?:youtu.be/))([^\s"]+)\s*$@im';
     //public static $ytregex = '@^[\r\n]{0,1}[[:blank:]]*https?://(?:www\.)?(?:(?:youtube.com/watch\?)|(?:youtu.be/))([^\s"]+)[[:blank:]]*[\r\n]{0,1}$@im';
     public static $ytregex = '@^[\r\t ]*https?://(?:www\.)?(?:(?:youtube.com/watch\?)|(?:youtu.be/))([^\s"]+)[\r\t ]*$@im';
+    public static $justurlregex = '@https?://(?:www\.)?(?:(?:youtube.com/watch\?)|(?:youtu.be/))([^\s"]+)@';
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -154,7 +155,7 @@ class YouTubePrefs
         ?>
         <script type="text/javascript">
             function widen_ytprefs_wiz() {
-                setTimeout(function(){
+                setTimeout(function() {
                     jQuery("#TB_window").animate({marginLeft: '-' + parseInt((950 / 2), 10) + 'px', width: '950px'}, 300);
                     jQuery("#TB_window iframe").animate({width: '950px'}, 300);
                 }, 15);
@@ -323,7 +324,19 @@ class YouTubePrefs
         {
             add_filter('the_content', 'YouTubePrefs::apply_prefs_content', 1);
             add_filter('widget_text', 'YouTubePrefs::apply_prefs_widget', 1);
+            add_shortcode('embedyt', 'YouTubePrefs::apply_prefs_shortcode');
         }
+    }
+
+    function apply_prefs_shortcode($atts, $content = null)
+    {
+        $content = trim($content);
+        $currfilter = current_filter();
+        if (preg_match(self::$justurlregex, $content))
+        {
+            return self::get_html(array($content), $currfilter == 'widget_text' ? false : true);
+        }
+        return '';
     }
 
     public static function apply_prefs_content($content)
@@ -541,10 +554,11 @@ class YouTubePrefs
         if (self::$defaultwidth == null)
         {
             global $content_width;
-            if (empty($content_width)) {
+            if (empty($content_width))
+            {
                 $content_width = $GLOBALS['content_width'];
             }
-            
+
             if (isset($urlkvp['width']) && is_numeric($urlkvp['width']))
             {
                 self::$defaultwidth = $urlkvp['width'];
@@ -566,7 +580,7 @@ class YouTubePrefs
                 self::$defaultwidth = 480;
             }
             //self::$defaultheight = $urlkvp['height'] ? $urlkvp['height'] + 28 : self::get_aspect_height($url, $urlkvp);
-            
+
             if (isset($urlkvp['height']) && is_numeric($urlkvp['height']))
             {
                 self::$defaultheight = $urlkvp['height'];
@@ -796,7 +810,7 @@ class YouTubePrefs
         ?>
 
         <style type="text/css">
-            .wrap {font-family: Arial;}
+            .wrap {font-family: Arial; color: #000000;}
             #ytform p { line-height: 20px; }
             #ytform ul li {margin-left: 30px; list-style: disc outside none;}
             .ytindent {padding: 0px 0px 0px 20px; font-size: 11px;}
@@ -813,7 +827,7 @@ class YouTubePrefs
             .grey{color: #888888;}
             #goprobox {border-radius: 15px; padding: 10px 15px 15px 15px; margin-top: 15px; border: 3px solid #CCE5EC; width: 825px; position: relative;}
             #salenote {position: absolute; right: 10px; top: 10px; width: 75px; height: 30px;}
-            #nonprosupport {border-radius: 15px; padding: 5px 10px 10px 10px;  border: 3px solid #ff6655; width: 800px;}
+            #nonprosupport {border-radius: 15px; padding: 5px 10px 10px 10px;  border: 3px solid #ff6655;}
             .pronon {font-weight: bold; color: #f85d00;}
             ul.reglist li {margin: 0px 0px 0px 30px; list-style: disc outside none;}
             .procol {width: 465px; float: left;}
@@ -828,13 +842,15 @@ class YouTubePrefs
             .cuz {background-image: linear-gradient(to bottom,#4983FF,#0C5597) !important; color: #ffffff;}
             #boxdefaultdims {font-weight: bold; padding: 0px 10px; <?php echo $all[self::$opt_defaultdims] ? '' : 'display: none;' ?>}
             .textinput {border-width: 2px !important;}
-            h3.sect {border-radius: 10px; background-color: #D9E9F7; padding: 5px 5px 5px 10px;}
+            h3.sect {border-radius: 10px; background-color: #D9E9F7; padding: 5px 5px 5px 10px; position: relative;}
             h3.sect a {text-decoration: none; color: #E20000;}
+            h3.sect a.button-primary {color: #ffffff;} 
             #ytnav {margin-bottom: 15px;}
             #ytnav a {font-weight: bold; display: inline-block; padding: 5px 10px; margin: 0px 20px 0px 0px; border: 1px solid #cccccc; border-radius: 6px;
-                      text-decoration: none;}
+                      text-decoration: none; background-color: #ffffff;}
             .jumper {height: 25px;}
-            .ssschema {float: right; width: 350px; height: auto;}
+            .ssschema {float: right; width: 350px; height: auto; margin-right: 10px;}
+            .totop {position: absolute; right: 20px; top: 5px; color: #444444; font-size: 10px;}
         </style>
 
         <div class="ytindent">
@@ -856,23 +872,29 @@ class YouTubePrefs
                     <?php _e("How to Insert a YouTube Video or Playlist") ?> <!--<span class="pronon">(For Free and <a href="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx" target="_blank">PRO Users &raquo;</a>)</span>-->
                 </h3>
                 <p>
-                    Do you already have a URL to the video you want to embed? All you have to do is paste it on its own line, as shown below (including the http:// part). Easy, eh?<br>
-                    For playlists: Go to the page for the playlist that lists all of its videos (<a target="_blank" href="http://www.youtube.com/playlist?list=PL70DEC2B0568B5469">Example &raquo;</a>). Click on the video that you want the playlist to start with. Copy and paste that browser URL into your blog on its own line.
+                    <b>For videos:</b> <i>Method 1 - </i> Do you already have a URL to the video you want to embed? All you have to do is paste it on its own line, as shown below (including the http:// part). Easy, eh?<br>
+                     <i>Method 2 - </i> If you want to have two or more videos next to each other on the same line, wrap each link with the <code>[embedyt]...[/embedyt]</code> shortcode. <b>Tip for embedding videos on the same line:</b> As shown in the example image below, decrease the size of each video so that they fit together on the same line (See the "How To Override Defaults" section for height and width instructions).
+                </p>
+                <p>
+                    <b>For playlists:</b> Go to the page for the playlist that lists all of its videos (<a target="_blank" href="http://www.youtube.com/playlist?list=PL70DEC2B0568B5469">Example &raquo;</a>). Click on the video that you want the playlist to start with. Copy and paste that browser URL into your blog on its own line. If you want to have two or more playlists next to each other on the same line, wrap each link with the <code>[embedyt]...[/embedyt]</code> shortcode.
+                </p>                
+                <p>
+                    <b>Examples:</b><br><br>
+                    <img style="width: 900px; height: auto;" class="shadow" src="<?php echo plugins_url('images/sshowto.png', __FILE__) ?>" />
                 </p>
                 <p>
                     Always follow these rules for any URL:
                 </p>
                 <ul class="reglist">
-                    <li>Make sure the URL is really on its own line by itself</li>
+                    <li>Make sure the URL is really on its own line by itself. Or, if you need multiple videos on the same line, make sure each URL is wrapped properly with the shortcode (Example:  <code>[embedyt]http://www.youtube.com/watch?v=ABCDEFGHIJK&width=400$height=250[/embedyt]</code>)</li>
                     <li>Make sure the URL is <strong>not</strong> an active hyperlink (i.e., it should just be plain text). Otherwise, highlight the URL and click the "unlink" button in your editor: <img src="<?php echo plugins_url('images/unlink.png', __FILE__) ?>"/></li>
                     <li>Make sure you did <strong>not</strong> format or align the URL in any way. If your URL still appears in your actual post instead of a video, highlight it and click the "remove formatting" button (formatting can be invisible sometimes): <img src="<?php echo plugins_url('images/erase.png', __FILE__) ?>"/></li>
+                    <li>If you really want to align the video, try wrapping the link with the shortcode first. For example: <code>[embedyt]http://www.youtube.com/watch?v=ABCDEFGHIJK[/embedyt]</code> Using the shortcode also allows you to have two or more videos next to each other on the same line.  Just put the shortcoded links together on the same line. For example:<br>
+                        <code>[embedyt]http://www.youtube.com/watch?v=ABCDEF[/embedyt] [embedyt]http://www.youtube.com/watch?v=GHIJK[/embedyt]</code>
                 </ul>       
-                <p>
-                    <img style="width: 400px; height: auto;" class="shadow" src="<?php echo plugins_url('images/howto.png', __FILE__) ?>" />
-                </p>
 
                 <div class="jumper" id="jumpwiz"></div>
-                <h3 class="sect">Visual YouTube Wizard</h3>
+                <h3 class="sect">Visual YouTube Wizard <a href="#top" class="totop">&#9650; top</a></h3>
 
                 <p>
                     Let's say you don't know the exact URL of the video you wish to embed.  Well, we've made the ability to directly search YouTube and insert videos right from your editor tab as a free feature to all users.  
@@ -888,11 +910,11 @@ class YouTubePrefs
                     <b class="orange">Even more options are available to PRO users!</b> Simply click the <span class="button-primary cuz">&#9658; Customize</span> button on the wizard to further personalize your embeds without having to enter special codes yourself. No memorization needed!
                     <br>
                     <br>
-                    <img src="<?php echo plugins_url('images/ssprowizard.jpg', __FILE__) ?>" >
+                    <img src="<?php echo plugins_url('images/ssprowizard.png', __FILE__) ?>" >
                 </p>
                 <div class="jumper" id="jumpdefaults"></div>
                 <h3 class="sect">
-                    <?php _e("Default YouTube Options") ?> 
+                    <?php _e("Default YouTube Options") ?> <a href="#top" class="totop">&#9650; top</a>
                 </h3>
                 <p>
                     <?php _e("Below you can set the default options for all your videos (click \"Save Changes\" when finished). However, you can override them (and more) on a per-video basis. Directions on how to do that are in the next section.") ?>
@@ -997,7 +1019,7 @@ class YouTubePrefs
                             <label for="<?php echo self::$opt_schemaorg; ?>">
                                 <b>(PRO)</b> Automatically add Google, Bing, and Yahoo friendly markup so that your pages with video embeds can be indexed to have a greater chance of showing up in search engine results for those particular videos, even if you aren't the owner. This markup also promotes the chances of your pages showing up with actual video thumbnails within search results (see example on the right). Just check the PRO setting and we'll handle the SEO.
                             </label>
-                            
+
                         </p>
                         <?php
                     }
@@ -1031,9 +1053,9 @@ class YouTubePrefs
                     <p class="submit">
                         <input type="submit" onclick="return savevalidate();" name="Submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
                     </p>
-                    
+
                     <hr>
-                    
+
                     <?php
                     if ($haspro)
                     {
@@ -1055,14 +1077,14 @@ class YouTubePrefs
                 <div class="jumper" id="jumpoverride"></div>
 
                 <h3 class="sect">
-                    <?php _e("How To Override Defaults / Other Options") ?> 
+                    <?php _e("How To Override Defaults / Other Options") ?> <a href="#top" class="totop">&#9650; top</a>
                 </h3>
                 <p>Suppose you have a few videos that need to be different from the above defaults. You can add options to the end of a link as displayed below to override the above defaults. Each option should begin with '&'.
                     <br><span class="pronon">PRO users: You can use the <span class="button-primary cuz">&#9658; Customize</span> button in the wizard instead of memorizing the following.</span>
                     <?php
                     _e('<ul>');
                     _e("<li><strong>width</strong> - Sets the width of your player. If omitted, the default width will be the width of your theme's content.<em> Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&width=500</strong>&height=350</em></li>");
-                    _e("<li><strong>height</strong> - Sets the height of your player. We do not recommend setting height because best-height will be calculated for you automatically, based on the above height. <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA&width=500<strong>&height=350</strong></em> </li>");
+                    _e("<li><strong>height</strong> - Sets the height of your player. <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA&width=500<strong>&height=350</strong></em> </li>");
                     _e("<li><strong>autoplay</strong> - Set this to 1 to autoplay the video (or 0 to play the video once). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&autoplay=1</strong></em> </li>");
                     _e("<li><strong>cc_load_policy</strong> - Set this to 1 to turn on closed captioning (or 0 to leave them off). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&cc_load_policy=1</strong></em> </li>");
                     _e("<li><strong>iv_load_policy</strong> - Set this to 3 to turn off annotations (or 1 to show them). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&iv_load_policy=3</strong></em> </li>");
@@ -1154,10 +1176,10 @@ class YouTubePrefs
                                 A chance to showcase your site right from our homepage
                             </li>
 
-<!--                            <li>
-                                <img src="<?php echo plugins_url('images/questionsale.png', __FILE__) ?>">
-                                What else? You tell us!                                
-                            </li>                            -->
+                            <!--                            <li>
+                                                            <img src="<?php echo plugins_url('images/questionsale.png', __FILE__) ?>">
+                                                            What else? You tell us!                                
+                                                        </li>                            -->
                         </ul>
                     </div>
                     <br>
@@ -1196,9 +1218,13 @@ class YouTubePrefs
                 <h3>Support tips for non-PRO users</h3>
                 We've found that a common support request has been from users that are pasting video links on single lines, as required, but are not seeing the video embed show up. One of these suggestions is usually the fix:
                 <ul class="reglist">
-                    <li>Make sure the URL is really on its own line by itself</li>
+                    <li>Make sure the URL is really on its own line by itself. Or, if you need multiple videos on the same line, make sure each URL is wrapped properly with the shortcode (Example:  <code>[embedyt]http://www.youtube.com/watch?v=ABCDEFGHIJK&width=400$height=250[/embedyt]</code>)</li>
                     <li>Make sure the URL is not an active hyperlink (i.e., it should just be plain text). Otherwise, highlight the URL and click the "unlink" button in your editor: <img src="<?php echo plugins_url('images/unlink.png', __FILE__) ?>"/>.</li>
                     <li>Make sure you did <strong>not</strong> format or align the URL in any way. If your URL still appears in your actual post instead of a video, highlight it and click the "remove formatting" button (formatting can be invisible sometimes): <img src="<?php echo plugins_url('images/erase.png', __FILE__) ?>"/></li>
+                    <li>Try wrapping the URL with the <code>[embedyt]...[/embedyt]</code> shortcode. For example: <code>[embedyt]http://www.youtube.com/watch?v=ABCDEFGHIJK[/embedyt]</code> Using the shortcode also allows you to have two or more videos next to each other on the same line.  Just put the shortcoded links together on the same line. For example:<br>
+                        <code>[embedyt]http://www.youtube.com/watch?v=ABCDEF&width=400&height=250[/embedyt] [embedyt]http://www.youtube.com/watch?v=GHIJK&width=400&height=250[/embedyt]</code>
+                        <br> TIP: As shown above, decrease the size of each video so that they fit together on the same line (See the "How To Override Defaults" section for height and width instructions)
+                    </li>
                     <li>Finally, there's a slight chance your custom theme is the issue, if you have one. To know for sure, we suggest temporarily switching to one of the default WordPress themes (e.g., "Twenty Thirteen") just to see if your video does appear. If it suddenly works, then your custom theme is the issue. You can switch back when done testing.</li>
                     <li>If none of the above work, you can contact us here if you still have issues: ext@embedplus.com. PRO users should use the priority form below instead.</li>                        
                 </ul>                
@@ -1206,7 +1232,7 @@ class YouTubePrefs
             </div>
             <br>
             <h3 class="sect">
-                Priority Support <span class="pronon">(<a href="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx" target="_blank">PRO Users &raquo;</a>)</span>
+                Priority Support <span class="pronon">(<a href="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx" target="_blank">PRO Users &raquo;</a>)</span><a href="#top" class="totop">&#9650; top</a>
             </h3>
             <p>
                 <strong>PRO users:</strong> Below, We've enabled the ability to have priority support with our team.  Use this to get one-on-one help with any issues you might have or to send us suggestions for future features.  We typically respond within minutes during normal work hours.  
@@ -1225,33 +1251,33 @@ class YouTubePrefs
             -->
 
             <script type="text/javascript">
-                                                                                                                                                                                
+
                 function savevalidate()
                 {
                     var valid = true;
-                                                                                                                                                                                    
+
                     if (jQuery("#<?php echo self::$opt_defaultdims; ?>").is(":checked"))
                     {
-                        if (!(jQuery.isNumeric(jQuery.trim(jQuery("#<?php echo self::$opt_defaultwidth; ?>").val())) && 
-                            jQuery.isNumeric(jQuery.trim(jQuery("#<?php echo self::$opt_defaultheight; ?>").val()))))
+                        if (!(jQuery.isNumeric(jQuery.trim(jQuery("#<?php echo self::$opt_defaultwidth; ?>").val())) &&
+                                jQuery.isNumeric(jQuery.trim(jQuery("#<?php echo self::$opt_defaultheight; ?>").val()))))
                         {
                             alert("Please enter valid numbers for default height and width, or uncheck the option.");
                             jQuery("#boxdefaultdims input").css("background-color", "#ffcccc").css("border", "2px solid #000000");
                             valid = false;
                         }
                     }
-                                                                                                                                                                                    
-                                                                                                                                                                                    
+
+
                     return valid;
                 }
-                                                                                                                                                                                
+
                 var prokeyval;
                 var mydomain = escape("http://" + window.location.host.toString());
 
                 jQuery(document).ready(function($) {
                     jQuery('#<?php echo self::$opt_defaultdims; ?>').change(function()
                     {
-                        if(jQuery(this).is(":checked"))
+                        if (jQuery(this).is(":checked"))
                         {
                             jQuery("#boxdefaultdims").show(500);
                         }
@@ -1259,68 +1285,68 @@ class YouTubePrefs
                         {
                             jQuery("#boxdefaultdims").hide(500);
                         }
-                                                                                                                                                                                                                                
+
                     });
-                                                                                                                                                                                                                                                                                                                                                                                                                        
+
                     jQuery("#showcase-validate").click(function() {
                         window.open("<?php echo self::$epbase . "/showcase-validate.aspx?prokey=" . self::$alloptions[self::$opt_pro] ?>" + "&domain=" + mydomain);
                     });
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-                    jQuery('#showprokey').click(function(){
+
+                    jQuery('#showprokey').click(function() {
                         jQuery('.submitpro').show(500);
                         return false;
                     });
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
-                    jQuery('#prokeysubmit').click(function(){
+
+                    jQuery('#prokeysubmit').click(function() {
                         jQuery(this).attr('disabled', 'disabled');
                         jQuery('#prokeyfailed').hide();
                         jQuery('#prokeysuccess').hide();
                         jQuery('#prokeyloading').show();
                         prokeyval = jQuery('#opt_pro').val();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
-                        var tempscript=document.createElement("script");
-                        tempscript.src="//www.embedplus.com/dashboard/wordpress-pro-validatejp.aspx?simple=1&prokey=" + prokeyval + "&domain=" + mydomain;
-                        var n=document.getElementsByTagName("head")[0].appendChild(tempscript);
-                        setTimeout(function(){
+
+                        var tempscript = document.createElement("script");
+                        tempscript.src = "//www.embedplus.com/dashboard/wordpress-pro-validatejp.aspx?simple=1&prokey=" + prokeyval + "&domain=" + mydomain;
+                        var n = document.getElementsByTagName("head")[0].appendChild(tempscript);
+                        setTimeout(function() {
                             n.parentNode.removeChild(n)
-                        },500);
+                        }, 500);
                         return false;
                     });
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-                    window.embedplus_record_prokey = function(good){
-                                                                                                                                                                                                                
+
+                    window.embedplus_record_prokey = function(good) {
+
                         var wpajaxurl = "<?php echo admin_url('admin-ajax.php') ?>";
                         if (window.location.toString().indexOf('https://') == 0)
                         {
                             wpajaxurl = wpajaxurl.replace("http://", "https://");
                         }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+
                         jQuery.ajax({
-                            type : "post",
-                            dataType : "json",
+                            type: "post",
+                            dataType: "json",
                             timeout: 30000,
-                            url : wpajaxurl,
-                            data : { action: 'my_embedplus_pro_record', <?php echo self::$opt_pro; ?>:  (good? prokeyval : "")},
+                            url: wpajaxurl,
+                            data: {action: 'my_embedplus_pro_record', <?php echo self::$opt_pro; ?>: (good ? prokeyval : "")},
                             success: function(response) {
-                                if(response.type == "success") {
+                                if (response.type == "success") {
                                     jQuery("#prokeysuccess").show();
                                 }
                                 else {
                                     jQuery("#prokeyfailed").show();
                                 }
                             },
-                            error: function(xhr, ajaxOptions, thrownError){
+                            error: function(xhr, ajaxOptions, thrownError) {
                                 jQuery('#prokeyfailed').show();
                             },
                             complete: function() {
                                 jQuery('#prokeyloading').hide();
                                 jQuery('#prokeysubmit').removeAttr('disabled');
                             }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+
                         });
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+
                     };
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+
                 });
             </script>
             <?php
@@ -1463,7 +1489,7 @@ class YouTubePrefs
             $epprokey = YouTubePrefs::$alloptions[YouTubePrefs::$opt_pro];
             $myytdefaults = http_build_query(YouTubePrefs::$alloptions);
             ?>
-            <script type="text/javascript">            
+            <script type="text/javascript">
                 var epblogwidth = <?php echo $blogwidth; ?>;
                 var epprokey = '<?php echo $epprokey; ?>';
                 var epbasesite = '<?php echo YouTubePrefs::$epbase; ?>';
@@ -1477,46 +1503,41 @@ class YouTubePrefs
                 var epmessageEvent = epeventMethod == "attachEvent" ? "onmessage" : "message";
 
                 // Listen to message from child window
-                epeventer(epmessageEvent,function(e)
+                epeventer(epmessageEvent, function(e)
                 {
                     var embedcode = "";
                     try
                     {
                         if (e.data.indexOf("youtubeembedplus") == 0)
                         {
-                            embedcode = "<p>" + e.data.split("|")[1] + "</p>";
-                                                                                                                                                                                                                                                                                        
-                            //                        window.tinyMCE.execInstanceCommand(
-                            //                        window.tinyMCE.activeEditor.id,
-                            //                        'restoreSelection',
-                            //                        false,
-                            //                        null);
-                                                                                                                                                                                                                                                                                        
+
+                            embedcode = e.data.split("|")[1];
+                            if (embedcode.indexOf("[") !== 0)
+                            {
+                                embedcode = "<p>" + embedcode + "</p>";
+                            }
+
                             window.tinyMCE.execInstanceCommand(
-                            window.tinyMCE.activeEditor.id,
-                            'mceInsertContent',
-                            false,
-                            embedcode);
+                                    window.tinyMCE.activeEditor.id,
+                                    'mceInsertContent',
+                                    false,
+                                    embedcode);
 
                             tb_remove();
 
-                            //                            var $mceclose = jQuery(".mceClose");                                                                                                                               
-                            //                            $mceclose.get(0).click();
-                            //                            //wintoclose = window.tinyMCE.activeEditor.windowManager;
-                            //                            jQuery(".mceClose, #mceModalBlocker").mousedown().click();
                         }
                     }
                     catch (err)
                     {
-                        if (typeof console != 'undefined') console.log(err.message);
+                        if (typeof console != 'undefined')
+                            console.log(err.message);
                     }
-                                                                                                                                                                                                                                                                                                                    
-                                                                                                                                                                                                                                                                                                
-                },false);
-                                                                                                                                                                                                                                                                                                                        
+
+
+                }, false);
+
             </script>
             <?php
         }
     }
-
     

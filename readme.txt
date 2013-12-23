@@ -1,25 +1,26 @@
 === YouTube ===
 Contributors: embedplus
 Plugin Name: YouTube Embed
-Tags: health, diagnostic, youtube status, seo, video seo, rich snippets, reddit, google+, google plus, comments, search, widget, sidebar, responsive, fluid, iphone, mobile, android, tablet, ipad, youtube playlist, playlists, playlist, wmode, hd, autohd, auto hd, video analytics, analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin, https, ssl, secure, no-cookie, cookie, html5, youtube html5
+Tags: short code, shortcode, youtube shortcode, health, diagnostic, youtube status, seo, video seo, rich snippets, reddit, google+, google plus, comments, search, widget, sidebar, responsive, fluid, iphone, mobile, android, tablet, ipad, youtube playlist, playlists, playlist, wmode, hd, autohd, auto hd, video analytics, analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin, https, ssl, secure, no-cookie, cookie, html5, youtube html5
 Requires at least: 2.9
 Tested up to: 3.8
-Stable tag: 6.4
+Stable tag: 7.0
 License: GPLv3 or later
 
 YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
 
 == Description ==
 
-**Celebrating over 250,000 downloads with new features:**
+**From 0 to 300,000 downloads in one year!  Here are some recently added features:**
 
 * Built-in YouTube video search, viewing, and insertion right from your editor.
 * One-click Video SEO tags.
 * Analytics and deleted video alerts work with past YouTube videos that you embedded with many other YouTube plugins.
 * Review the latest web discussions about videos you want to embed before embedding.
+* Shortcode support for embedding multiple videos on one line.
 * And more...
 
-This YouTube embed plugin for WordPress keeps things simple, but it can be upgraded for enhanced SEO, performance, privacy and security for you and your visitors. It provides the basic features of the YouTube embedded player and will have you posting videos in seconds after installing it. **All you have to do is simply paste an unformatted YouTube link on its own line.**  Your YouTube embed will then show up when you preview or publish the post. The settings page has plenty of default options that you can automatically apply to all your embedded YouTube videos:
+This YouTube embed plugin for WordPress keeps things simple, but it can be upgraded for enhanced SEO, performance, privacy and security for you and your visitors. It provides the basic features of the YouTube embedded player and will have you posting videos in seconds after installing it. **All you have to do is simply paste an unformatted YouTube link on its own line (shortcodes are also supported).**  Your YouTube embed will then show up when you preview or publish the post. The settings page has plenty of default options that you can automatically apply to all your embedded YouTube videos:
 
 * Automatically center all your videos
 * Automatically start playing your videos
@@ -70,7 +71,7 @@ See more details after installing. Enjoy!
 1. Use the WordPress plugin installer to install the plugin.  Alternatively, you can just extract the folder in our download package and upload it to your plugin directory.
 1. Access the Plugins admin menu to activate the YouTube embed plugin.
 1. Make your default settings after clicking the new YouTube menu item that shows up in your admin panel.
-1. To embed videos in your post, start pasting the links with any desired additional codes needed for your YouTube embed (see below section for additional codes). Make sure each link is on its own line. If you don't know exactly which video you want to embed, use the free built-in search feature to find and insert one.
+1. To embed videos in your post, start pasting the links with any desired additional codes needed for your YouTube embed (see below section for additional codes). Make sure each link is on its own line. Or, if you need multiple videos on the same line, make sure each URL is wrapped properly with the shortcode (Example: `[embedyt]http://www.youtube.com/watch?v=ABCDEFGHIJK&width=400$height=250`) If you don't know exactly which video you want to embed, use the free built-in search feature to find and insert one.
 1. To get video SEO, an analytics dashboard and many other premium features, [sign up for one of the options here >>](https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx)
 
 **Additional codes (adding these will override the default settings in the admin):**
@@ -94,7 +95,7 @@ You can also start and end each individual video at particular times. Like the a
 
 **Always follow these rules when pasting a link:**
 
-* Make sure the url is really on its own line by itself.
+* Make sure the url is really on its own line by itself. Or, if you need multiple videos on the same line, make sure each URL is wrapped properly with the shortcode (Example: `[embedyt]http://www.youtube.com/watch?v=ABCDEFGHIJK&width=400$height=250`)
 * Make sure the url is not an active hyperlink (i.e., it should just be plain text). Otherwise, highlight the url and click the "unlink" button in your editor.
 * Make sure you did **not** format or align the url in any way. If your url still appears in your actual post instead of a video, highlight it and click the "remove formatting" button (formatting can be invisible sometimes).
 * Finally, there's a slight chance your custom theme is the issue, if you have one. To know for sure, we suggest temporarily switching to one of the default WordPress themes (e.g., "Twenty Thirteen") just to see if your video does appear. If it suddenly works, then your custom theme is the issue. You can switch back when done testing.
@@ -104,6 +105,10 @@ You can also start and end each individual video at particular times. Like the a
 1. YouTube Embed Screenshot 1: Paste a YouTube link on its own line and it will become a YouTube embed on your website.
 2. YouTube Embed Screenshot 2: How to get to YouTube's admin settings.
 3. YouTube Embed Screenshot 3: Visual YouTube Wizard and Search Tool
+
+== Changelog ==
+= YouTube Embed 7.0 =
+Shortcode support for embedding multiple videos on one line
 
 == Changelog ==
 = YouTube Embed 6.4 =

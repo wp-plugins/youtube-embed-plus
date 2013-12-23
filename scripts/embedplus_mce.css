@@ -75,13 +75,13 @@
     border-radius: 3px;
     border: 1px solid #bbbbbb;
     box-sizing: border-box;
-    color: #333;
+    /*color: #333;*/
     cursor: pointer;
     display: inline-block;
-    font-family: sans-serif;
+    /*font-family: sans-serif;
     font-size: 12px;
     height: 24px;
-    line-height: 23px;
+    line-height: 23px;*/
     margin: 0px 5px 0px 0px;
     outline-color: #333;
     outline-style: none;
