@@ -71,7 +71,7 @@ See more details after installing. Enjoy!
 1. Use the WordPress plugin installer to install the plugin.  Alternatively, you can just extract the folder in our download package and upload it to your plugin directory.
 1. Access the Plugins admin menu to activate the YouTube embed plugin.
 1. Make your default settings after clicking the new YouTube menu item that shows up in your admin panel.
-1. To embed videos in your post, start pasting the links with any desired additional codes needed for your YouTube embed (see below section for additional codes). Make sure each link is on its own line. Or, if you need multiple videos on the same line, make sure each URL is wrapped properly with the shortcode (Example: `[embedyt]http://www.youtube.com/watch?v=ABCDEFGHIJK&width=400$height=250`) If you don't know exactly which video you want to embed, use the free built-in search feature to find and insert one.
+1. To embed videos in your post, start pasting the links with any desired additional codes needed for your YouTube embed (see below section for additional codes). Make sure each link is on its own line. Or, if you need multiple videos on the same line, make sure each URL is wrapped properly with the shortcode. Example: `[embedyt]http://www.youtube.com/watch?v=ABCDEFGHIJK&width=400$height=250[/embedyt]` If you don't know exactly which video you want to embed, use the free built-in search feature to find and insert one.
 1. To get video SEO, an analytics dashboard and many other premium features, [sign up for one of the options here >>](https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx)
 
 **Additional codes (adding these will override the default settings in the admin):**
@@ -95,30 +95,28 @@ You can also start and end each individual video at particular times. Like the a
 
 **Always follow these rules when pasting a link:**
 
-* Make sure the url is really on its own line by itself. Or, if you need multiple videos on the same line, make sure each URL is wrapped properly with the shortcode (Example: `[embedyt]http://www.youtube.com/watch?v=ABCDEFGHIJK&width=400$height=250`)
+* Make sure the url is really on its own line by itself. Or, if you need multiple videos on the same line, make sure each URL is wrapped properly with the shortcode. Example: `[embedyt]http://www.youtube.com/watch?v=ABCDEFGHIJK&width=400$height=250[/embedyt]`
 * Make sure the url is not an active hyperlink (i.e., it should just be plain text). Otherwise, highlight the url and click the "unlink" button in your editor.
 * Make sure you did **not** format or align the url in any way. If your url still appears in your actual post instead of a video, highlight it and click the "remove formatting" button (formatting can be invisible sometimes).
 * Finally, there's a slight chance your custom theme is the issue, if you have one. To know for sure, we suggest temporarily switching to one of the default WordPress themes (e.g., "Twenty Thirteen") just to see if your video does appear. If it suddenly works, then your custom theme is the issue. You can switch back when done testing.
 
 == Screenshots ==
 
-1. YouTube Embed Screenshot 1: Paste a YouTube link on its own line and it will become a YouTube embed on your website.
+1. YouTube Embed Screenshot 1: Paste a YouTube link on its own line and it will become a YouTube embed on your website. Or, use the shortcode method.
 2. YouTube Embed Screenshot 2: How to get to YouTube's admin settings.
 3. YouTube Embed Screenshot 3: Visual YouTube Wizard and Search Tool
+
 
 == Changelog ==
 = YouTube Embed 7.0 =
 Shortcode support for embedding multiple videos on one line
 
-== Changelog ==
 = YouTube Embed 6.4 =
 Fixes for some users of WordPress 3.8
 
-== Changelog ==
 = YouTube Embed 6.3 =
 Removed possible e_notices.
 
-== Changelog ==
 = YouTube Embed 6.2 =
 Given the increasing focus on privacy, the no-cookies options was added as a free option to all users.  Priority support enhancements also made.
 
