@@ -105,7 +105,8 @@ You can also start and end each individual video at particular times. Like the a
 1. YouTube Embed Screenshot 1: Paste a YouTube link on its own line and it will become a YouTube embed on your website. Or, use the shortcode method.
 2. YouTube Embed Screenshot 2: How to get to YouTube's admin settings.
 3. YouTube Embed Screenshot 3: Visual YouTube Wizard and Search Tool
-
+4. YouTube Embed Screenshot 4: Wizard Insert Search Result Screenshot
+5. YouTube Embed Screenshot 5: Wizard Search Results Screenshot
 
 == Changelog ==
 = YouTube Embed 7.0 =
