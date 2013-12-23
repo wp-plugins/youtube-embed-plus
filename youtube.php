@@ -901,7 +901,7 @@ class YouTubePrefs
                     Simply click the <img style="vertical-align: text-bottom;" src="<?php echo plugins_url('images/wizbuttonbig.png', __FILE__) ?>"> wizard button found above 
                     your editor to start the wizard (see image above to locate this button).  There, you'll be given the option to enter your search terms.  
                     Click the "Search" button to view the results.  Each result will have an <span class="button-primary cuz">&#9660; Insert Into Editor</span> button that 
-                    you can click to directly embed the desired video link to your post without having to copy and paste it.             
+                    you can click to directly embed the desired video link to your post without having to copy and paste.             
                 </p>
                 <p>
                     The ability to read the latest Internet discussions about the videos you want to embed is now free to all users.
@@ -924,7 +924,7 @@ class YouTubePrefs
                     <p>
                         <input name="<?php echo self::$opt_oldspacing; ?>" id="<?php echo self::$opt_oldspacing; ?>" <?php checked($all[self::$opt_oldspacing], 1); ?> type="checkbox" class="checkbox">
                         <label for="<?php echo self::$opt_oldspacing; ?>">
-                            Continue the spacing style from version 4.0 and older. Those versions required you to manually add spacing above and below your video. Unchecking this will automatically add the spacing for you.
+                            Continue the spacing style from version 4.0 and older. Those versions required you to manually add spacing above and below your video. Unchecking this will automatically add the spacing.
                         </label>
                     </p>
                     <p>
