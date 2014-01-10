@@ -4,14 +4,14 @@ Plugin Name: YouTube Embed
 Tags: short code, shortcode, youtube shortcode, health, diagnostic, youtube status, seo, video seo, rich snippets, reddit, google+, google plus, comments, search, widget, sidebar, responsive, fluid, iphone, mobile, android, tablet, ipad, youtube playlist, playlists, playlist, wmode, hd, autohd, auto hd, video analytics, analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin, https, ssl, secure, no-cookie, cookie, html5, youtube html5
 Requires at least: 2.9
 Tested up to: 3.8
-Stable tag: 7.0
+Stable tag: 7.1
 License: GPLv3 or later
 
 YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
 
 == Description ==
 
-**From 0 to 300,000 downloads in one year!  Here are some recently added features:**
+**From 0 to 300,000 downloads in it's first year! Here are some recently added features:**
 
 * Built-in YouTube video search, viewing, and insertion right from your editor.
 * One-click Video SEO tags.
@@ -22,19 +22,20 @@ YouTube embed plugin with basic features and convenient defaults. Upgrade now to
 
 This YouTube embed plugin for WordPress keeps things simple, but it can be upgraded for enhanced SEO, performance, privacy and security for you and your visitors. It provides the basic features of the YouTube embedded player and will have you posting videos in seconds after installing it. **All you have to do is simply paste an unformatted YouTube link on its own line (shortcodes are also supported).**  Your YouTube embed will then show up when you preview or publish the post. The settings page has plenty of default options that you can automatically apply to all your embedded YouTube videos:
 
+* Force HD quality when available
+* Make your videos responsive so that they dynamically fit in all screen sizes (smart phone, PC and tablet)
+* Modest branding - hide YouTube logo while playing
 * Automatically center all your videos
 * Automatically start playing your videos
 * Turn on/off closed captions by default
 * Show/hide annotations by default
 * Loop your videos
-* Modest branding - hide YouTube logo while playing
 * Show/hide related videos at the end
 * Show/hide the video title and other info
 * Use the light theme
-* Force HD quality when available
 * Show/hide player controls
 * Use "opaque" wmode
-* Make your videos responsive so that they dynamically fit in all screen sizes (smart phone, PC and tablet)
+* Autohide controls until hovering
 
 Customizations can be also made to each YouTube embed by adding more to the link as shown below. Adding these will override the above global defaults that you set:
 
@@ -49,6 +50,7 @@ Customizations can be also made to each YouTube embed by adding more to the link
 * rel - Set this to 0 to not show related videos at the end of playing (or 1 to show them). Example: `http://www.youtube.com/watch?v=quwebVjAEJA&rel=0`
 * showinfo - Set this to 0 to hide the video title and other info (or 1 to show it). Example: `http://www.youtube.com/watch?v=quwebVjAEJA&showinfo=0`
 * theme - Set this to 'light' to make the player have the light-colored theme (or 'dark' for the dark theme). Example: `http://www.youtube.com/watch?v=quwebVjAEJA&theme=light`
+* autohide - Set this to 1 to slide away the control bar after the video starts playing. It will automatically slide back in again if you mouse over the video. (Set to  2 to always show it). Example: `http://www.youtube.com/watch?v=quwebVjAEJA&autohide=1`
 
 You can also start and end each individual video at particular times. Like the above, each option should begin with '&'
 
@@ -65,6 +67,8 @@ Beyond the above features, you have the option of upgrading to PRO to add enhanc
 Recently, we also added One-Click Video SEO, which adds markup that can improve your click rates and video SERP rankings.
 
 See more details after installing. Enjoy!
+
+[Maintained by EmbedPlus for YouTube >>](http://www.embedplus.com/)
 
 == Installation ==
 
@@ -87,6 +91,7 @@ See more details after installing. Enjoy!
 * rel - Set this to 0 to not show related videos at the end of playing (or 1 to show them). Example: `http://www.youtube.com/watch?v=quwebVjAEJA&rel=0`
 * showinfo - Set this to 0 to hide the video title and other info (or 1 to show it). Example: `http://www.youtube.com/watch?v=quwebVjAEJA&showinfo=0`
 * theme - Set this to 'light' to make the player have the light-colored theme (or 'dark' for the dark theme). Example: `http://www.youtube.com/watch?v=quwebVjAEJA&theme=light`
+* autohide - Set this to 1 to slide away the control bar after the video starts playing. It will automatically slide back in again if you mouse over the video. (Set to  2 to always show it). Example: `http://www.youtube.com/watch?v=quwebVjAEJA&autohide=1`
 
 You can also start and end each individual video at particular times. Like the above, each option should begin with '&'
 
@@ -109,6 +114,9 @@ You can also start and end each individual video at particular times. Like the a
 5. YouTube Embed Screenshot 5: Wizard Search Results Screenshot
 
 == Changelog ==
+= YouTube Embed 7.1 =
+Added autohide controls feature
+
 = YouTube Embed 7.0 =
 Shortcode support for embedding multiple videos on one line
 

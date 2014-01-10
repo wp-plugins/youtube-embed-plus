@@ -3,7 +3,7 @@
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
-  Version: 7.0
+  Version: 7.1
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
@@ -32,7 +32,7 @@
 class YouTubePrefs
 {
 
-    public static $version = '7.0';
+    public static $version = '7.1';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -46,6 +46,7 @@ class YouTubePrefs
     public static $opt_modestbranding = 'modestbranding';
     public static $opt_rel = 'rel';
     public static $opt_showinfo = 'showinfo';
+    public static $opt_autohide = 'autohide';
     public static $opt_controls = 'controls';
     public static $opt_theme = 'theme';
     public static $opt_wmode = 'wmode';
@@ -114,6 +115,7 @@ class YouTubePrefs
             self::$opt_modestbranding,
             self::$opt_rel,
             self::$opt_showinfo,
+            self::$opt_autohide,
             self::$opt_controls,
             self::$opt_html5,
             self::$opt_theme,
@@ -227,6 +229,7 @@ class YouTubePrefs
         $_html5 = get_option('youtubeprefs_html5', 0);
         $_theme = get_option('youtubeprefs_theme', 'dark');
         $_vq = get_option('youtubeprefs_vq', '');
+        $_autohide = 2;
         $_pro = '';
         $_ssl = 0;
         $_nocookie = 0;
@@ -260,6 +263,7 @@ class YouTubePrefs
             $_ssl = self::tryget($arroptions, self::$opt_ssl, 0);
             $_nocookie = self::tryget($arroptions, self::$opt_nocookie, 0);
             $_controls = self::tryget($arroptions, self::$opt_controls, 2);
+            $_autohide = self::tryget($arroptions, self::$opt_autohide, 2);
             $_oldspacing = self::tryget($arroptions, self::$opt_oldspacing, 1);
             $_responsive = self::tryget($arroptions, self::$opt_responsive, 0);
             $_schemaorg = self::tryget($arroptions, self::$opt_schemaorg, 0);
@@ -282,6 +286,7 @@ class YouTubePrefs
             self::$opt_modestbranding => $_modestbranding,
             self::$opt_rel => $_rel,
             self::$opt_showinfo => $_showinfo,
+            self::$opt_autohide => $_autohide,
             self::$opt_html5 => $_html5,
             self::$opt_theme => $_theme,
             self::$opt_wmode => $_wmode,
@@ -753,6 +758,7 @@ class YouTubePrefs
             $new_options[self::$opt_rel] = $_POST[self::$opt_rel] == (true || 'on') ? 1 : 0;
             $new_options[self::$opt_showinfo] = $_POST[self::$opt_showinfo] == (true || 'on') ? 1 : 0;
             $new_options[self::$opt_controls] = $_POST[self::$opt_controls] == (true || 'on') ? 2 : 0;
+            $new_options[self::$opt_autohide] = $_POST[self::$opt_autohide] == (true || 'on') ? 1 : 2;
             $new_options[self::$opt_html5] = $_POST[self::$opt_html5] == (true || 'on') ? 1 : 0;
             $new_options[self::$opt_theme] = $_POST[self::$opt_theme] == (true || 'on') ? 'dark' : 'light';
             $new_options[self::$opt_wmode] = $_POST[self::$opt_wmode] == (true || 'on') ? 'opaque' : 'transparent';
@@ -811,7 +817,7 @@ class YouTubePrefs
 
         <style type="text/css">
             .wrap {font-family: Arial; color: #000000;}
-            #ytform p { line-height: 20px; }
+            #ytform p { line-height: 20px; margin-bottom: 11px; }
             #ytform ul li {margin-left: 30px; list-style: disc outside none;}
             .ytindent {padding: 0px 0px 0px 20px; font-size: 11px;}
             .ytindent ul, .ytindent p {font-size: 11px;}
@@ -851,6 +857,8 @@ class YouTubePrefs
             .jumper {height: 25px;}
             .ssschema {float: right; width: 350px; height: auto; margin-right: 10px;}
             .totop {position: absolute; right: 20px; top: 5px; color: #444444; font-size: 10px;}
+            input[type=checkbox] {border: 1px solid #000000;}
+            .chktitle {display: inline-block; padding: 1px 3px 1px 3px; border-radius: 3px; background-color: #ffffff; border: 1px solid #dddddd;}
         </style>
 
         <div class="ytindent">
@@ -873,7 +881,7 @@ class YouTubePrefs
                 </h3>
                 <p>
                     <b>For videos:</b> <i>Method 1 - </i> Do you already have a URL to the video you want to embed? All you have to do is paste it on its own line, as shown below (including the http:// part). Easy, eh?<br>
-                     <i>Method 2 - </i> If you want to have two or more videos next to each other on the same line, wrap each link with the <code>[embedyt]...[/embedyt]</code> shortcode. <b>Tip for embedding videos on the same line:</b> As shown in the example image below, decrease the size of each video so that they fit together on the same line (See the "How To Override Defaults" section for height and width instructions).
+                    <i>Method 2 - </i> If you want to have two or more videos next to each other on the same line, wrap each link with the <code>[embedyt]...[/embedyt]</code> shortcode. <b>Tip for embedding videos on the same line:</b> As shown in the example image below, decrease the size of each video so that they fit together on the same line (See the "How To Override Defaults" section for height and width instructions).
                 </p>
                 <p>
                     <b>For playlists:</b> Go to the page for the playlist that lists all of its videos (<a target="_blank" href="http://www.youtube.com/playlist?list=PL70DEC2B0568B5469">Example &raquo;</a>). Click on the video that you want the playlist to start with. Copy and paste that browser URL into your blog on its own line. If you want to have two or more playlists next to each other on the same line, wrap each link with the <code>[embedyt]...[/embedyt]</code> shortcode.
@@ -922,62 +930,56 @@ class YouTubePrefs
 
                 <div class="ytindent chx">
                     <p>
-                        <input name="<?php echo self::$opt_oldspacing; ?>" id="<?php echo self::$opt_oldspacing; ?>" <?php checked($all[self::$opt_oldspacing], 1); ?> type="checkbox" class="checkbox">
-                        <label for="<?php echo self::$opt_oldspacing; ?>">
-                            Continue the spacing style from version 4.0 and older. Those versions required you to manually add spacing above and below your video. Unchecking this will automatically add the spacing.
-                        </label>
-                    </p>
-                    <p>
                         <input name="<?php echo self::$opt_center; ?>" id="<?php echo self::$opt_center; ?>" <?php checked($all[self::$opt_center], 1); ?> type="checkbox" class="checkbox">
-                        <label for="<?php echo self::$opt_center; ?>"><?php _e('Automatically center all your videos (not necessary if all you\'re videos span the whole width of your blog)') ?></label>
+                        <label for="<?php echo self::$opt_center; ?>"><?php _e('<b class="chktitle">Centering:</b> Automatically center all your videos (not necessary if all you\'re videos span the whole width of your blog).') ?></label>
                     </p>
                     <p>
                         <input name="<?php echo self::$opt_autoplay; ?>" id="<?php echo self::$opt_autoplay; ?>" <?php checked($all[self::$opt_autoplay], 1); ?> type="checkbox" class="checkbox">
-                        <label for="<?php echo self::$opt_autoplay; ?>"><?php _e('Automatically start playing your videos') ?></label>
+                        <label for="<?php echo self::$opt_autoplay; ?>"><?php _e('<b class="chktitle">Autoplay:</b>  Automatically start playing your videos.') ?></label>
                     </p>
                     <p>
                         <input name="<?php echo self::$opt_cc_load_policy; ?>" id="<?php echo self::$opt_cc_load_policy; ?>" <?php checked($all[self::$opt_cc_load_policy], 1); ?> type="checkbox" class="checkbox">
-                        <label for="<?php echo self::$opt_cc_load_policy; ?>"><?php _e('Turn on closed captions by default') ?></label>
+                        <label for="<?php echo self::$opt_cc_load_policy; ?>"><?php _e('<b class="chktitle">Closed Captions:</b> Turn on closed captions by default.') ?></label>
                     </p>
                     <p>
                         <input name="<?php echo self::$opt_iv_load_policy; ?>" id="<?php echo self::$opt_iv_load_policy; ?>" <?php checked($all[self::$opt_iv_load_policy], 1); ?> type="checkbox" class="checkbox">
-                        <label for="<?php echo self::$opt_iv_load_policy; ?>"><?php _e('Show annotations by default') ?></label>
+                        <label for="<?php echo self::$opt_iv_load_policy; ?>"><?php _e('<b class="chktitle">Annotations:</b> Show annotations by default.') ?></label>
                     </p>
                     <p>
                         <input name="<?php echo self::$opt_loop; ?>" id="<?php echo self::$opt_loop; ?>" <?php checked($all[self::$opt_loop], 1); ?> type="checkbox" class="checkbox">
-                        <label for="<?php echo self::$opt_loop; ?>"><?php _e('Loop all your videos') ?></label>
+                        <label for="<?php echo self::$opt_loop; ?>"><?php _e('<b class="chktitle">Looping:</b> Loop all your videos.') ?></label>
                     </p>
                     <p>
                         <input name="<?php echo self::$opt_modestbranding; ?>" id="<?php echo self::$opt_modestbranding; ?>" <?php checked($all[self::$opt_modestbranding], 1); ?> type="checkbox" class="checkbox">
-                        <label for="<?php echo self::$opt_modestbranding; ?>"><?php _e('Modest branding - hide YouTube logo from control bar while playing') ?></label>
+                        <label for="<?php echo self::$opt_modestbranding; ?>"><?php _e('<b class="chktitle">Modest Branding:</b> Hide YouTube logo from control bar while playing.') ?></label>
                     </p>
                     <p>
                         <input name="<?php echo self::$opt_rel; ?>" id="<?php echo self::$opt_rel; ?>" <?php checked($all[self::$opt_rel], 1); ?> type="checkbox" class="checkbox">
-                        <label for="<?php echo self::$opt_rel; ?>"><?php _e('Show related videos at the end') ?></label>
+                        <label for="<?php echo self::$opt_rel; ?>"><?php _e('<b class="chktitle">Related Videos:</b> Show related videos at the end.') ?></label>
                     </p>
                     <p>
                         <input name="<?php echo self::$opt_showinfo; ?>" id="<?php echo self::$opt_showinfo; ?>" <?php checked($all[self::$opt_showinfo], 1); ?> type="checkbox" class="checkbox">
-                        <label for="<?php echo self::$opt_showinfo; ?>"><?php _e('Show the video title and other info') ?></label>
+                        <label for="<?php echo self::$opt_showinfo; ?>"><?php _e('<b class="chktitle">Show Title:</b> Show the video title and other info.') ?></label>
                     </p>
                     <p>
                         <input name="<?php echo self::$opt_theme; ?>" id="<?php echo self::$opt_theme; ?>" <?php checked($all[self::$opt_theme], 'dark'); ?> type="checkbox" class="checkbox">
-                        <label for="<?php echo self::$opt_theme; ?>"><?php _e('Use the dark theme (uncheck to use light theme)') ?></label>
+                        <label for="<?php echo self::$opt_theme; ?>"><?php _e('<b class="chktitle">Dark Theme:</b> Use the dark theme (uncheck to use light theme).') ?></label>
                     </p>
                     <p>
                         <input name="<?php echo self::$opt_vq; ?>" id="<?php echo self::$opt_vq; ?>" <?php checked($all[self::$opt_vq], 'hd720'); ?> type="checkbox" class="checkbox">
-                        <label for="<?php echo self::$opt_vq; ?>"><?php _e('Force HD quality when available') ?></label>
+                        <label for="<?php echo self::$opt_vq; ?>"><?php _e('<b class="chktitle">HD Quality:</b> Force HD quality when available.') ?></label>
                     </p>
                     <p>
                         <input name="<?php echo self::$opt_controls; ?>" id="<?php echo self::$opt_controls; ?>" <?php checked($all[self::$opt_controls], 2); ?> type="checkbox" class="checkbox">
-                        <label for="<?php echo self::$opt_controls; ?>"><?php _e('Show player controls. Checking this also speeds up page loading (the Flash player will "lazy load," which means it will load the player after clicking play). Uncheck this to hide the player controls for a cleaner look.') ?></label>
+                        <label for="<?php echo self::$opt_controls; ?>"><?php _e('<b class="chktitle">Show Controls:</b> Show the player\'s control bar. Checking this also speeds up page loading (the Flash player will "lazy load," which means it will load the player after clicking play). Uncheck this to completely remove the player controls for a cleaner look.') ?></label>
                     </p>
                     <p>
                         <input name="<?php echo self::$opt_wmode; ?>" id="<?php echo self::$opt_wmode; ?>" <?php checked($all[self::$opt_wmode], 'opaque'); ?> type="checkbox" class="checkbox">
-                        <label for="<?php echo self::$opt_wmode; ?>"><?php _e('Use "opaque" wmode (uncheck to use "transparent"). Opaque may have higher performance.') ?></label>
+                        <label for="<?php echo self::$opt_wmode; ?>"><?php _e('<b class="chktitle">Wmode:</b> Use "opaque" wmode (uncheck to use "transparent"). Opaque may have higher performance.') ?></label>
                     </p>
                     <p>
                         <input name="<?php echo self::$opt_responsive; ?>" id="<?php echo self::$opt_responsive; ?>" <?php checked($all[self::$opt_responsive], 1); ?> type="checkbox" class="checkbox">
-                        <label for="<?php echo self::$opt_responsive; ?>"><?php _e('Make my videos responsive so that they dynamically fit in all screen sizes. (smart phone, PC and tablet)') ?></label>
+                        <label for="<?php echo self::$opt_responsive; ?>"><?php _e('<b class="chktitle">Responsive Video Sizing:</b> Make my videos responsive so that they dynamically fit in all screen sizes (smart phone, PC and tablet). NOTE: While this is checked, any custom hardcoded widths and heights you may have set will dynamically change too.') ?></label>
                     </p>
                     <p>
                         <input name="<?php echo self::$opt_defaultdims; ?>" id="<?php echo self::$opt_defaultdims; ?>" <?php checked($all[self::$opt_defaultdims], 1); ?> type="checkbox" class="checkbox">                        
@@ -986,12 +988,22 @@ class YouTubePrefs
                             Height: <input type="text" name="<?php echo self::$opt_defaultheight; ?>" id="<?php echo self::$opt_defaultheight; ?>" value="<?php echo trim($all[self::$opt_defaultheight]); ?>" class="textinput" style="width: 50px;">
                         </span>
 
-                        <label for="<?php echo self::$opt_defaultdims; ?>"><?php _e('Make my videos have a default size (NOTE: Checking the responsive option will override this size setting) ') ?></label>
+                        <label for="<?php echo self::$opt_defaultdims; ?>"><?php _e('<b class="chktitle">Default Dimensions:</b> Make my videos have a default size (NOTE: Checking the responsive option will override this size setting) ') ?></label>
                     </p>
                     <p>
                         <input name="<?php echo self::$opt_nocookie; ?>" id="<?php echo self::$opt_nocookie; ?>" <?php checked($all[self::$opt_nocookie], 1); ?> type="checkbox" class="checkbox">
                         <label for="<?php echo self::$opt_nocookie; ?>">
-                            Prevent YouTube from leaving tracking cookies on your visitors browsers unless they actual play the videos. This is coded to apply this behavior on links in your past post as well. (Checking this might affect YouTube API behavior)
+                            <b class="chktitle">YouTube Cookies:</b> Prevent YouTube from leaving tracking cookies on your visitors browsers unless they actual play the videos. This is coded to apply this behavior on links in your past post as well. (Checking this might affect YouTube API behavior)
+                        </label>
+                    </p>
+                    <p>
+                        <input name="<?php echo self::$opt_autohide; ?>" id="<?php echo self::$opt_autohide; ?>" <?php checked($all[self::$opt_autohide], 1); ?> type="checkbox" class="checkbox">
+                        <label for="<?php echo self::$opt_autohide; ?>"><?php _e('<b class="chktitle">Autohide Controls:</b> Slide away the control bar after the video starts playing. It will automatically slide back in again if you mouse over the video.') ?></label>
+                    </p>
+                    <p>
+                        <input name="<?php echo self::$opt_oldspacing; ?>" id="<?php echo self::$opt_oldspacing; ?>" <?php checked($all[self::$opt_oldspacing], 1); ?> type="checkbox" class="checkbox">
+                        <label for="<?php echo self::$opt_oldspacing; ?>">
+                            <b class="chktitle">Legacy Spacing:</b> Continue the spacing style from version 4.0 and older. Those versions required you to manually add spacing above and below your video. Unchecking this will automatically add the spacing.
                         </label>
                     </p>
 
@@ -1004,20 +1016,20 @@ class YouTubePrefs
                         <p>
                             <input name="<?php echo self::$opt_ssl; ?>" id="<?php echo self::$opt_ssl; ?>" <?php checked($all[self::$opt_ssl], 1); ?> type="checkbox" class="checkbox">
                             <label for="<?php echo self::$opt_ssl; ?>">
-                                <b>(PRO)</b> Use the secure YouTube player for all of your visitors and videos you embed. This will go back and also secure your past embeds as they are loaded on their pages.
+                                <b>(PRO)</b> <b class="chktitle">HTTPS/SSL Player:</b> Use the secure YouTube player for all of your visitors and videos you embed. This will go back and also secure your past embeds as they are loaded on their pages.
                             </label>
                         </p>
                         <p>
                             <input name="<?php echo self::$opt_html5; ?>" id="<?php echo self::$opt_html5; ?>" <?php checked($all[self::$opt_html5], 1); ?> type="checkbox" class="checkbox">
                             <label for="<?php echo self::$opt_html5; ?>">
-                                <b>(PRO)</b> Speed up your pages containing YouTube videos by using YouTube's HTML5 player instead of the Flash player when available.  It's been noted that using the HTML5 player offers visibly lower page load times than Flash.  Our own internal tests along with data from some beta testers suggest the same thing. In fact, some experiments show that pages (with multiple embeds) can have over four times less size with HTML5 than Flash. <br><span class="italic">So what does this all mean?</span>  Well given that site speed may have an effect on search engine rankings, we suggest checking this option if you typically embed videos in your posts as it may have a site-wide benefit. Our code will even go back and load your older posted videos as HTML5 instead of Flash, where possible.
+                                <b>(PRO)</b> <b class="chktitle">HTML5 First:</b> Speed up your pages containing YouTube videos by using YouTube's HTML5 player instead of the Flash player when available.  It's been noted that using the HTML5 player offers visibly lower page load times than Flash.  Our own internal tests along with data from some beta testers suggest the same thing. In fact, some experiments show that pages (with multiple embeds) can have over four times less size with HTML5 than Flash. <br><span class="italic">So what does this all mean?</span>  Well given that site speed may have an effect on search engine rankings, we suggest checking this option if you typically embed videos in your posts as it may have a site-wide benefit. Our code will even go back and load your older posted videos as HTML5 instead of Flash, where possible.
                             </label>
                         </p>
                         <p>
                             <img class="ssschema" src="<?php echo plugins_url('images/ssschemaorg.jpg', __FILE__) ?>" />
                             <input name="<?php echo self::$opt_schemaorg; ?>" id="<?php echo self::$opt_schemaorg; ?>" <?php checked($all[self::$opt_schemaorg], 1); ?> type="checkbox" class="checkbox">
                             <label for="<?php echo self::$opt_schemaorg; ?>">
-                                <b>(PRO)</b> Automatically add Google, Bing, and Yahoo friendly markup so that your pages with video embeds can be indexed to have a greater chance of showing up in search engine results for those particular videos, even if you aren't the owner. This markup also promotes the chances of your pages showing up with actual video thumbnails within search results (see example on the right). Just check the PRO setting and we'll handle the SEO.
+                                <b>(PRO)</b> <b class="chktitle">Video SEO Tags:</b> Automatically add Google, Bing, and Yahoo friendly markup so that your pages with video embeds can be indexed to have a greater chance of showing up in search engine results for those particular videos, even if you aren't the owner. This markup also promotes the chances of your pages showing up with actual video thumbnails within search results (see example on the right). Just check the PRO setting and we'll handle the SEO.
                             </label>
 
                         </p>
@@ -1029,20 +1041,20 @@ class YouTubePrefs
                         <p>
                             <input disabled type="checkbox" class="checkbox">
                             <label>
-                                <span class="pronon">(PRO Users)</span> Use the secure YouTube player for all of your visitors and videos you embed. This will go back and also secure your past embeds as they are loaded on their pages.
+                                <b class="chktitle">HTTPS/SSL Player:</b>  <span class="pronon">(PRO Users)</span> Use the secure YouTube player for all of your visitors and videos you embed. This will go back and also secure your past embeds as they are loaded on their pages.
                             </label>
                         </p>
                         <p>
                             <input disabled type="checkbox" class="checkbox">
                             <label>
-                                <span class="pronon">(PRO Users)</span> Speed up your pages containing YouTube videos by using YouTube's HTML5 player instead of the Flash player when available.  It's been noted that using the HTML5 player offers visibly lower page load times than Flash.  Our own internal tests along with data from some beta testers suggest the same thing. <b>In fact, some experiments show that pages (with multiple embeds) can have over four times less size with HTML5 than Flash.</b> <br><span class="italic">So what does this all mean?</span>  Well given that site speed may have an effect on search engine rankings, we suggest checking this option if you typically embed videos in your posts. Our code will even go back and load your older posted videos as HTML5 instead of Flash, where possible.
+                                <b class="chktitle">HTML5 First:</b>  <span class="pronon">(PRO Users)</span> Speed up your pages containing YouTube videos by using YouTube's HTML5 player instead of the Flash player when available.  It's been noted that using the HTML5 player offers visibly lower page load times than Flash.  Our own internal tests along with data from some beta testers suggest the same thing. <b>In fact, some experiments show that pages (with multiple embeds) can have over four times less size with HTML5 than Flash.</b> <br><span class="italic">So what does this all mean?</span>  Well given that site speed may have an effect on search engine rankings, we suggest checking this option if you typically embed videos in your posts. Our code will even go back and load your older posted videos as HTML5 instead of Flash, where possible.
                             </label>
                         </p>
                         <p>
                             <img class="ssschema" src="<?php echo plugins_url('images/ssschemaorg.jpg', __FILE__) ?>" />
                             <input disabled type="checkbox" class="checkbox">
                             <label>
-                                <span class="pronon">(NEW: PRO Users)</span> Automatically add Google, Bing, and Yahoo friendly markup so that your pages with video embeds can be indexed to have a greater chance of showing up in search engine results for those particular videos, even if you aren't the owner. This markup also promotes the chances of your pages showing up with actual video thumbnails within search results (see example on the right). Just check the PRO setting and we'll handle the SEO.
+                                <b class="chktitle">Video SEO Tags:</b> <span class="pronon">(NEW: PRO Users)</span>  Automatically add Google, Bing, and Yahoo friendly markup so that your pages with video embeds can be indexed to have a greater chance of showing up in search engine results for those particular videos, even if you aren't the owner. This markup also promotes the chances of your pages showing up with actual video thumbnails within search results (see example on the right). Just check the PRO setting and we'll handle the SEO.
                             </label>
                         </p>
 
@@ -1094,7 +1106,8 @@ class YouTubePrefs
                     _e("<li><strong>showinfo</strong> - Set this to 0 to hide the video title and other info (or 1 to show it). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&showinfo=0</strong></em> </li>");
                     _e("<li><strong>theme</strong> - Set this to 'light' to make the player have the light-colored theme (or 'dark' for the dark theme). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&theme=light</strong></em> </li>");
                     _e("<li><strong>vq</strong> - Set this to 'hd720' or 'hd1080' to force the video to have HD quality. Leave blank to let YouTube decide. <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&vq=hd720</strong></em> </li>");
-                    _e("<li><strong>controls</strong> - Set this to 0 to hide the video controls (or 2 to show it). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&controls=0</strong></em> </li>");
+                    _e("<li><strong>controls</strong> - Set this to 0 to completely hide the video controls (or 2 to show it). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&controls=0</strong></em> </li>");
+                    _e("<li><strong>autohide</strong> - Set this to 1 to slide away the control bar after the video starts playing. It will automatically slide back in again if you mouse over the video. (Set to  2 to always show it). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&autohide=1</strong></em> </li>");
                     _e('</ul>');
 
                     _e("<p>You can also start and end each individual video at particular times. Like the above, each option should begin with '&'</p>");
@@ -1374,8 +1387,8 @@ class YouTubePrefs
                 global $content_width;
                 if (empty($content_width))
                     $content_width = $GLOBALS['content_width'];
-                if (empty($content_width))
-                    $content_width = $_GLOBALS['content_width'];
+                //if (empty($content_width))
+                //  $content_width = $_GLOBALS['content_width'];
 
                 $blogwidth = $embed_size_w ? $embed_size_w : ($content_width ? $content_width : 450);
             }
