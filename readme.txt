@@ -11,7 +11,7 @@ YouTube embed plugin with basic features and convenient defaults. Upgrade now to
 
 == Description ==
 
-**From 0 to 300,000 downloads in it's first year! Here are some recently added features:**
+**From 0 to 300,000 downloads in its first year! Here are some recently added features:**
 
 * Built-in YouTube video search, viewing, and insertion right from your editor.
 * One-click Video SEO tags.
