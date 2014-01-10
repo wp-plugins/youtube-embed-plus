@@ -502,14 +502,14 @@ class YouTubePrefs
                         $_duration = self::formatDuration(self::secondsToDuration(intval($json['entry']['media$group']['yt$duration']['seconds'])));
                         $_uploadDate = sanitize_text_field($json['entry']['published']['$t']);
 
-                        $schemaorgcode = '<div style="display:none;" itemprop="video" itemscope itemtype="http://schema.org/VideoObject">';
+                        $schemaorgcode = '<span style="display:none;" itemprop="video" itemscope itemtype="http://schema.org/VideoObject">';
                         $schemaorgcode .= '<meta itemprop="embedURL" content="http://www.youtube.com/embed/' . $vidid . '">';
                         $schemaorgcode .= '<meta itemprop="name" content="' . $_name . '">';
                         $schemaorgcode .= '<meta itemprop="description" content="' . $_description . '">';
                         $schemaorgcode .= '<meta itemprop="thumbnailUrl" content="' . $_thumbnailUrl . '">';
                         $schemaorgcode .= '<meta itemprop="duration" content="' . $_duration . '">';
                         $schemaorgcode .= '<meta itemprop="uploadDate" content="' . $_uploadDate . '">';
-                        $schemaorgcode .= '</div>';
+                        $schemaorgcode .= '</span>';
                     }
                 }
             }
