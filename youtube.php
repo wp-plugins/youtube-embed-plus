@@ -422,9 +422,9 @@ class YouTubePrefs
             $centercode = ' style="display: block; margin: 0px auto;" ';
         }
 
-        $code1 = $schemaorgoutput . '<iframe ' . $centercode . ' id="_ytid_' . rand(10000, 99999) . '" width="' . self::$defaultwidth . '" height="' . self::$defaultheight .
+        $code1 = '<iframe ' . $centercode . ' id="_ytid_' . rand(10000, 99999) . '" width="' . self::$defaultwidth . '" height="' . self::$defaultheight .
                 '" src="' . $linkscheme . '://www.' . $youtubebaseurl . '.com/embed/' . $linkparams['v'] . '?';
-        $code2 = '" frameborder="0" allowfullscreen type="text/html" class="__youtube_prefs__' . ($iscontent ? '' : ' __youtube_prefs_widget__') . '"></iframe>';
+        $code2 = '" frameborder="0" allowfullscreen type="text/html" class="__youtube_prefs__' . ($iscontent ? '' : ' __youtube_prefs_widget__') . '"></iframe>' . $schemaorgoutput;
 
         $origin = '';
 
@@ -502,7 +502,7 @@ class YouTubePrefs
                         $_duration = self::formatDuration(self::secondsToDuration(intval($json['entry']['media$group']['yt$duration']['seconds'])));
                         $_uploadDate = sanitize_text_field($json['entry']['published']['$t']);
 
-                        $schemaorgcode = '<span style="display:none;" itemprop="video" itemscope itemtype="http://schema.org/VideoObject">';
+                        $schemaorgcode = '<span itemprop="video" itemscope itemtype="http://schema.org/VideoObject">';
                         $schemaorgcode .= '<meta itemprop="embedURL" content="http://www.youtube.com/embed/' . $vidid . '">';
                         $schemaorgcode .= '<meta itemprop="name" content="' . $_name . '">';
                         $schemaorgcode .= '<meta itemprop="description" content="' . $_description . '">';
