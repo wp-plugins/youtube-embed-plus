@@ -3,7 +3,7 @@
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
-  Version: 7.1
+  Version: 7.2
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
@@ -32,7 +32,7 @@
 class YouTubePrefs
 {
 
-    public static $version = '7.1';
+    public static $version = '7.2';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -140,7 +140,7 @@ class YouTubePrefs
         }
     }
 
-    static function media_button_wizard()
+    public static function media_button_wizard()
     {
         add_thickbox();
 
@@ -172,7 +172,7 @@ class YouTubePrefs
         //<?php if (version_compare(get_bloginfo('version'), '3.0', '<')) {echo '_old';}
     }
 
-    static function check_double_plugin_warning()
+    public static function check_double_plugin_warning()
     {
         if (is_plugin_active('embedplus-for-wordpress/embedplus.php'))
         {
@@ -180,7 +180,7 @@ class YouTubePrefs
         }
     }
 
-    static function double_plugin_warning()
+    public static function double_plugin_warning()
     {
         ?>
         <style type="text/css">
@@ -195,7 +195,7 @@ class YouTubePrefs
         <?php
     }
 
-    static function jsvars()
+    public static function jsvars()
     {
         $responsiveselector = '["iframe.__youtube_prefs_widget__"]';
         if (self::$alloptions[self::$opt_responsive] == 1)
@@ -210,12 +210,12 @@ class YouTubePrefs
         <?php
     }
 
-    static function fitvids()
+    public static function fitvids()
     {
         wp_enqueue_script('__ytprefsfitvids__', plugins_url('scripts/fitvids.min.js', __FILE__), false, false, true);
     }
 
-    static function initoptions()
+    public static function initoptions()
     {
         //vanilla defaults
         $_center = 0;
@@ -329,11 +329,11 @@ class YouTubePrefs
         {
             add_filter('the_content', 'YouTubePrefs::apply_prefs_content', 1);
             add_filter('widget_text', 'YouTubePrefs::apply_prefs_widget', 1);
-            add_shortcode('embedyt', 'YouTubePrefs::apply_prefs_shortcode');
+            add_shortcode('embedyt', array('YouTubePrefs', 'apply_prefs_shortcode'));
         }
     }
 
-    function apply_prefs_shortcode($atts, $content = null)
+    public static function apply_prefs_shortcode($atts, $content = null)
     {
         $content = trim($content);
         $currfilter = current_filter();
@@ -720,6 +720,11 @@ class YouTubePrefs
         die();
     }
 
+    public static function postchecked($idx)
+    {
+        return isset($_POST[$idx]) && $_POST[$idx] == (true || 'on');
+    }
+
     public static function ytprefs_show_options()
     {
 
@@ -749,26 +754,26 @@ class YouTubePrefs
             // Read their posted values
 
             $new_options = array();
-            $new_options[self::$opt_center] = $_POST[self::$opt_center] == (true || 'on') ? 1 : 0;
-            $new_options[self::$opt_autoplay] = $_POST[self::$opt_autoplay] == (true || 'on') ? 1 : 0;
-            $new_options[self::$opt_cc_load_policy] = $_POST[self::$opt_cc_load_policy] == (true || 'on') ? 1 : 0;
-            $new_options[self::$opt_iv_load_policy] = $_POST[self::$opt_iv_load_policy] == (true || 'on') ? 1 : 3;
-            $new_options[self::$opt_loop] = $_POST[self::$opt_loop] == (true || 'on') ? 1 : 0;
-            $new_options[self::$opt_modestbranding] = $_POST[self::$opt_modestbranding] == (true || 'on') ? 1 : 0;
-            $new_options[self::$opt_rel] = $_POST[self::$opt_rel] == (true || 'on') ? 1 : 0;
-            $new_options[self::$opt_showinfo] = $_POST[self::$opt_showinfo] == (true || 'on') ? 1 : 0;
-            $new_options[self::$opt_controls] = $_POST[self::$opt_controls] == (true || 'on') ? 2 : 0;
-            $new_options[self::$opt_autohide] = $_POST[self::$opt_autohide] == (true || 'on') ? 1 : 2;
-            $new_options[self::$opt_html5] = $_POST[self::$opt_html5] == (true || 'on') ? 1 : 0;
-            $new_options[self::$opt_theme] = $_POST[self::$opt_theme] == (true || 'on') ? 'dark' : 'light';
-            $new_options[self::$opt_wmode] = $_POST[self::$opt_wmode] == (true || 'on') ? 'opaque' : 'transparent';
-            $new_options[self::$opt_vq] = $_POST[self::$opt_vq] == (true || 'on') ? 'hd720' : '';
-            $new_options[self::$opt_nocookie] = $_POST[self::$opt_nocookie] == (true || 'on') ? 1 : 0;
-            $new_options[self::$opt_ssl] = isset($_POST[self::$opt_ssl]) && $_POST[self::$opt_ssl] == (true || 'on') ? 1 : 0;
-            $new_options[self::$opt_oldspacing] = isset($_POST[self::$opt_oldspacing]) && $_POST[self::$opt_oldspacing] == (true || 'on') ? 1 : 0;
-            $new_options[self::$opt_responsive] = isset($_POST[self::$opt_responsive]) && $_POST[self::$opt_responsive] == (true || 'on') ? 1 : 0;
-            $new_options[self::$opt_schemaorg] = isset($_POST[self::$opt_schemaorg]) && $_POST[self::$opt_schemaorg] == (true || 'on') ? 1 : 0;
-            $new_options[self::$opt_defaultdims] = isset($_POST[self::$opt_defaultdims]) && $_POST[self::$opt_defaultdims] == (true || 'on') ? 1 : 0;
+            $new_options[self::$opt_center] = self::postchecked(self::$opt_center) ? 1 : 0;
+            $new_options[self::$opt_autoplay] = self::postchecked(self::$opt_autoplay) ? 1 : 0;
+            $new_options[self::$opt_cc_load_policy] = self::postchecked(self::$opt_cc_load_policy) ? 1 : 0;
+            $new_options[self::$opt_iv_load_policy] = self::postchecked(self::$opt_iv_load_policy) ? 1 : 3;
+            $new_options[self::$opt_loop] = self::postchecked(self::$opt_loop) ? 1 : 0;
+            $new_options[self::$opt_modestbranding] = self::postchecked(self::$opt_modestbranding) ? 1 : 0;
+            $new_options[self::$opt_rel] = self::postchecked(self::$opt_rel) ? 1 : 0;
+            $new_options[self::$opt_showinfo] = self::postchecked(self::$opt_showinfo) ? 1 : 0;
+            $new_options[self::$opt_controls] = self::postchecked(self::$opt_controls) ? 2 : 0;
+            $new_options[self::$opt_autohide] = self::postchecked(self::$opt_autohide) ? 1 : 2;
+            $new_options[self::$opt_html5] = self::postchecked(self::$opt_html5) ? 1 : 0;
+            $new_options[self::$opt_theme] = self::postchecked(self::$opt_theme) ? 'dark' : 'light';
+            $new_options[self::$opt_wmode] = self::postchecked(self::$opt_wmode) ? 'opaque' : 'transparent';
+            $new_options[self::$opt_vq] = self::postchecked(self::$opt_vq) ? 'hd720' : '';
+            $new_options[self::$opt_nocookie] = self::postchecked(self::$opt_nocookie) ? 1 : 0;
+            $new_options[self::$opt_ssl] = self::postchecked(self::$opt_ssl) ? 1 : 0;
+            $new_options[self::$opt_oldspacing] = self::postchecked(self::$opt_oldspacing) ? 1 : 0;
+            $new_options[self::$opt_responsive] = self::postchecked(self::$opt_responsive) ? 1 : 0;
+            $new_options[self::$opt_schemaorg] = self::postchecked(self::$opt_schemaorg) ? 1 : 0;
+            $new_options[self::$opt_defaultdims] = self::postchecked(self::$opt_defaultdims) ? 1 : 0;
 
             $_defaultwidth = '';
             try
@@ -842,13 +847,14 @@ class YouTubePrefs
             .ytindent h3 {font-size: 15px; line-height: 22px; margin: 5px 0px 10px 0px;}
             #wizleftlink {float: left; display: block; width: 240px; font-style: italic; text-align: center; text-decoration: none;}
             .button-primary {font-weight: bold; white-space: nowrap;}
-            #opt_pro {box-shadow: 0px 0px 5px 0px #1870D5; width: 270px;vertical-align: top;}
+            #opt_pro {box-shadow: 0px 0px 5px 0px #1870D5; width: 320px;vertical-align: top;}
             #goprobox h3 {font-size: 13px;}
             .chx p {margin: 0px 0px 5px 0px;}
             .cuz {background-image: linear-gradient(to bottom,#4983FF,#0C5597) !important; color: #ffffff;}
+            .brightpro {background-image: linear-gradient(to bottom,#ff5500,#cc2200) !important; color: #ffffff;}
             #boxdefaultdims {font-weight: bold; padding: 0px 10px; <?php echo $all[self::$opt_defaultdims] ? '' : 'display: none;' ?>}
             .textinput {border-width: 2px !important;}
-            h3.sect {border-radius: 10px; background-color: #D9E9F7; padding: 5px 5px 5px 10px; position: relative;}
+            h3.sect {border-radius: 10px; background-color: #D9E9F7; padding: 5px 5px 5px 10px; position: relative; font-weight: bold;}
             h3.sect a {text-decoration: none; color: #E20000;}
             h3.sect a.button-primary {color: #ffffff;} 
             #ytnav {margin-bottom: 15px;}
@@ -869,7 +875,7 @@ class YouTubePrefs
                 <a href="#jumpwiz">Visual YouTube Wizard</a>
                 <a href="#jumpdefaults">Set Defaults</a>
                 <a href="#jumpoverride">How To Override Defaults</a>
-                <a href="#jumppro" style="border-color: #888888;">Go PRO!</a>
+                <a href="#jumppro" style="border-color: #888888;">Go PRO! <sup class="orange bold">Low Prices</sup></a>
                 <a href="#jumpsupport">Support</a>
             </div>
 
@@ -1134,7 +1140,7 @@ class YouTubePrefs
                     ?>
 
                     <h3 class="sect">
-                        <a href="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx" class="button-primary" target="_blank">Want to go PRO?</a> PRO users help to keep this plugin running and frequently updated. They get perks like:
+                        <a href="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx" class="button-primary" target="_blank">Want to go PRO? (Low Prices)</a> &nbsp; PRO users help to keep this plugin running and frequently updated. They get perks like:
                     </h3>
                     <div class="procol">
                         <ul class="gopro">
@@ -1145,6 +1151,10 @@ class YouTubePrefs
                             <li>
                                 <img src="<?php echo plugins_url('images/vseo.png', __FILE__) ?>">
                                 One-Click Video SEO Tags (markup that can help drive more traffic)
+                            </li>
+                            <li>
+                                <img src="<?php echo plugins_url('images/iconmusic.png', __FILE__) ?>">
+                                Music video extras to inspire your posts <sup class="orange bold">NEW</sup>
                             </li>
                             <li>
                                 <img src="<?php echo plugins_url('images/html5.png', __FILE__) ?>">
@@ -1188,20 +1198,21 @@ class YouTubePrefs
                                 <img src="<?php echo plugins_url('images/showcase.png', __FILE__) ?>">
                                 A chance to showcase your site right from our homepage
                             </li>
-
-                            <!--                            <li>
-                                                            <img src="<?php echo plugins_url('images/questionsale.png', __FILE__) ?>">
-                                                            What else? You tell us!                                
-                                                        </li>                            -->
+                            <li>
+                                <img src="<?php echo plugins_url('images/questionsale.png', __FILE__) ?>">
+                                What else? You tell us!                                
+                            </li>                           
                         </ul>
                     </div>
                     <br>
                     <br>
                     <div style="clear: both;"></div>
-                    <h3>Enter and save your PRO key (emailed to you):</h3>
+                    <h3 class="bold">Enter and save your PRO key (emailed to you):</h3>
                 <?php } ?>
-                <form name="form2" method="post" action="" id="epform2" class="submitpro" <?php if ($haspro) echo 'style="display: none;"' ?>>
-                    <input type="hidden" name="<?php echo $pro_submitted; ?>" value="Y">
+                <form name="form2" method="post" action="" id="epform2" class="submitpro" <?php if ($haspro)
+        {
+            echo 'style="display: none;"';
+        } ?>>
 
                     <input name="<?php echo self::$opt_pro; ?>" id="opt_pro" value="<?php echo $all[self::$opt_pro]; ?>" type="text">
                     <input type="submit" name="Submit" class="button-primary" id="prokeysubmit" value="<?php _e('Save Key') ?>" />
@@ -1209,10 +1220,10 @@ class YouTubePrefs
                     if (!$haspro)
                     {
                         ?>                    
-                        &nbsp; &nbsp; &nbsp; <span style="font-size: 25px; color: #cccccc;">|</span> &nbsp; &nbsp; &nbsp; <a href="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx" class="button-primary" target="_blank">Click here to go PRO &raquo;</a>
-                        <?php
-                    }
-                    ?>
+                        &nbsp; &nbsp; &nbsp; <span style="font-size: 25px; color: #cccccc;">|</span> &nbsp; &nbsp; &nbsp; <a href="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx" class="button-primary brightpro" target="_blank">Click here to go PRO &raquo;</a>
+            <?php
+        }
+        ?>
                     <br>
                     <span style="display: none;" id="prokeyloading" class="orange bold">Verifying...</span>
                     <span  class="orange bold" style="display: none;" id="prokeysuccess">Success! Please refresh this page.</span>
@@ -1228,7 +1239,7 @@ class YouTubePrefs
             </div>
             <div class="jumper" id="jumpsupport"></div>
             <div id="nonprosupport">
-                <h3>Support tips for non-PRO users</h3>
+                <h3 class="bold">Support tips for non-PRO users</h3>
                 We've found that a common support request has been from users that are pasting video links on single lines, as required, but are not seeing the video embed show up. One of these suggestions is usually the fix:
                 <ul class="reglist">
                     <li>Make sure the URL is really on its own line by itself. Or, if you need multiple videos on the same line, make sure each URL is wrapped properly with the shortcode (Example:  <code>[embedyt]http://www.youtube.com/watch?v=ABCDEFGHIJK&width=400$height=250[/embedyt]</code>)</li>
@@ -1239,7 +1250,7 @@ class YouTubePrefs
                         <br> TIP: As shown above, decrease the size of each video so that they fit together on the same line (See the "How To Override Defaults" section for height and width instructions)
                     </li>
                     <li>Finally, there's a slight chance your custom theme is the issue, if you have one. To know for sure, we suggest temporarily switching to one of the default WordPress themes (e.g., "Twenty Thirteen") just to see if your video does appear. If it suddenly works, then your custom theme is the issue. You can switch back when done testing.</li>
-                    <li>If none of the above work, you can contact us here if you still have issues: ext@embedplus.com. PRO users should use the priority form below instead.</li>                        
+                    <li>If none of the above work, you can contact us here if you still have issues: ext@embedplus.com. We'll try to respond within a week. PRO users should use the priority form below for faster replies.</li>                        
                 </ul>                
                 </p>
             </div>
