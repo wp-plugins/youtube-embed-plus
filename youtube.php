@@ -3,7 +3,7 @@
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
-  Version: 7.2
+  Version: 7.3
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
@@ -32,7 +32,7 @@
 class YouTubePrefs
 {
 
-    public static $version = '7.2';
+    public static $version = '7.3';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -49,6 +49,7 @@ class YouTubePrefs
     public static $opt_autohide = 'autohide';
     public static $opt_controls = 'controls';
     public static $opt_theme = 'theme';
+    public static $opt_color = 'color';
     public static $opt_wmode = 'wmode';
     public static $opt_vq = 'vq';
     public static $opt_html5 = 'html5';
@@ -119,6 +120,7 @@ class YouTubePrefs
             self::$opt_controls,
             self::$opt_html5,
             self::$opt_theme,
+            self::$opt_color,
             self::$opt_wmode,
             self::$opt_vq,
             'list',
@@ -228,6 +230,7 @@ class YouTubePrefs
         $_showinfo = get_option('youtubeprefs_showinfo', 1);
         $_html5 = get_option('youtubeprefs_html5', 0);
         $_theme = get_option('youtubeprefs_theme', 'dark');
+        $_color = get_option('youtubeprefs_color', 'red');
         $_vq = get_option('youtubeprefs_vq', '');
         $_autohide = 2;
         $_pro = '';
@@ -257,6 +260,7 @@ class YouTubePrefs
             $_showinfo = self::tryget($arroptions, self::$opt_showinfo, 1);
             $_html5 = self::tryget($arroptions, self::$opt_html5, 0);
             $_theme = self::tryget($arroptions, self::$opt_theme, 'dark');
+            $_color = self::tryget($arroptions, self::$opt_color, 'red');
             $_wmode = self::tryget($arroptions, self::$opt_wmode, 'opaque');
             $_vq = self::tryget($arroptions, self::$opt_vq, '');
             $_pro = self::tryget($arroptions, self::$opt_pro, '');
@@ -289,6 +293,7 @@ class YouTubePrefs
             self::$opt_autohide => $_autohide,
             self::$opt_html5 => $_html5,
             self::$opt_theme => $_theme,
+            self::$opt_color => $_color,
             self::$opt_wmode => $_wmode,
             self::$opt_vq => $_vq,
             self::$opt_pro => $_pro,
@@ -720,6 +725,77 @@ class YouTubePrefs
         die();
     }
 
+    public static function custom_admin_pointers_check()
+    {
+        $admin_pointers = self::custom_admin_pointers();
+        foreach ($admin_pointers as $pointer => $array)
+        {
+            if ($array['active'])
+                return true;
+        }
+    }
+
+    public static function custom_admin_pointers_footer()
+    {
+        $admin_pointers = self::custom_admin_pointers();
+        ?>
+        <script type="text/javascript">
+            /* <![CDATA[ */
+            (function($) {
+        <?php
+        foreach ($admin_pointers as $pointer => $array)
+        {
+            if ($array['active'])
+            {
+                ?>
+                        var wpajaxurl = "<?php echo admin_url('admin-ajax.php') ?>";
+                        if (window.location.toString().indexOf('https://') == 0)
+                        {
+                            wpajaxurl = wpajaxurl.replace("http://", "https://");
+                        }
+                        $('<?php echo $array['anchor_id']; ?>').pointer({
+                            content: '<?php echo $array['content']; ?>',
+                            position: {
+                                edge: '<?php echo $array['edge']; ?>',
+                                align: '<?php echo $array['align']; ?>'
+                            },
+                            close: function() {
+                                $.post(wpajaxurl, {
+                                    pointer: '<?php echo $pointer; ?>',
+                                    action: 'dismiss-wp-pointer'
+                                });
+                            }
+                        }).pointer('open');
+                <?php
+            }
+        }
+        ?>
+            })(jQuery);
+            /* ]]> */
+        </script>
+        <?php
+    }
+
+    public static function custom_admin_pointers()
+    {
+        $dismissed = explode(',', (string) get_user_meta(get_current_user_id(), 'dismissed_wp_pointers', true));
+        $version = str_replace('.', '_', self::$version); // replace all periods in 1.0 with an underscore
+        $prefix = 'custom_admin_pointers' . $version . '_';
+
+        $new_pointer_content = '<h3>' . __('New Feature') . '</h3>';
+        $new_pointer_content .= '<p>' . __('Thanks for updating the fastest growing YouTube plugin for WordPress! Please review your video settings as this version adds another free feature. PRO users can also <a target="_blank" href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer' . '">review any recent enhancements here &raquo;</a>') . '</p>';
+
+        return array(
+            $prefix . 'new_items' => array(
+                'content' => $new_pointer_content,
+                'anchor_id' => '#toplevel_page_youtube-my-preferences',
+                'edge' => 'top',
+                'align' => 'left',
+                'active' => (!in_array($prefix . 'new_items', $dismissed) )
+            ),
+        );
+    }
+
     public static function postchecked($idx)
     {
         return isset($_POST[$idx]) && $_POST[$idx] == (true || 'on');
@@ -766,6 +842,7 @@ class YouTubePrefs
             $new_options[self::$opt_autohide] = self::postchecked(self::$opt_autohide) ? 1 : 2;
             $new_options[self::$opt_html5] = self::postchecked(self::$opt_html5) ? 1 : 0;
             $new_options[self::$opt_theme] = self::postchecked(self::$opt_theme) ? 'dark' : 'light';
+            $new_options[self::$opt_color] = self::postchecked(self::$opt_color) ? 'red' : 'white';
             $new_options[self::$opt_wmode] = self::postchecked(self::$opt_wmode) ? 'opaque' : 'transparent';
             $new_options[self::$opt_vq] = self::postchecked(self::$opt_vq) ? 'hd720' : '';
             $new_options[self::$opt_nocookie] = self::postchecked(self::$opt_nocookie) ? 1 : 0;
@@ -972,6 +1049,10 @@ class YouTubePrefs
                         <label for="<?php echo self::$opt_theme; ?>"><?php _e('<b class="chktitle">Dark Theme:</b> Use the dark theme (uncheck to use light theme).') ?></label>
                     </p>
                     <p>
+                        <input name="<?php echo self::$opt_color; ?>" id="<?php echo self::$opt_color; ?>" <?php checked($all[self::$opt_color], 'red'); ?> type="checkbox" class="checkbox">
+                        <label for="<?php echo self::$opt_color; ?>"><?php _e('<b class="chktitle">Red Progress Bar:</b> Use the red progress bar (uncheck to use a white progress bar). Note: Using white will disable the modestbranding option.') ?></label>
+                    </p>
+                    <p>
                         <input name="<?php echo self::$opt_vq; ?>" id="<?php echo self::$opt_vq; ?>" <?php checked($all[self::$opt_vq], 'hd720'); ?> type="checkbox" class="checkbox">
                         <label for="<?php echo self::$opt_vq; ?>"><?php _e('<b class="chktitle">HD Quality:</b> Force HD quality when available.') ?></label>
                     </p>
@@ -1111,6 +1192,7 @@ class YouTubePrefs
                     _e("<li><strong>rel</strong> - Set this to 0 to not show related videos at the end of playing (or 1 to show them). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&rel=0</strong></em> </li>");
                     _e("<li><strong>showinfo</strong> - Set this to 0 to hide the video title and other info (or 1 to show it). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&showinfo=0</strong></em> </li>");
                     _e("<li><strong>theme</strong> - Set this to 'light' to make the player have the light-colored theme (or 'dark' for the dark theme). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&theme=light</strong></em> </li>");
+                    _e("<li><strong>color</strong> - Set this to 'white' to make the player have a white progress bar (or 'red' for a red progress bar). Note: Using white will disable the modestbranding option. <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&color=white</strong></em> </li>");
                     _e("<li><strong>vq</strong> - Set this to 'hd720' or 'hd1080' to force the video to have HD quality. Leave blank to let YouTube decide. <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&vq=hd720</strong></em> </li>");
                     _e("<li><strong>controls</strong> - Set this to 0 to completely hide the video controls (or 2 to show it). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&controls=0</strong></em> </li>");
                     _e("<li><strong>autohide</strong> - Set this to 1 to slide away the control bar after the video starts playing. It will automatically slide back in again if you mouse over the video. (Set to  2 to always show it). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&autohide=1</strong></em> </li>");
@@ -1140,6 +1222,8 @@ class YouTubePrefs
                     ?>
 
                     <h3 class="sect">
+
+                        PRO users help keep new features coming and our coffee cups filled. Go PRO and get these perks in return &raquo;
                         <a href="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx" class="button-primary" target="_blank">Want to go PRO? (Low Prices)</a> &nbsp; PRO users help to keep this plugin running and frequently updated. They get perks like:
                     </h3>
                     <div class="procol">
@@ -1209,10 +1293,12 @@ class YouTubePrefs
                     <div style="clear: both;"></div>
                     <h3 class="bold">Enter and save your PRO key (emailed to you):</h3>
                 <?php } ?>
-                <form name="form2" method="post" action="" id="epform2" class="submitpro" <?php if ($haspro)
-        {
-            echo 'style="display: none;"';
-        } ?>>
+                <form name="form2" method="post" action="" id="epform2" class="submitpro" <?php
+                if ($haspro)
+                {
+                    echo 'style="display: none;"';
+                }
+                ?>>
 
                     <input name="<?php echo self::$opt_pro; ?>" id="opt_pro" value="<?php echo $all[self::$opt_pro]; ?>" type="text">
                     <input type="submit" name="Submit" class="button-primary" id="prokeysubmit" value="<?php _e('Save Key') ?>" />
@@ -1221,9 +1307,9 @@ class YouTubePrefs
                     {
                         ?>                    
                         &nbsp; &nbsp; &nbsp; <span style="font-size: 25px; color: #cccccc;">|</span> &nbsp; &nbsp; &nbsp; <a href="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx" class="button-primary brightpro" target="_blank">Click here to go PRO &raquo;</a>
-            <?php
-        }
-        ?>
+                        <?php
+                    }
+                    ?>
                     <br>
                     <span style="display: none;" id="prokeyloading" class="orange bold">Verifying...</span>
                     <span  class="orange bold" style="display: none;" id="prokeysuccess">Success! Please refresh this page.</span>
@@ -1502,6 +1588,17 @@ class YouTubePrefs
     {
         wp_enqueue_style('embedplusyoutube', plugins_url() . '/youtube-embed-plus/scripts/embedplus_mce.css');
         add_action('wp_print_scripts', 'youtubeprefs_output_scriptvars');
+
+
+        if ((!(isset(YouTubePrefs::$alloptions[YouTubePrefs::$opt_pro]) &&
+                strlen(trim(YouTubePrefs::$alloptions[YouTubePrefs::$opt_pro])) > 0)) &&
+                (get_bloginfo('version') >= '3.3') && YouTubePrefs::custom_admin_pointers_check())
+        {
+            add_action('admin_print_footer_scripts', 'YouTubePrefs::custom_admin_pointers_footer');
+
+            wp_enqueue_script('wp-pointer');
+            wp_enqueue_style('wp-pointer');
+        }
     }
 
     function youtubeprefs_output_scriptvars()

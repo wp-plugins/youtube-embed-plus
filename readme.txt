@@ -4,7 +4,7 @@ Plugin Name: YouTube Embed
 Tags: music, music video, songs, song, lyrics, responsive, short code, shortcode, youtube shortcode, health, diagnostic, youtube status, seo, video seo, rich snippets, reddit, google+, google plus, comments, search, widget, sidebar, responsive, fluid, iphone, mobile, android, tablet, ipad, youtube playlist, playlists, playlist, wmode, hd, autohd, auto hd, video analytics, analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin, https, ssl, secure, no-cookie, cookie, html5, youtube html5
 Requires at least: 2.9
 Tested up to: 3.8.1
-Stable tag: 7.2
+Stable tag: 7.3
 License: GPLv3 or later
 
 YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
@@ -113,6 +113,10 @@ You can also start and end each individual video at particular times. Like the a
 3. YouTube Embed Screenshot 3: Visual YouTube Wizard and Search Tool
 4. YouTube Embed Screenshot 4: Wizard Insert Search Result Screenshot
 5. YouTube Embed Screenshot 5: Wizard Search Results Screenshot
+
+== Changelog ==
+= YouTube Embed 7.3 =
+Change the color of the progress bar from red to white.
 
 == Changelog ==
 = YouTube Embed 7.2 =
