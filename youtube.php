@@ -913,7 +913,7 @@ class YouTubePrefs
             .orange {color: #f85d00;}
             .bold {font-weight: bold;}
             .grey{color: #888888;}
-            #goprobox {border-radius: 15px; padding: 10px 15px 15px 15px; margin-top: 15px; border: 3px solid #CCE5EC; width: 825px; position: relative;}
+            #goprobox {border-radius: 15px; padding: 10px 15px 15px 15px; margin-top: 15px; border: 3px solid #CCE5EC; position: relative;}
             #salenote {position: absolute; right: 10px; top: 10px; width: 75px; height: 30px;}
             #nonprosupport {border-radius: 15px; padding: 5px 10px 10px 10px;  border: 3px solid #ff6655;}
             .pronon {font-weight: bold; color: #f85d00;}
@@ -1222,9 +1222,8 @@ class YouTubePrefs
                     ?>
 
                     <h3 class="sect">
-
-                        PRO users help keep new features coming and our coffee cups filled. Go PRO and get these perks in return &raquo;
-                        <a href="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx" class="button-primary" target="_blank">Want to go PRO? (Low Prices)</a> &nbsp; PRO users help to keep this plugin running and frequently updated. They get perks like:
+                        <a href="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx" class="button-primary" target="_blank">Want to go PRO? (Low Prices) &raquo;</a> &nbsp; 
+                        PRO users help keep new features coming and our coffee cups filled. Go PRO and get these perks in return:
                     </h3>
                     <div class="procol">
                         <ul class="gopro">
