@@ -115,10 +115,10 @@ You can also start and end each individual video at particular times. Like the a
 5. YouTube Embed Screenshot 5: Wizard Search Results Screenshot
 
 == Changelog ==
+
 = YouTube Embed 7.3 =
 Change the color of the progress bar from red to white.
 
-== Changelog ==
 = YouTube Embed 7.2 =
 Added music video extras to inspire your posts (PRO).
 
