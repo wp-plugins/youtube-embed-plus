@@ -3,7 +3,7 @@
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
-  Version: 7.3
+  Version: 7.5
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
@@ -32,7 +32,7 @@
 class YouTubePrefs
 {
 
-    public static $version = '7.3';
+    public static $version = '7.5';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -50,6 +50,7 @@ class YouTubePrefs
     public static $opt_controls = 'controls';
     public static $opt_theme = 'theme';
     public static $opt_color = 'color';
+    public static $opt_listType = 'listType';
     public static $opt_wmode = 'wmode';
     public static $opt_vq = 'vq';
     public static $opt_html5 = 'html5';
@@ -70,18 +71,17 @@ class YouTubePrefs
     public static $double_plugin = false;
     public static $scriptsprinted = 0;
     /*
-      color
-      autohide
+      listType
      */
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////
-    public static $oldytregex = '@^\s*https?://(?:www\.)?(?:(?:youtube.com/watch\?)|(?:youtu.be/))([^\s"]+)\s*$@im';
     //public static $ytregex = '@^[\r\n]{0,1}[[:blank:]]*https?://(?:www\.)?(?:(?:youtube.com/watch\?)|(?:youtu.be/))([^\s"]+)[[:blank:]]*[\r\n]{0,1}$@im';
-    public static $ytregex = '@^[\r\t ]*https?://(?:www\.)?(?:(?:youtube.com/watch\?)|(?:youtu.be/))([^\s"]+)[\r\t ]*$@im';
-    public static $justurlregex = '@https?://(?:www\.)?(?:(?:youtube.com/watch\?)|(?:youtu.be/))([^\s"]+)@';
+    public static $oldytregex = '@^\s*https?://(?:www\.)?(?:(?:youtube.com/(?:(?:watch)|(?:embed))/{0,1}\?)|(?:youtu.be/))([^\s"]+)\s*$@im';
+    public static $ytregex = '@^[\r\t ]*https?://(?:www\.)?(?:(?:youtube.com/(?:(?:watch)|(?:embed))/{0,1}\?)|(?:youtu.be/))([^\s"]+)[\r\t ]*$@im';
+    public static $justurlregex = '@https?://(?:www\.)?(?:(?:youtube.com/(?:(?:watch)|(?:embed))/{0,1}\?)|(?:youtu.be/))([^\s"]+)@';
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -121,6 +121,7 @@ class YouTubePrefs
             self::$opt_html5,
             self::$opt_theme,
             self::$opt_color,
+            self::$opt_listType,
             self::$opt_wmode,
             self::$opt_vq,
             'list',
@@ -408,7 +409,7 @@ class YouTubePrefs
                 unset($finalparams[self::$opt_html5]);
             }
 
-            if (self::$alloptions[self::$opt_schemaorg] == 1)
+            if (self::$alloptions[self::$opt_schemaorg] == 1 && isset($finalparams['v']))
             {
                 $schemaorgoutput = self::getschemaorgoutput($finalparams['v']);
             }
@@ -428,7 +429,7 @@ class YouTubePrefs
         }
 
         $code1 = '<iframe ' . $centercode . ' id="_ytid_' . rand(10000, 99999) . '" width="' . self::$defaultwidth . '" height="' . self::$defaultheight .
-                '" src="' . $linkscheme . '://www.' . $youtubebaseurl . '.com/embed/' . $linkparams['v'] . '?';
+                '" src="' . $linkscheme . '://www.' . $youtubebaseurl . '.com/embed/' . (isset($linkparams['v']) ? $linkparams['v'] : '') . '?';
         $code2 = '" frameborder="0" allowfullscreen type="text/html" class="__youtube_prefs__' . ($iscontent ? '' : ' __youtube_prefs_widget__') . '"></iframe>' . $schemaorgoutput;
 
         $origin = '';
@@ -783,7 +784,7 @@ class YouTubePrefs
         $prefix = 'custom_admin_pointers' . $version . '_';
 
         $new_pointer_content = '<h3>' . __('New Feature') . '</h3>';
-        $new_pointer_content .= '<p>' . __('Thanks for updating the fastest growing YouTube plugin for WordPress! Please review your video settings as this version adds another free feature. PRO users can also <a target="_blank" href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer' . '">review any recent enhancements here &raquo;</a>') . '</p>';
+        $new_pointer_content .= '<p>' . __('Thanks for updating the fastest growing YouTube plugin for WordPress! Please review your plugin settings and menus as this version includes a new free feature. PRO users can also <a target="_blank" href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer' . '">review any recent enhancements here &raquo;</a>') . '</p>';
 
         return array(
             $prefix . 'new_items' => array(
@@ -942,6 +943,7 @@ class YouTubePrefs
             .totop {position: absolute; right: 20px; top: 5px; color: #444444; font-size: 10px;}
             input[type=checkbox] {border: 1px solid #000000;}
             .chktitle {display: inline-block; padding: 1px 3px 1px 3px; border-radius: 3px; background-color: #ffffff; border: 1px solid #dddddd;}
+            b, strong {font-weight: bold;}
         </style>
 
         <div class="ytindent">
@@ -969,6 +971,9 @@ class YouTubePrefs
                 <p>
                     <b>For playlists:</b> Go to the page for the playlist that lists all of its videos (<a target="_blank" href="http://www.youtube.com/playlist?list=PL70DEC2B0568B5469">Example &raquo;</a>). Click on the video that you want the playlist to start with. Copy and paste that browser URL into your blog on its own line. If you want to have two or more playlists next to each other on the same line, wrap each link with the <code>[embedyt]...[/embedyt]</code> shortcode.
                 </p>                
+                <p>
+                    <b>For channel playlists:<sup class="orange">NEW</sup></b> At your editor, click on the <img style="vertical-align: text-bottom;" src="<?php echo plugins_url('images/wizbuttonbig.png', __FILE__) ?>"> wizard button and choose the option <i>Search for a video or channel to insert in my editor.</i> Then, click on the <i>channel playlist</i> option there (instead of <i>single video</i>). Search for the channel username and follow the rest of the directions there.
+                </p>
                 <p>
                     <b>Examples:</b><br><br>
                     <img style="width: 900px; height: auto;" class="shadow" src="<?php echo plugins_url('images/sshowto.png', __FILE__) ?>" />

@@ -1,10 +1,10 @@
 === YouTube ===
 Contributors: embedplus
 Plugin Name: YouTube Embed
-Tags: annotations, music, music video, songs, song, lyrics, responsive, short code, shortcode, youtube shortcode, health, diagnostic, youtube status, seo, video seo, rich snippets, reddit, google+, google plus, comments, search, widget, sidebar, responsive, fluid, iphone, mobile, android, tablet, ipad, youtube playlist, playlists, playlist, wmode, hd, autohd, auto hd, video analytics, analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin, https, ssl, secure, no-cookie, cookie, html5, youtube html5
+Tags: channel, annotations, music, music video, songs, song, lyrics, responsive, short code, shortcode, youtube shortcode, health, diagnostic, youtube status, seo, video seo, rich snippets, reddit, google+, google plus, comments, search, widget, sidebar, responsive, fluid, iphone, mobile, android, tablet, ipad, youtube playlist, playlists, playlist, wmode, hd, autohd, auto hd, video analytics, analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin, https, ssl, secure, no-cookie, cookie, html5, youtube html5
 Requires at least: 2.9
 Tested up to: 3.8.1
-Stable tag: 7.3
+Stable tag: 7.5
 License: GPLv3 or later
 
 YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
@@ -115,6 +115,9 @@ You can also start and end each individual video at particular times. Like the a
 5. YouTube Embed Screenshot 5: Wizard Search Results Screenshot
 
 == Changelog ==
+
+= YouTube Embed 7.5 =
+Ability to embed an entire channel as a playlist embed.
 
 = YouTube Embed 7.3 =
 Change the color of the progress bar from red to white.
