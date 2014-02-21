@@ -3,7 +3,7 @@
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
-  Version: 7.5
+  Version: 7.6
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
@@ -32,7 +32,7 @@
 class YouTubePrefs
 {
 
-    public static $version = '7.5';
+    public static $version = '7.6';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -783,8 +783,10 @@ class YouTubePrefs
         $version = str_replace('.', '_', self::$version); // replace all periods in 1.0 with an underscore
         $prefix = 'custom_admin_pointers' . $version . '_';
 
-        $new_pointer_content = '<h3>' . __('New Feature') . '</h3>';
-        $new_pointer_content .= '<p>' . __('Thanks for updating the fastest growing YouTube plugin for WordPress! Please review your plugin settings and menus as this version includes a new free feature. PRO users can also <a target="_blank" href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer' . '">review any recent enhancements here &raquo;</a>') . '</p>';
+        $new_pointer_content = '<h3>' . __('Notice') . '</h3>';
+        $new_pointer_content .= '<p>' . __("As of February 20th, 2014, there is an internet-wide Google/YouTube bug for forcing HD playback. It affects all WordPress and Non-WordPress sites. We have already notified the folks at Google. You can uncheck <em>HD Quality</em> for now and we will notify you when Google fixes the problem.") . '</p>';
+
+//PRO users can also <a target="_blank" href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer' . '">review any recent enhancements here &raquo;</a>'
 
         return array(
             $prefix . 'new_items' => array(
@@ -1059,7 +1061,7 @@ class YouTubePrefs
                     </p>
                     <p>
                         <input name="<?php echo self::$opt_vq; ?>" id="<?php echo self::$opt_vq; ?>" <?php checked($all[self::$opt_vq], 'hd720'); ?> type="checkbox" class="checkbox">
-                        <label for="<?php echo self::$opt_vq; ?>"><?php _e('<b class="chktitle">HD Quality:</b> Force HD quality when available.') ?></label>
+                        <label for="<?php echo self::$opt_vq; ?>"><?php _e('<b class="chktitle">HD Quality:</b> Force HD quality when available.') ?> <b class="orange">NOTE: As of February 20th, 2014, there is an internet-wide Google/YouTube bug for forcing HD playback. It affects all WordPress and Non-WordPress sites. We've already notified the folks at Google.  You can uncheck 'HD Quality' for now and we'll notify you when Google fixes the problem.</b></label>
                     </p>
                     <p>
                         <input name="<?php echo self::$opt_controls; ?>" id="<?php echo self::$opt_controls; ?>" <?php checked($all[self::$opt_controls], 2); ?> type="checkbox" class="checkbox">
@@ -1594,9 +1596,33 @@ class YouTubePrefs
         add_action('wp_print_scripts', 'youtubeprefs_output_scriptvars');
 
 
-        if ((!(isset(YouTubePrefs::$alloptions[YouTubePrefs::$opt_pro]) &&
-                strlen(trim(YouTubePrefs::$alloptions[YouTubePrefs::$opt_pro])) > 0)) &&
-                (get_bloginfo('version') >= '3.3') && YouTubePrefs::custom_admin_pointers_check())
+        if (
+                //////////////////////////////////////////////////////
+                //////////////////////////////////////////////////////
+                //////////////////////////////////////////////////////
+                //////////////////////////////////////////////////////
+                //////////////////////////////////////////////////////
+                //////////////////////////////////////////////////////
+                //////////////////////////////////////////////////////
+                //////////////////////////////////////////////////////
+                //////////////////////////////////////////////////////
+                //////////////////////////////////////////////////////
+                //////////////////////////////////////////////////////
+                //////////////////////////////////////////////////////
+                //////////////////////////////////////////////////////
+                //////////////////////////////////////////////////////
+                //////////////////////////////////////////////////////
+                //////////////////////////////////////////////////////
+                //////////////////////////////////////////////////////
+                //////////////////////////////////////////////////////
+                //////////////////////////////////////////////////////
+                //////////////////////////////////////////////////////
+                //////////////////////////////////////////////////////
+                //////////////////////////////////////////////////////
+                //
+                //(!(isset(YouTubePrefs::$alloptions[YouTubePrefs::$opt_pro]) && strlen(trim(YouTubePrefs::$alloptions[YouTubePrefs::$opt_pro])) > 0)) &&
+                (get_bloginfo('version') >= '3.3') && YouTubePrefs::custom_admin_pointers_check()
+        )
         {
             add_action('admin_print_footer_scripts', 'YouTubePrefs::custom_admin_pointers_footer');
 
