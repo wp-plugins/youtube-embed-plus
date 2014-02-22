@@ -784,7 +784,7 @@ class YouTubePrefs
         $prefix = 'custom_admin_pointers' . $version . '_';
 
         $new_pointer_content = '<h3>' . __('Notice') . '</h3>';
-        $new_pointer_content .= '<p>' . __("As of February 20th, 2014, there is an internet-wide Google/YouTube bug for forcing HD playback. It affects all WordPress and Non-WordPress sites. We have already notified the folks at Google. You can uncheck <em>HD Quality</em> for now and we will notify you when Google fixes the problem.") . '</p>';
+        $new_pointer_content .= '<p>' . __("On February 20th, 2014, there was an internet-wide Google/YouTube bug for forcing HD playback. It affected WordPress and Non-WordPress sites. We have already notified our friends at Google, and things are improving! You can uncheck <em>HD Quality</em> for now if you have problems.  All other free and <a class=\"bold orange\" target=_blank href=\"" . self::$epbase . "/dashboard/pro-easy-video-analytics.aspx?ref=frompointer\">PRO &raquo;</a> features should be working normally.") . '</p>';
 
 //PRO users can also <a target="_blank" href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer' . '">review any recent enhancements here &raquo;</a>'
 
@@ -1061,7 +1061,7 @@ class YouTubePrefs
                     </p>
                     <p>
                         <input name="<?php echo self::$opt_vq; ?>" id="<?php echo self::$opt_vq; ?>" <?php checked($all[self::$opt_vq], 'hd720'); ?> type="checkbox" class="checkbox">
-                        <label for="<?php echo self::$opt_vq; ?>"><?php _e('<b class="chktitle">HD Quality:</b> Force HD quality when available.') ?> <b class="orange">NOTE: As of February 20th, 2014, there is an internet-wide Google/YouTube bug for forcing HD playback. It affects all WordPress and Non-WordPress sites. We've already notified the folks at Google.  You can uncheck 'HD Quality' for now and we'll notify you when Google fixes the problem.</b></label>
+                        <label for="<?php echo self::$opt_vq; ?>"><?php _e('<b class="chktitle">HD Quality:</b> Force HD quality when available.') ?> <b class="orange">NOTE:  On February 20th, 2014, there was an internet-wide Google/YouTube bug for forcing HD playback. It affected WordPress and Non-WordPress sites. We have already notified our friends at Google, and things are improving! You can uncheck HD Quality for now if you have problems.  All other free and PRO features should be working normally.</b></label>
                     </p>
                     <p>
                         <input name="<?php echo self::$opt_controls; ?>" id="<?php echo self::$opt_controls; ?>" <?php checked($all[self::$opt_controls], 2); ?> type="checkbox" class="checkbox">
