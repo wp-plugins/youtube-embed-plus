@@ -120,7 +120,7 @@ You can also start and end each individual video at particular times. Like the a
 Fixes black bar issue when no height/width is specified.
 
 = YouTube Embed 7.6 =
-Added notice: As of February 20th, 2014, there is an internet-wide Google/YouTube bug for forcing HD playback. It affects all WordPress and Non-WordPress sites. We've already notified the folks at Google. You can uncheck 'Force HD' for now and we'll notify you when Google fixes the problem.
+Added notice about Google's HD problem.
 
 = YouTube Embed 7.5 =
 Ability to embed an entire channel as a playlist embed.
