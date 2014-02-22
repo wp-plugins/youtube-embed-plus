@@ -4,7 +4,7 @@ Plugin Name: YouTube Embed
 Tags: channel, annotations, music, music video, songs, song, lyrics, responsive, short code, shortcode, youtube shortcode, health, diagnostic, youtube status, seo, video seo, rich snippets, reddit, google+, google plus, comments, search, widget, sidebar, responsive, fluid, iphone, mobile, android, tablet, ipad, youtube playlist, playlists, playlist, wmode, hd, autohd, auto hd, video analytics, analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin, https, ssl, secure, no-cookie, cookie, html5, youtube html5
 Requires at least: 2.9
 Tested up to: 3.8.1
-Stable tag: 7.6
+Stable tag: 7.7
 License: GPLv3 or later
 
 YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
@@ -116,8 +116,11 @@ You can also start and end each individual video at particular times. Like the a
 
 == Changelog ==
 
+= YouTube Embed 7.7 =
+Fixes black bar issue when no height/width is specified.
+
 = YouTube Embed 7.6 =
-Added notice: As of February 20th, 2014, there is an internet-wide Google/YouTube bug for forcing HD playback. It affects all WordPress and Non-WordPress sites. We've already notified the folks at Google. You can uncheck 'Force HD' for now and we'll notify you when Google fixes the problem.
+Added notice about Google's HD problem.
 
 = YouTube Embed 7.5 =
 Ability to embed an entire channel as a playlist embed.

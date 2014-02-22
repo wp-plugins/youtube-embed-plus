@@ -3,7 +3,7 @@
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
-  Version: 7.6
+  Version: 7.7
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
@@ -32,7 +32,7 @@
 class YouTubePrefs
 {
 
-    public static $version = '7.6';
+    public static $version = '7.7';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -377,20 +377,25 @@ class YouTubePrefs
         $link = trim(preg_replace('/&amp;/i', '&', $m[0]));
         $link = preg_replace('/\s/', '', $link);
         $linkparamstemp = explode('?', $link);
-        $linkparams = self::keyvalue($linkparamstemp[1], true);
-        if (strpos($linkparamstemp[0], 'youtu.be') !== false && !$linkparams['v'])
+
+        $linkparams = array();
+        if (count($linkparamstemp) > 1)
+        {
+            $linkparams = self::keyvalue($linkparamstemp[1], true);
+        }
+        if (strpos($linkparamstemp[0], 'youtu.be') !== false && !isset($linkparams['v']))
         {
             $vtemp = explode('/', $linkparamstemp[0]);
             $linkparams['v'] = array_pop($vtemp);
         }
-
-        self::init_dimensions($link, $linkparams);
 
         $linkscheme = 'http';
         $youtubebaseurl = 'youtube';
         $schemaorgoutput = '';
 
         $finalparams = $linkparams + self::$alloptions;
+
+        self::init_dimensions($link, $linkparams, $finalparams);
 
         if (self::$alloptions[self::$opt_nocookie] == 1)
         {
@@ -430,7 +435,8 @@ class YouTubePrefs
 
         $code1 = '<iframe ' . $centercode . ' id="_ytid_' . rand(10000, 99999) . '" width="' . self::$defaultwidth . '" height="' . self::$defaultheight .
                 '" src="' . $linkscheme . '://www.' . $youtubebaseurl . '.com/embed/' . (isset($linkparams['v']) ? $linkparams['v'] : '') . '?';
-        $code2 = '" frameborder="0" allowfullscreen type="text/html" class="__youtube_prefs__' . ($iscontent ? '' : ' __youtube_prefs_widget__') . '"></iframe>' . $schemaorgoutput;
+        $code2 = '" frameborder="0" type="text/html" class="__youtube_prefs__' . ($iscontent ? '' : ' __youtube_prefs_widget__') .
+                '" allowfullscreen webkitallowfullscreen mozallowfullscreen ></iframe>' . $schemaorgoutput;
 
         $origin = '';
 
@@ -559,7 +565,7 @@ class YouTubePrefs
         return "T{$hours}H{$minutes}M{$seconds}S";
     }
 
-    public static function init_dimensions($url, $urlkvp)
+    public static function init_dimensions($url, $urlkvp, $finalparams)
     {
         // get default dimensions; try embed size in settings, then try theme's content width, then just 480px
         if (self::$defaultwidth == null)
@@ -574,7 +580,7 @@ class YouTubePrefs
             {
                 self::$defaultwidth = $urlkvp['width'];
             }
-            else if (isset(self::$alloptions[self::$opt_defaultwidth]) && is_numeric(self::$alloptions[self::$opt_defaultwidth]))
+            else if (self::$alloptions[self::$opt_defaultdims] == 1 && (isset(self::$alloptions[self::$opt_defaultwidth]) && is_numeric(self::$alloptions[self::$opt_defaultwidth])))
             {
                 self::$defaultwidth = self::$alloptions[self::$opt_defaultwidth];
             }
@@ -590,24 +596,25 @@ class YouTubePrefs
             {
                 self::$defaultwidth = 480;
             }
-            //self::$defaultheight = $urlkvp['height'] ? $urlkvp['height'] + 28 : self::get_aspect_height($url, $urlkvp);
+
+
 
             if (isset($urlkvp['height']) && is_numeric($urlkvp['height']))
             {
                 self::$defaultheight = $urlkvp['height'];
             }
-            else if (isset(self::$alloptions[self::$opt_defaultheight]) && is_numeric(self::$alloptions[self::$opt_defaultheight]))
+            else if (self::$alloptions[self::$opt_defaultdims] == 1 && (isset(self::$alloptions[self::$opt_defaultheight]) && is_numeric(self::$alloptions[self::$opt_defaultheight])))
             {
                 self::$defaultheight = self::$alloptions[self::$opt_defaultheight];
             }
             else
             {
-                self::$defaultheight = self::get_aspect_height($url, $urlkvp);
+                self::$defaultheight = self::get_aspect_height($url, $urlkvp, $finalparams);
             }
         }
     }
 
-    public static function get_aspect_height($url, $urlkvp)
+    public static function get_aspect_height($url, $urlkvp, $finalparams)
     {
 
         // attempt to get aspect ratio correct height from oEmbed
@@ -628,8 +635,12 @@ class YouTubePrefs
             }
         }
 
-        //add 28 for YouTube's own bar
-        return $aspectheight + 28;
+        if ($finalparams[self::$opt_controls] != 0 && $finalparams[self::$opt_autohide] != 1)
+        {
+            //add 28 for YouTube's own bar
+            $aspectheight += 28;
+        }
+        return $aspectheight;
     }
 
     public static function ytprefs_plugin_menu()
@@ -783,10 +794,8 @@ class YouTubePrefs
         $version = str_replace('.', '_', self::$version); // replace all periods in 1.0 with an underscore
         $prefix = 'custom_admin_pointers' . $version . '_';
 
-        $new_pointer_content = '<h3>' . __('Notice') . '</h3>';
-        $new_pointer_content .= '<p>' . __("On February 20th, 2014, there was an internet-wide Google/YouTube bug for forcing HD playback. It affected WordPress and Non-WordPress sites. We have already notified our friends at Google, and things are improving! You can uncheck <em>HD Quality</em> for now if you have problems.  All other free and <a class=\"bold orange\" target=_blank href=\"" . self::$epbase . "/dashboard/pro-easy-video-analytics.aspx?ref=frompointer\">PRO &raquo;</a> features should be working normally.") . '</p>';
-
-//PRO users can also <a target="_blank" href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer' . '">review any recent enhancements here &raquo;</a>'
+        $new_pointer_content = '<h3>' . __('New Update') . '</h3>';
+        $new_pointer_content .= '<p>' . __('This is an important update that improves the handling of the annoying black bars that some YouTube videos can have. Our sizing formula has been incorporated into both free and <a class="bold orange" target="_blank" href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer' . '">PRO &raquo;</a> versions.') . '</p>';
 
         return array(
             $prefix . 'new_items' => array(
@@ -1061,7 +1070,7 @@ class YouTubePrefs
                     </p>
                     <p>
                         <input name="<?php echo self::$opt_vq; ?>" id="<?php echo self::$opt_vq; ?>" <?php checked($all[self::$opt_vq], 'hd720'); ?> type="checkbox" class="checkbox">
-                        <label for="<?php echo self::$opt_vq; ?>"><?php _e('<b class="chktitle">HD Quality:</b> Force HD quality when available.') ?> <b class="orange">NOTE:  On February 20th, 2014, there was an internet-wide Google/YouTube bug for forcing HD playback. It affected WordPress and Non-WordPress sites. We have already notified our friends at Google, and things are improving! You can uncheck HD Quality for now if you have problems.  All other free and PRO features should be working normally.</b></label>
+                        <label for="<?php echo self::$opt_vq; ?>"><?php _e('<b class="chktitle">HD Quality:</b> Force HD quality when available.') ?> </label>
                     </p>
                     <p>
                         <input name="<?php echo self::$opt_controls; ?>" id="<?php echo self::$opt_controls; ?>" <?php checked($all[self::$opt_controls], 2); ?> type="checkbox" class="checkbox">
@@ -1597,29 +1606,6 @@ class YouTubePrefs
 
 
         if (
-                //////////////////////////////////////////////////////
-                //////////////////////////////////////////////////////
-                //////////////////////////////////////////////////////
-                //////////////////////////////////////////////////////
-                //////////////////////////////////////////////////////
-                //////////////////////////////////////////////////////
-                //////////////////////////////////////////////////////
-                //////////////////////////////////////////////////////
-                //////////////////////////////////////////////////////
-                //////////////////////////////////////////////////////
-                //////////////////////////////////////////////////////
-                //////////////////////////////////////////////////////
-                //////////////////////////////////////////////////////
-                //////////////////////////////////////////////////////
-                //////////////////////////////////////////////////////
-                //////////////////////////////////////////////////////
-                //////////////////////////////////////////////////////
-                //////////////////////////////////////////////////////
-                //////////////////////////////////////////////////////
-                //////////////////////////////////////////////////////
-                //////////////////////////////////////////////////////
-                //////////////////////////////////////////////////////
-                //
                 //(!(isset(YouTubePrefs::$alloptions[YouTubePrefs::$opt_pro]) && strlen(trim(YouTubePrefs::$alloptions[YouTubePrefs::$opt_pro])) > 0)) &&
                 (get_bloginfo('version') >= '3.3') && YouTubePrefs::custom_admin_pointers_check()
         )
