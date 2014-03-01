@@ -795,7 +795,7 @@ class YouTubePrefs
         $prefix = 'custom_admin_pointers' . $version . '_';
 
         $new_pointer_content = '<h3>' . __('New Update') . '</h3>';
-        $new_pointer_content .= '<p>' . __('This is an important update that improves the handling of the annoying black bars that some YouTube videos can have. Our sizing formula has been incorporated into both free and <a class="bold orange" target="_blank" href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer' . '">PRO &raquo;</a> versions.') . '</p>';
+        $new_pointer_content .= '<p>' . __('This is an important update that incorporates a refined sizing formula into both free and PRO versions. &nbsp;<a class="bold orange" target="_blank" href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer&coupon=FEB-CAFE-4-PRO' . '">It is also now easier to go PRO with coupon code <i>FEB-CAFE-4-PRO</i> &#x25B6;</a>') . '</p>';
 
         return array(
             $prefix . 'new_items' => array(
