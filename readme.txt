@@ -4,15 +4,16 @@ Plugin Name: YouTube Embed
 Tags: channel, annotations, music, music video, songs, song, lyrics, responsive, short code, shortcode, youtube shortcode, health, diagnostic, youtube status, seo, video seo, rich snippets, reddit, google+, google plus, comments, search, widget, sidebar, responsive, fluid, iphone, mobile, android, tablet, ipad, youtube playlist, playlists, playlist, wmode, hd, autohd, auto hd, video analytics, analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin, https, ssl, secure, no-cookie, cookie, html5, youtube html5
 Requires at least: 2.9
 Tested up to: 3.8.1
-Stable tag: 7.7
+Stable tag: 7.8
 License: GPLv3 or later
 
 YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
 
 == Description ==
 
-**From 0 to 300,000 downloads in its first year! Here are some recently added features:**
+**400,000+ downloads! Here are some recently added features:**
 
+* "At a Glance" direct access to YouTube posts/pages
 * Built-in YouTube video search, viewing, and insertion right from your editor.
 * One-click Video SEO tags.
 * Music video embedding extras.
@@ -115,6 +116,9 @@ You can also start and end each individual video at particular times. Like the a
 5. YouTube Embed Screenshot 5: Wizard Search Results Screenshot
 
 == Changelog ==
+
+= YouTube Embed 7.8 =
+"At a Glance" direct access to YouTube posts/pages.
 
 = YouTube Embed 7.7 =
 Fixes black bar issue when no height/width is specified.

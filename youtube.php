@@ -3,7 +3,7 @@
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
-  Version: 7.7
+  Version: 7.8
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
@@ -32,13 +32,14 @@
 class YouTubePrefs
 {
 
-    public static $version = '7.7';
+    public static $version = '7.8';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
     public static $defaultheight = null;
     public static $defaultwidth = null;
     public static $opt_center = 'centervid';
+    public static $opt_glance = 'glance';
     public static $opt_autoplay = 'autoplay';
     public static $opt_cc_load_policy = 'cc_load_policy';
     public static $opt_iv_load_policy = 'iv_load_policy';
@@ -130,6 +131,9 @@ class YouTubePrefs
         );
 
         add_action('media_buttons', 'YouTubePrefs::media_button_wizard', 11);
+
+
+
         //$embedplusmce_wiz = new Add_new_tinymce_btn_Youtubeprefs('|', 'embedplus_youtubeprefs_wiz', plugins_url() . '/youtube-embed-plus/scripts/embedplus_mce_wiz.js');
         //$embedplusmce_prefs = new Add_new_tinymce_btn_Youtubeprefs('|', 'embedplus_youtubeprefs', plugins_url() . '/youtube-embed-plus/scripts/embedplus_mce_prefs.js');
         //$epstatsmce_youtubeprefs = new Add_new_tinymce_btn_Youtubeprefs('|', 'embedplusstats_youtubeprefs', plugins_url() . '/youtube-embed-plus/scripts/embedplusstats_mce.js');
@@ -141,6 +145,318 @@ class YouTubePrefs
             add_action('wp_print_scripts', array('YouTubePrefs', 'jsvars'));
             add_action('wp_enqueue_scripts', array('YouTubePrefs', 'fitvids'));
         }
+    }
+
+    public static function show_glance_list()
+    {
+        $glancehref = self::show_glance();
+        $cnt = self::get_glance_count();
+
+        //display via list
+        return
+                '<li class="page-count">
+            <a href="' . $glancehref . '" class="thickbox ytprefs_glance_button" id="ytprefs_glance_button" title="YouTube Embeds At a Glance">
+                ' . number_format_i18n($cnt) . ' With YouTube
+            </a>
+        </li>';
+    }
+
+    public static function show_glance_table()
+    {
+        $glancehref = self::show_glance();
+        $cnt = self::get_glance_count();
+        return
+                '<tr>
+            <td class="first b"><a title="YouTube Embeds At a Glance" href="' . $glancehref . '" class="thickbox ytprefs_glance_button">' . number_format_i18n($cnt) . '</a></td>
+            <td class="t"><a title="YouTube Embeds At a Glance" href="' . $glancehref . '" id="ytprefs_glance_button" class="thickbox ytprefs_glance_button">With YouTube</a></td>
+        </tr>';
+    }
+
+    public static function get_glance_count()
+    {
+        global $wpdb;
+        $query_sql = "
+                SELECT count(*) as mytotal
+                FROM $wpdb->posts
+                WHERE (post_content LIKE '%youtube.com/%' OR post_content LIKE '%youtu.be/%')
+                AND post_status = 'publish'";
+
+        $query_result = $wpdb->get_results($query_sql, OBJECT);
+
+        return intval($query_result[0]->mytotal);
+    }
+
+    public static function show_glance()
+    {
+        $glancehref = admin_url('admin.php?page=youtube-ep-glance') . '&random=' . rand(1, 1000) . '&TB_iframe=true&width=780&height=800';
+        return $glancehref;
+    }
+
+    public static function glance_page()
+    {
+        ?>
+        <div class="wrap">
+            <style type="text/css">
+                #wphead {display:none;}
+                #wpbody{margin-left: 0px;}
+                .wrap {font-family: Arial; padding: 0px 10px 0px 10px; line-height: 180%;}
+                .bold {font-weight: bold;}
+                .orange {color: #f85d00;}
+                #adminmenuback {display: none;}
+                #adminmenu, adminmenuwrap {display: none;}
+                #wpcontent, .auto-fold #wpcontent {margin-left: 0px;}
+                #wpadminbar {display:none;}
+                html.wp-toolbar {padding: 0px;}
+                #footer, #wpfooter, .auto-fold #wpfooter {display: none;}
+                .acctitle {background-color: #dddddd; border-radius: 5px; padding: 7px 15px 7px 15px; cursor: pointer; margin: 10px; font-weight: bold; font-size: 12px;}
+                .acctitle:hover {background-color: #cccccc;}
+                .accbox {display: none; position: relative; margin:  5px 8px 30px 15px; clear: both; line-height: 180%;}
+                .accclose {position: absolute; top: -38px; right: 5px; cursor: pointer; width: 24px; height: 24px;}
+                .accloader {padding-right: 20px;}
+                .accthumb {display: block; width: 300px; float: left; margin-right: 25px;}
+                .accinfo {width: 300px; float: left;}
+                .accvidtitle {font-weight: bold; font-size: 16px;}
+                .accthumb img {width: 300px; height: auto; display: block;}
+                .clearboth {clear: both;}
+                .pad20 {padding: 20px;}
+                .center {text-align: center;}
+            </style>
+            <script type="text/javascript">
+                function accclose(ele)
+                {
+                    jQuery(ele).parent('.accbox').hide(400);
+                }
+
+                (function($j)
+                {
+                    $j(document).ready(function() {
+
+
+                        $j('.acctitle').click(function() {
+                            var $acctitle = $j(this);
+                            var $accbox = $j(this).parent().children('.accbox');
+                            var pid = $accbox.attr("data-postid");
+
+                            $acctitle.prepend('<img class="accloader" src="<?php echo plugins_url('images/ajax-loader.gif', __FILE__) ?>" />');
+                            jQuery.ajax({
+                                type: "post",
+                                dataType: "json",
+                                timeout: 30000,
+                                url: wpajaxurl,
+                                data: {action: 'my_embedplus_glance_vids', postid: pid},
+                                success: function(response) {
+                                    if (response.type == "success") {
+                                        $accbox.html(response.data),
+                                                $accbox.show(400);
+                                    }
+                                    else {
+                                    }
+                                },
+                                error: function(xhr, ajaxOptions, thrownError) {
+
+                                },
+                                complete: function() {
+                                    $acctitle.children('.accloader').remove();
+                                }
+
+                            });
+
+
+                        });
+                    });
+                })(jQuery);
+
+
+            </script>
+            <?php
+            global $wpdb;
+            $query_sql = "
+                SELECT SQL_CALC_FOUND_ROWS *
+                FROM $wpdb->posts
+                WHERE (post_content LIKE '%youtube.com/%' OR post_content LIKE '%youtu.be/%')
+                AND post_status = 'publish'
+                order by post_date DESC LIMIT 0, 10";
+
+            $query_result = $wpdb->get_results($query_sql, OBJECT);
+
+            if ($query_result !== null)
+            {
+                $total = $wpdb->get_var("SELECT FOUND_ROWS();");
+                global $post;
+                echo '<h2><img src="' . plugins_url('images/youtubeicon16.png', __FILE__) . '" /> 10 Latest Posts/Pages with YouTube Videos (' . $total . ' Total)</h2>';
+                ?>
+
+                We recommend using this page as an easy way to check the results of the global default settings you make (e.g. hide annotations) on your recent embeds.
+
+                <?php
+                if (!(self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0))
+                {
+                    ?>
+                    <i>New:</i> <a target="_blank" href="https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx?coupon=400K-4OFF">Coupon code <span class="bold">400K-4OFF</span> is now active to help non-PRO users &raquo;</a>
+                    <?php
+                }
+
+                if ($total > 0)
+                {
+                    echo '<ul class="accord">';
+                    foreach ($query_result as $post)
+                    {
+                        echo '<li>';
+                        setup_postdata($post);
+                        the_title('<div class="acctitle">', ' &raquo;</div>');
+                        echo '<div class="accbox" data-postid="' . $post->ID . '"></div><div class="clearboth"></div></li>';
+                    }
+                    echo '</ul>';
+                }
+                else
+                {
+                    echo '<p class="center bold orange">You currently do not have any YouTube embeds yet.</p>';
+                }
+            }
+
+            wp_reset_postdata();
+            ?>
+            To remove this feature from your dashboard, simply uncheck <i>Show "At a Glance" Embed Links</i> in the <a target="_blank" href="<?php echo admin_url('admin.php?page=youtube-my-preferences#jumpdefaults') ?>">plugin settings page &raquo;</a>.
+        </div>
+        <?php
+    }
+
+    public static function my_embedplus_glance_vids()
+    {
+        $result = array();
+        if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')
+        {
+            $postid = intval($_REQUEST['postid']);
+            $currpost = get_post($postid);
+
+            $thehtml = '<img class="accclose" onclick="accclose(this)" src="' . plugins_url('images/accclose.png', __FILE__) . '" />';
+
+            $matches = Array();
+            $ismatch = preg_match_all(self::$justurlregex, $currpost->post_content, $matches);
+
+            if ($ismatch)
+            {
+                foreach ($matches[0] as $match)
+                {
+                    $link = trim(preg_replace('/&amp;/i', '&', $match));
+                    $link = preg_replace('/\s/', '', $link);
+                    $linkparamstemp = explode('?', $link);
+
+                    $linkparams = array();
+                    if (count($linkparamstemp) > 1)
+                    {
+                        $linkparams = self::keyvalue($linkparamstemp[1], true);
+                    }
+                    if (strpos($linkparamstemp[0], 'youtu.be') !== false && !isset($linkparams['v']))
+                    {
+                        $vtemp = explode('/', $linkparamstemp[0]);
+                        $linkparams['v'] = array_pop($vtemp);
+                    }
+
+                    $vidid = $linkparams['v'];
+
+                    try
+                    {
+                        $ytapilink = 'http://gdata.youtube.com/feeds/api/videos/' . $vidid . '?v=2&alt=json&fields=id,published,title,content,media:group(media:description,yt:duration)';
+                        $apidata = wp_remote_get($ytapilink);
+                        if (!is_wp_error($apidata))
+                        {
+                            $raw = wp_remote_retrieve_body($apidata);
+                            if (!empty($raw))
+                            {
+                                $postlink = get_permalink($postid);
+                                $json = json_decode($raw, true);
+                                if (is_array($json))
+                                {
+                                    $_name = esc_attr(sanitize_text_field($json['entry']['title']['$t']));
+                                    $_description = esc_attr(sanitize_text_field($json['entry']['media$group']['media$description']['$t']));
+                                    $_thumbnailUrl = esc_url("//i.ytimg.com/vi/" . $vidid . "/0.jpg");
+                                    $_duration = self::formatDuration(self::secondsToDuration(intval($json['entry']['media$group']['yt$duration']['seconds'])));
+                                    $_uploadDate = sanitize_text_field($json['entry']['published']['$t']);
+
+                                    $thehtml .= '<a target="_blank" href="' . $postlink . '" class="accthumb"><img src="' . $_thumbnailUrl . '" /></a>';
+                                    $thehtml .= '<div class="accinfo">';
+                                    $thehtml .= '<a target="_blank" href="' . $postlink . '" class="accvidtitle">' . $_name . '</a>';
+                                    $thehtml .= '<div class="accdesc">' . (strlen($_description) > 400 ? substr($_description, 0, 400) . "..." : $_description) . '</div>';
+                                    $thehtml .= '</div>';
+                                    $thehtml .= '<div class="clearboth pad20"></div>';
+                                }
+                                else
+                                {
+                                    $thehtml .= '<p class="center bold orange">This <a target="_blank" href="' . $postlink . '">post/page</a> contains a video that has been removed from YouTube.';
+
+                                    if (!(self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0))
+                                    {
+                                        $thehtml .='<br><a target="_blank" href="https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx">Activate delete video tracking to catch these cases &raquo;</a>';
+                                    }
+                                    $thehtml .= '</strong>';
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception $ex)
+                    {
+                        
+                    }
+                }
+            }
+
+
+
+            if ($currpost != null)
+            {
+                $result['type'] = 'success';
+                $result['data'] = $thehtml;
+            }
+            else
+            {
+                $result['type'] = 'error';
+            }
+            echo json_encode($result);
+        }
+        else
+        {
+            $result['type'] = 'error';
+            header("Location: " . $_SERVER["HTTP_REFERER"]);
+        }
+        die();
+    }
+
+    public static function my_embedplus_glance_count()
+    {
+        $result = array();
+        if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')
+        {
+            $thehtml = '';
+
+            try
+            {
+                if (version_compare(get_bloginfo('version'), '3.8', '>='))
+                {
+                    $result['container'] = '#dashboard_right_now ul';
+                    $thehtml .= self::show_glance_list();
+                }
+                else
+                {
+                    $result['container'] = '#dashboard_right_now .table_content table tbody';
+                    $thehtml .= self::show_glance_table();
+                }
+                $result['type'] = 'success';
+                $result['data'] = $thehtml;
+            }
+            catch (Exception $e)
+            {
+                $result['type'] = 'error';
+            }
+
+            echo json_encode($result);
+        }
+        else
+        {
+            $result['type'] = 'error';
+            header("Location: " . $_SERVER["HTTP_REFERER"]);
+        }
+        die();
     }
 
     public static function media_button_wizard()
@@ -172,7 +488,6 @@ class YouTubePrefs
         </script>
         <a href="<?php echo $wizhref; ?>" class="thickbox button ytprefs_media_link" id="ytprefs_wiz_button" title="Visual YouTube Search Tool and Wizard - An easier embedding option"><span></span> YouTube</a>
         <?php
-        //<?php if (version_compare(get_bloginfo('version'), '3.0', '<')) {echo '_old';}
     }
 
     public static function check_double_plugin_warning()
@@ -222,6 +537,7 @@ class YouTubePrefs
     {
         //vanilla defaults
         $_center = 0;
+        $_glance = 1;
         $_autoplay = get_option('youtubeprefs_autoplay', 0);
         $_cc_load_policy = get_option('youtubeprefs_cc_load_policy', 0);
         $_iv_load_policy = get_option('youtubeprefs_iv_load_policy', 1);
@@ -252,6 +568,7 @@ class YouTubePrefs
         if ($arroptions !== false)
         {
             $_center = self::tryget($arroptions, self::$opt_center, 0);
+            $_glance = self::tryget($arroptions, self::$opt_glance, 1);
             $_autoplay = self::tryget($arroptions, self::$opt_autoplay, 0);
             $_cc_load_policy = self::tryget($arroptions, self::$opt_cc_load_policy, 0);
             $_iv_load_policy = self::tryget($arroptions, self::$opt_iv_load_policy, 1);
@@ -284,6 +601,7 @@ class YouTubePrefs
         $all = array(
             self::$opt_version => self::$version,
             self::$opt_center => $_center,
+            self::$opt_glance => $_glance,
             self::$opt_autoplay => $_autoplay,
             self::$opt_cc_load_policy => $_cc_load_policy,
             self::$opt_iv_load_policy => $_iv_load_policy,
@@ -498,7 +816,7 @@ class YouTubePrefs
         $schemaorgcode = '';
         try
         {
-            $ytapilink = 'https://gdata.youtube.com/feeds/api/videos/' . $vidid . '?v=2&alt=json&fields=id,published,title,content,media:group(media:description,yt:duration)';
+            $ytapilink = 'http://gdata.youtube.com/feeds/api/videos/' . $vidid . '?v=2&alt=json&fields=id,published,title,content,media:group(media:description,yt:duration)';
             $apidata = wp_remote_get($ytapilink);
             if (!is_wp_error($apidata))
             {
@@ -658,6 +976,7 @@ class YouTubePrefs
             add_submenu_page('youtube-my-preferences', '', '', 'manage_options', 'youtube-my-preferences', 'YouTubePrefs::ytprefs_show_options');
             add_submenu_page('youtube-my-preferences', 'YouTube PRO', 'YouTube PRO', 'manage_options', 'youtube-ep-analytics-dashboard', 'YouTubePrefs::epstats_show_options');
         }
+        add_submenu_page(null, 'YouTube Posts', 'YouTube Posts', 'manage_options', 'youtube-ep-glance', 'YouTubePrefs::glance_page');
     }
 
     public static function epstats_show_options()
@@ -690,11 +1009,14 @@ class YouTubePrefs
             <?php
             $thishost = (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : "");
             $thiskey = self::$alloptions[self::$opt_pro];
+
+            $dashurl = self::$epbase . "/dashboard/pro-easy-video-analytics.aspx?ref=protab&domain=" . $thishost . "&prokey=" . $thiskey . '&coupon=400K-4OFF';
+
             if (self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0)
             {
                 //// header
                 echo "<h2>" . '<img src="' . plugins_url('images/epstats16.png', __FILE__) . '" /> ' . __('YouTube Analytics Dashboard') . "</h2>";
-                echo '<p><i>Logging you in...</i></p>';
+                echo '<p><i>Logging you in below... (You can also <a class="button-primary" target="_blank" href="' . $dashurl . '">click here</a> to launch your dashboard in a new tab)</i></p>';
             }
             else
             {
@@ -702,7 +1024,7 @@ class YouTubePrefs
                 echo "<h2>" . '<img src="' . plugins_url('images/epstats16.png', __FILE__) . '" /> ' . __('YouTube Plugin PRO') . "</h2><p class='bold orange'>This tab is here to provide direct access to analytics. Graphs and other data about your site will show below after you activate PRO.</p><br>";
             }
             ?>
-            <iframe class="shadow" src="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx?ref=protab&domain=<?php echo $thishost; ?>&prokey=<?php echo $thiskey; ?>" width="1060" height="2700" scrolling="auto"/>
+            <iframe class="shadow" src="<?php echo $dashurl ?>" width="1060" height="2700" scrolling="auto"/>
         </div>
         <?php
     }
@@ -747,24 +1069,69 @@ class YouTubePrefs
         }
     }
 
+    public static function glance_script()
+    {
+        add_thickbox();
+        ?>
+        <script type="text/javascript">
+            function widen_ytprefs_glance() {
+                setTimeout(function() {
+                    jQuery("#TB_window").animate({marginLeft: '-' + parseInt((780 / 2), 10) + 'px', width: '780px'}, 300);
+                    jQuery("#TB_window iframe").animate({width: '780px'}, 300);
+                }, 15);
+            }
+
+            (function($j)
+            {
+                $j(document).ready(function() {
+
+                    $j.ajax({
+                        type: "post",
+                        dataType: "json",
+                        timeout: 30000,
+                        url: wpajaxurl,
+                        data: {action: 'my_embedplus_glance_count'},
+                        success: function(response) {
+                            if (response.type == "success") {
+                                $j(response.container).append(response.data);
+                                $j(".ytprefs_glance_button").click(widen_ytprefs_glance);
+                                $j(window).resize(widen_ytprefs_glance);
+                                if (typeof ep_do_pointers == 'function')
+                                {
+                                    ep_do_pointers($j);
+                                }
+                            }
+                            else {
+                            }
+                        },
+                        error: function(xhr, ajaxOptions, thrownError) {
+
+                        },
+                        complete: function() {
+                        }
+                    });
+
+                });
+
+            })(jQuery);
+        </script>
+        <?php
+    }
+
     public static function custom_admin_pointers_footer()
     {
         $admin_pointers = self::custom_admin_pointers();
         ?>
         <script type="text/javascript">
             /* <![CDATA[ */
-            (function($) {
+            function ep_do_pointers($)
+            {
         <?php
         foreach ($admin_pointers as $pointer => $array)
         {
             if ($array['active'])
             {
                 ?>
-                        var wpajaxurl = "<?php echo admin_url('admin-ajax.php') ?>";
-                        if (window.location.toString().indexOf('https://') == 0)
-                        {
-                            wpajaxurl = wpajaxurl.replace("http://", "https://");
-                        }
                         $('<?php echo $array['anchor_id']; ?>').pointer({
                             content: '<?php echo $array['content']; ?>',
                             position: {
@@ -782,7 +1149,9 @@ class YouTubePrefs
             }
         }
         ?>
-            })(jQuery);
+            }
+
+            ep_do_pointers(jQuery);
             /* ]]> */
         </script>
         <?php
@@ -795,12 +1164,19 @@ class YouTubePrefs
         $prefix = 'custom_admin_pointers' . $version . '_';
 
         $new_pointer_content = '<h3>' . __('New Update') . '</h3>';
-        $new_pointer_content .= '<p>' . __('This is an important update that incorporates a refined sizing formula into both free and PRO versions. &nbsp;<a class="bold orange" target="_blank" href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer&coupon=FEB-CAFE-4-PRO' . '">It is also now easier to go PRO with coupon code <i>FEB-CAFE-4-PRO</i> &#x25B6;</a>') . '</p>';
+
+
+        $new_pointer_content .= '<p>' . __('This update gives you an "At a Glance" listing of your YouTube posts/pages.  It will help you quickly check the global defaults you make (e.g. hide annotations) on recent embeds. We want you to try it and if not, you can easily remove it in the YouTube settings page.');
+        if (!(self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0))
+        {
+            $new_pointer_content .= __('Also new in this update is the activation of  <a class="bold orange" target="_blank" href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer&coupon=400K-4OFF' . '">coupon code 400K-4OFF &raquo;</a>');
+        }
+        $new_pointer_content .= '</p>';
 
         return array(
             $prefix . 'new_items' => array(
                 'content' => $new_pointer_content,
-                'anchor_id' => '#toplevel_page_youtube-my-preferences',
+                'anchor_id' => '#ytprefs_glance_button', // '#toplevel_page_youtube-my-preferences',
                 'edge' => 'top',
                 'align' => 'left',
                 'active' => (!in_array($prefix . 'new_items', $dismissed) )
@@ -843,6 +1219,7 @@ class YouTubePrefs
 
             $new_options = array();
             $new_options[self::$opt_center] = self::postchecked(self::$opt_center) ? 1 : 0;
+            $new_options[self::$opt_glance] = self::postchecked(self::$opt_glance) ? 1 : 0;
             $new_options[self::$opt_autoplay] = self::postchecked(self::$opt_autoplay) ? 1 : 0;
             $new_options[self::$opt_cc_load_policy] = self::postchecked(self::$opt_cc_load_policy) ? 1 : 0;
             $new_options[self::$opt_iv_load_policy] = self::postchecked(self::$opt_iv_load_policy) ? 1 : 3;
@@ -965,7 +1342,7 @@ class YouTubePrefs
                 <a href="#jumpwiz">Visual YouTube Wizard</a>
                 <a href="#jumpdefaults">Set Defaults</a>
                 <a href="#jumpoverride">How To Override Defaults</a>
-                <a href="#jumppro" style="border-color: #888888;">Go PRO! <sup class="orange bold">Low Prices</sup></a>
+                <a href="#jumppro" style="border-color: #888888;">Go PRO!</a>
                 <a href="#jumpsupport">Support</a>
             </div>
 
@@ -1026,8 +1403,15 @@ class YouTubePrefs
                 <p>
                     <?php _e("Below you can set the default options for all your videos (click \"Save Changes\" when finished). However, you can override them (and more) on a per-video basis. Directions on how to do that are in the next section.") ?>
                 </p>
+                <p class="submit">
+                    <input type="submit" onclick="return savevalidate();" name="Submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
+                </p>
 
                 <div class="ytindent chx">
+                    <p>
+                        <input name="<?php echo self::$opt_glance; ?>" id="<?php echo self::$opt_glance; ?>" <?php checked($all[self::$opt_glance], 1); ?> type="checkbox" class="checkbox">
+                        <label for="<?php echo self::$opt_glance; ?>"><?php _e('<b class="chktitle">At a glance:</b> Show "At a Glance" Embed Links') ?></label>
+                    </p>
                     <p>
                         <input name="<?php echo self::$opt_center; ?>" id="<?php echo self::$opt_center; ?>" <?php checked($all[self::$opt_center], 1); ?> type="checkbox" class="checkbox">
                         <label for="<?php echo self::$opt_center; ?>"><?php _e('<b class="chktitle">Centering:</b> Automatically center all your videos (not necessary if all you\'re videos span the whole width of your blog).') ?></label>
@@ -1368,7 +1752,7 @@ class YouTubePrefs
 
             <p class="bold">Keep us going!
                 <br>
-                <iframe src="<?php echo self::$epbase ?>/wplikeus.aspx" width="350" height="100"></iframe>
+                <iframe src="<?php echo self::$epbase ?>/wplikeus.aspx?prokey=<?php echo $all[self::$opt_pro]; ?>" width="350" height="100"></iframe>
             </p>
             <!--
             <h3 class="orange">What's next for us? Take this survey.</h3>
@@ -1440,12 +1824,6 @@ class YouTubePrefs
 
                     window.embedplus_record_prokey = function(good) {
 
-                        var wpajaxurl = "<?php echo admin_url('admin-ajax.php') ?>";
-                        if (window.location.toString().indexOf('https://') == 0)
-                        {
-                            wpajaxurl = wpajaxurl.replace("http://", "https://");
-                        }
-
                         jQuery.ajax({
                             type: "post",
                             dataType: "json",
@@ -1498,9 +1876,9 @@ class YouTubePrefs
 
                 global $content_width;
                 if (empty($content_width))
+                {
                     $content_width = $GLOBALS['content_width'];
-                //if (empty($content_width))
-                //  $content_width = $_GLOBALS['content_width'];
+                }
 
                 $blogwidth = $embed_size_w ? $embed_size_w : ($content_width ? $content_width : 450);
             }
@@ -1593,6 +1971,8 @@ class YouTubePrefs
     register_activation_hook(__FILE__, array('YouTubePrefs', 'initoptions'));
     add_action('wp_enqueue_scripts', array('YouTubePrefs', 'ytprefsscript'));
     add_action("wp_ajax_my_embedplus_pro_record", array('YouTubePrefs', 'my_embedplus_pro_record'));
+    add_action("wp_ajax_my_embedplus_glance_vids", array('YouTubePrefs', 'my_embedplus_glance_vids'));
+    add_action("wp_ajax_my_embedplus_glance_count", array('YouTubePrefs', 'my_embedplus_glance_count'));
 
 
     $youtubeplg = new YouTubePrefs();
@@ -1604,9 +1984,8 @@ class YouTubePrefs
         wp_enqueue_style('embedplusyoutube', plugins_url() . '/youtube-embed-plus/scripts/embedplus_mce.css');
         add_action('wp_print_scripts', 'youtubeprefs_output_scriptvars');
 
-
         if (
-                //(!(isset(YouTubePrefs::$alloptions[YouTubePrefs::$opt_pro]) && strlen(trim(YouTubePrefs::$alloptions[YouTubePrefs::$opt_pro])) > 0)) &&
+        //(!(isset(YouTubePrefs::$alloptions[YouTubePrefs::$opt_pro]) && strlen(trim(YouTubePrefs::$alloptions[YouTubePrefs::$opt_pro])) > 0)) &&
                 (get_bloginfo('version') >= '3.3') && YouTubePrefs::custom_admin_pointers_check()
         )
         {
@@ -1614,6 +1993,11 @@ class YouTubePrefs
 
             wp_enqueue_script('wp-pointer');
             wp_enqueue_style('wp-pointer');
+        }
+
+        if (YouTubePrefs::$alloptions['glance'] == 1)
+        {
+            add_action('admin_print_footer_scripts', 'YouTubePrefs::glance_script');
         }
     }
 
@@ -1627,6 +2011,12 @@ class YouTubePrefs
             $myytdefaults = http_build_query(YouTubePrefs::$alloptions);
             ?>
             <script type="text/javascript">
+                var wpajaxurl = "<?php echo admin_url('admin-ajax.php') ?>";
+                if (window.location.toString().indexOf('https://') == 0)
+                {
+                    wpajaxurl = wpajaxurl.replace("http://", "https://");
+                }
+
                 var epblogwidth = <?php echo $blogwidth; ?>;
                 var epprokey = '<?php echo $epprokey; ?>';
                 var epbasesite = '<?php echo YouTubePrefs::$epbase; ?>';
@@ -1672,6 +2062,11 @@ class YouTubePrefs
 
 
                 }, false);
+
+
+
+
+
 
             </script>
             <?php
