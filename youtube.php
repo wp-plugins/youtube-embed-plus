@@ -3,7 +3,7 @@
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
-  Version: 7.8
+  Version: 7.9
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
@@ -32,7 +32,7 @@
 class YouTubePrefs
 {
 
-    public static $version = '7.8';
+    public static $version = '7.9';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -1098,7 +1098,7 @@ class YouTubePrefs
                                 $j(window).resize(widen_ytprefs_glance);
                                 if (typeof ep_do_pointers == 'function')
                                 {
-                                    ep_do_pointers($j);
+                                    //ep_do_pointers($j);
                                 }
                             }
                             else {
@@ -1166,17 +1166,21 @@ class YouTubePrefs
         $new_pointer_content = '<h3>' . __('New Update') . '</h3>';
 
 
-        $new_pointer_content .= '<p>' . __('This update gives you an "At a Glance" listing of your YouTube posts/pages.  It will help you quickly check the global defaults you make (e.g. hide annotations) on recent embeds. We want you to try it and if not, you can easily remove it in the YouTube settings page.');
+        $new_pointer_content .= '<p>' . __('YouTube searching and inserting now works for Visual mode <i>and</i> Text mode of the editor for all users, both Free and ');
         if (!(self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0))
         {
-            $new_pointer_content .= __('Also new in this update is the activation of  <a class="bold orange" target="_blank" href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer&coupon=400K-4OFF' . '">coupon code 400K-4OFF &raquo;</a>');
+            $new_pointer_content .= __('<a class="bold orange" target="_blank" href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer&coupon=400K-4OFF' . '">PRO &raquo;</a>');
+        }
+        else
+        {
+           $new_pointer_content .= __('PRO.'); 
         }
         $new_pointer_content .= '</p>';
 
         return array(
             $prefix . 'new_items' => array(
                 'content' => $new_pointer_content,
-                'anchor_id' => '#ytprefs_glance_button', // '#toplevel_page_youtube-my-preferences',
+                'anchor_id' => '#toplevel_page_youtube-my-preferences', //'#ytprefs_glance_button', 
                 'edge' => 'top',
                 'align' => 'left',
                 'active' => (!in_array($prefix . 'new_items', $dismissed) )
@@ -2044,19 +2048,33 @@ class YouTubePrefs
                                 embedcode = "<p>" + embedcode + "</p>";
                             }
 
-                            window.tinyMCE.execInstanceCommand(
-                                    window.tinyMCE.activeEditor.id,
-                                    'mceInsertContent',
-                                    false,
-                                    embedcode);
-
+                            if (window.tinyMCE !== null && window.tinyMCE.activeEditor !== null && !window.tinyMCE.activeEditor.isHidden())
+                            {
+                                window.tinyMCE.execInstanceCommand(
+                                        window.tinyMCE.activeEditor.id,
+                                        'mceInsertContent',
+                                        false,
+                                        embedcode);
+                            }
+                            else
+                            {
+                                embedcode = embedcode.replace('<p>', '\n').replace('</p>', '\n');
+                                if (typeof QTags.insertContent === 'function')
+                                {
+                                    QTags.insertContent(embedcode);
+                                }
+                                else
+                                {
+                                    send_to_editor(embedcode);
+                                }
+                            }
                             tb_remove();
 
                         }
                     }
                     catch (err)
                     {
-                        if (typeof console != 'undefined')
+                        if (typeof console !== 'undefined')
                             console.log(err.message);
                     }
 
