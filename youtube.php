@@ -1890,6 +1890,8 @@ class YouTubePrefs
             {
                 
             }
+            
+            $blogwidth = preg_replace('/\D/', '', $blogwidth);
 
             return $blogwidth;
         }
