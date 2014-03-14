@@ -3,7 +3,7 @@
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
-  Version: 7.9
+  Version: 8.0
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
@@ -32,7 +32,7 @@
 class YouTubePrefs
 {
 
-    public static $version = '7.9';
+    public static $version = '8.0';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -1151,7 +1151,7 @@ class YouTubePrefs
         ?>
             }
 
-            ep_do_pointers(jQuery);
+            //////////////////////////////////////////////////////////ep_do_pointers(jQuery);
             /* ]]> */
         </script>
         <?php
