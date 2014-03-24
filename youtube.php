@@ -3,7 +3,7 @@
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
-  Version: 8.0
+  Version: 8.1
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
@@ -32,7 +32,7 @@
 class YouTubePrefs
 {
 
-    public static $version = '8.0';
+    public static $version = '8.1';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -692,7 +692,11 @@ class YouTubePrefs
 
     public static function get_html($m, $iscontent)
     {
-        $link = trim(preg_replace('/&amp;/i', '&', $m[0]));
+        //$link = trim(preg_replace('/&amp;/i', '&', $m[0]));
+        $badentities = array('&#215;', '×', '&#8211;', '–', '&amp;');
+        $goodliterals = array('x', 'x', '--', '--', '&');
+        $link = trim(str_replace($badentities, $goodliterals, $m[0]));
+
         $link = preg_replace('/\s/', '', $link);
         $linkparamstemp = explode('?', $link);
 
@@ -1173,7 +1177,7 @@ class YouTubePrefs
         }
         else
         {
-           $new_pointer_content .= __('PRO.'); 
+            $new_pointer_content .= __('PRO.');
         }
         $new_pointer_content .= '</p>';
 
@@ -1890,7 +1894,7 @@ class YouTubePrefs
             {
                 
             }
-            
+
             $blogwidth = preg_replace('/\D/', '', $blogwidth);
 
             return $blogwidth;
