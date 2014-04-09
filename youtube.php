@@ -3,7 +3,7 @@
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
-  Version: 8.1
+  Version: 8.2
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
@@ -32,7 +32,7 @@
 class YouTubePrefs
 {
 
-    public static $version = '8.1';
+    public static $version = '8.2';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -71,6 +71,10 @@ class YouTubePrefs
     public static $epbase = '//www.embedplus.com';
     public static $double_plugin = false;
     public static $scriptsprinted = 0;
+    public static $badentities = array('&#215;', '×', '&#8211;', '–', '&amp;');
+    public static $goodliterals = array('x', 'x', '--', '--', '&');
+
+
     /*
       listType
      */
@@ -82,7 +86,7 @@ class YouTubePrefs
     //public static $ytregex = '@^[\r\n]{0,1}[[:blank:]]*https?://(?:www\.)?(?:(?:youtube.com/watch\?)|(?:youtu.be/))([^\s"]+)[[:blank:]]*[\r\n]{0,1}$@im';
     public static $oldytregex = '@^\s*https?://(?:www\.)?(?:(?:youtube.com/(?:(?:watch)|(?:embed))/{0,1}\?)|(?:youtu.be/))([^\s"]+)\s*$@im';
     public static $ytregex = '@^[\r\t ]*https?://(?:www\.)?(?:(?:youtube.com/(?:(?:watch)|(?:embed))/{0,1}\?)|(?:youtu.be/))([^\s"]+)[\r\t ]*$@im';
-    public static $justurlregex = '@https?://(?:www\.)?(?:(?:youtube.com/(?:(?:watch)|(?:embed))/{0,1}\?)|(?:youtu.be/))([^\s"]+)@';
+    public static $justurlregex = '@https?://(?:www\.)?(?:(?:youtube.com/(?:(?:watch)|(?:embed))/{0,1}\?)|(?:youtu.be/))([^\[\s"]+)@i';
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -340,6 +344,8 @@ class YouTubePrefs
                 {
                     $link = trim(preg_replace('/&amp;/i', '&', $match));
                     $link = preg_replace('/\s/', '', $link);
+                    $link = trim(str_replace(self::$badentities, self::$goodliterals, $link));
+                    
                     $linkparamstemp = explode('?', $link);
 
                     $linkparams = array();
@@ -693,9 +699,7 @@ class YouTubePrefs
     public static function get_html($m, $iscontent)
     {
         //$link = trim(preg_replace('/&amp;/i', '&', $m[0]));
-        $badentities = array('&#215;', '×', '&#8211;', '–', '&amp;');
-        $goodliterals = array('x', 'x', '--', '--', '&');
-        $link = trim(str_replace($badentities, $goodliterals, $m[0]));
+        $link = trim(str_replace(self::$badentities, self::$goodliterals, $m[0]));
 
         $link = preg_replace('/\s/', '', $link);
         $linkparamstemp = explode('?', $link);
@@ -1155,7 +1159,7 @@ class YouTubePrefs
         ?>
             }
 
-            //////////////////////////////////////////////////////////ep_do_pointers(jQuery);
+            ep_do_pointers(jQuery); // switch off all pointers ooopointer
             /* ]]> */
         </script>
         <?php
@@ -1164,27 +1168,26 @@ class YouTubePrefs
     public static function custom_admin_pointers()
     {
         $dismissed = explode(',', (string) get_user_meta(get_current_user_id(), 'dismissed_wp_pointers', true));
-        $version = str_replace('.', '_', self::$version); // replace all periods in 1.0 with an underscore
+        $version = str_replace('.', '_', self::$version); // replace all periods in version with an underscore
         $prefix = 'custom_admin_pointers' . $version . '_';
 
-        $new_pointer_content = '<h3>' . __('New Update') . '</h3>';
+        $new_pointer_content = '<h3>' . __('New Update') . '</h3>'; // ooopointer
 
-
-        $new_pointer_content .= '<p>' . __('YouTube searching and inserting now works for Visual mode <i>and</i> Text mode of the editor for all users, both Free and ');
+        $new_pointer_content .= '<p>' . __('Version 8.2 adds an "At a Glance" improvement (all users). Also, the PRO dashboard now warns you of embeds that are blocked from your visitors in other countries. '); // ooopointer
         if (!(self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0))
         {
-            $new_pointer_content .= __('<a class="bold orange" target="_blank" href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer&coupon=400K-4OFF' . '">PRO &raquo;</a>');
+            $new_pointer_content .= __('<a class="bold orange" target="_blank" href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer&coupon=400K-4OFF' . '">Read more here &raquo;</a>');
         }
         else
         {
-            $new_pointer_content .= __('PRO.');
+            $new_pointer_content .= __('PRO).');
         }
         $new_pointer_content .= '</p>';
 
         return array(
             $prefix . 'new_items' => array(
                 'content' => $new_pointer_content,
-                'anchor_id' => '#toplevel_page_youtube-my-preferences', //'#ytprefs_glance_button', 
+                'anchor_id' => 'a.toplevel_page_youtube-my-preferences', //'#ytprefs_glance_button', 
                 'edge' => 'top',
                 'align' => 'left',
                 'active' => (!in_array($prefix . 'new_items', $dismissed) )
@@ -1644,10 +1647,6 @@ class YouTubePrefs
                                 One-Click Video SEO Tags (markup that can help drive more traffic)
                             </li>
                             <li>
-                                <img src="<?php echo plugins_url('images/iconmusic.png', __FILE__) ?>">
-                                Music video extras to inspire your posts <sup class="orange bold">NEW</sup>
-                            </li>
-                            <li>
                                 <img src="<?php echo plugins_url('images/html5.png', __FILE__) ?>">
                                 HTML5-first to speedup page loads (will even work for your old embeds)
                             </li>
@@ -1655,19 +1654,18 @@ class YouTubePrefs
                                 <img src="<?php echo plugins_url('images/deletechecker.png', __FILE__) ?>">
                                 Deleted Video Checker (alerts you if YouTube deletes videos you embedded)
                             </li>
-                            <!--
                             <li>
-                                <img src="<?php echo plugins_url('images/icondiscuss.png', __FILE__) ?>">
-                                Read the latest Internet discussions about the videos you want to embed 
+                                <img src="<?php echo plugins_url('images/globe.png', __FILE__) ?>">
+                                Alerts when visitors from different countries are blocked from viewing your embeds <sup class="orange bold">NEW</sup>
                             </li>                            
-                            -->
                             <li>
                                 <img src="<?php echo plugins_url('images/lock.png', __FILE__) ?>">
-                                Secure YouTube player (will even work for your old embeds)
+                                HTTPS Secure YouTube player (will even work for your old embeds)
                             </li>
+
                         </ul>
                     </div>
-                    <div class="procol" style="width: 340px;">
+                    <div class="procol" style="max-width: 400px;">
                         <ul class="gopro">
                             <li>
                                 <img src="<?php echo plugins_url('images/prioritysupport.png', __FILE__) ?>">
@@ -1676,6 +1674,10 @@ class YouTubePrefs
                             <li>
                                 <img src="<?php echo plugins_url('images/bulletgraph45.png', __FILE__) ?>">
                                 User-friendly video analytics dashboard
+                            </li>
+                            <li>
+                                <img src="<?php echo plugins_url('images/iconmusic.png', __FILE__) ?>">
+                                Music video extras to inspire your posts <sup class="orange bold">NEW</sup>
                             </li>
                             <li>
                                 <img src="<?php echo plugins_url('images/iconythealth.png', __FILE__) ?>">
@@ -1689,10 +1691,10 @@ class YouTubePrefs
                                 <img src="<?php echo plugins_url('images/showcase.png', __FILE__) ?>">
                                 A chance to showcase your site right from our homepage
                             </li>
-                            <li>
-                                <img src="<?php echo plugins_url('images/questionsale.png', __FILE__) ?>">
-                                What else? You tell us!                                
-                            </li>                           
+                            <!--                            <li>
+                                                            <img src="<?php echo plugins_url('images/questionsale.png', __FILE__) ?>">
+                                                            What else? You tell us!                                
+                                                        </li>                           -->
                         </ul>
                     </div>
                     <br>
@@ -1758,14 +1760,6 @@ class YouTubePrefs
 
             <iframe src="<?php echo self::$epbase ?>/dashboard/prosupport.aspx?simple=1&prokey=<?php echo $all[self::$opt_pro]; ?>&domain=<?php echo site_url(); ?>" width="500" height="500"></iframe>
 
-            <p class="bold">Keep us going!
-                <br>
-                <iframe src="<?php echo self::$epbase ?>/wplikeus.aspx?prokey=<?php echo $all[self::$opt_pro]; ?>" width="350" height="100"></iframe>
-            </p>
-            <!--
-            <h3 class="orange">What's next for us? Take this survey.</h3>
-            <div id="surveyMonkeyInfo" style="width:700px;font-size:10px;color:#666;border:1px solid #ccc;padding:4px;"><div><iframe id="sm_e_s" src="http://www.surveymonkey.com/jsEmbed.aspx?sm=uYXvJKm2UNLkrpXHzLJ57Q_3d_3d" width="700" height="800" style="border:0px;padding-bottom:4px;" frameborder="0" allowtransparency="true" ></iframe></div></div>
-            -->
 
             <script type="text/javascript">
 
@@ -1895,7 +1889,7 @@ class YouTubePrefs
                 
             }
 
-            $blogwidth = preg_replace('/\D/', '', $blogwidth);
+            $blogwidth = preg_replace('/\D/', '', $blogwidth); //may have px
 
             return $blogwidth;
         }
@@ -1995,7 +1989,7 @@ class YouTubePrefs
         add_action('wp_print_scripts', 'youtubeprefs_output_scriptvars');
 
         if (
-        //(!(isset(YouTubePrefs::$alloptions[YouTubePrefs::$opt_pro]) && strlen(trim(YouTubePrefs::$alloptions[YouTubePrefs::$opt_pro])) > 0)) &&
+                (!(isset(YouTubePrefs::$alloptions[YouTubePrefs::$opt_pro]) && strlen(trim(YouTubePrefs::$alloptions[YouTubePrefs::$opt_pro])) > 0)) && // display only if not pro ooopointer
                 (get_bloginfo('version') >= '3.3') && YouTubePrefs::custom_admin_pointers_check()
         )
         {
