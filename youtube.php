@@ -345,7 +345,7 @@ class YouTubePrefs
                     $link = trim(preg_replace('/&amp;/i', '&', $match));
                     $link = preg_replace('/\s/', '', $link);
                     $link = trim(str_replace(self::$badentities, self::$goodliterals, $link));
-                    
+
                     $linkparamstemp = explode('?', $link);
 
                     $linkparams = array();
@@ -516,6 +516,7 @@ class YouTubePrefs
         <div class="error">
             <p class="embedpluswarning">Seems like you have two different YouTube plugins by the EmbedPlus Team installed: <b><img src="<?php echo plugins_url('images/youtubeicon16.png', __FILE__) ?>" /> YouTube</b> and <b><img src="<?php echo plugins_url('images/btn_embedpluswiz.png', __FILE__) ?>" /> Advanced YouTube Embed.</b> We strongly suggest keeping only the one you prefer, so that they don't conflict with each other while trying to create your embeds.</p>
         </div>
+        <iframe allowTransparency="true" src="<?php echo self::$epbase . '/both-plugins-conflict.aspx' ?>" style="width:2px; height: 2px;" ></iframe>
         <?php
     }
 
@@ -982,7 +983,7 @@ class YouTubePrefs
         {
             add_menu_page('YouTube Settings', 'YouTube Free', 'manage_options', 'youtube-my-preferences', 'YouTubePrefs::ytprefs_show_options', plugins_url('images/youtubeicon16.png', __FILE__), '10.000392854349');
             add_submenu_page('youtube-my-preferences', '', '', 'manage_options', 'youtube-my-preferences', 'YouTubePrefs::ytprefs_show_options');
-            add_submenu_page('youtube-my-preferences', 'YouTube PRO', 'YouTube PRO', 'manage_options', 'youtube-ep-analytics-dashboard', 'YouTubePrefs::epstats_show_options');
+            add_submenu_page('youtube-my-preferences', 'YouTube PRO', '<img style="width: 16px; height: 16px; vertical-align: text-top;" src="' . plugins_url('images/iconwizard.png', __FILE__) . '" />&nbsp;&nbsp;YouTube PRO', 'manage_options', 'youtube-ep-analytics-dashboard', 'YouTubePrefs::epstats_show_options');
         }
         add_submenu_page(null, 'YouTube Posts', 'YouTube Posts', 'manage_options', 'youtube-ep-glance', 'YouTubePrefs::glance_page');
     }
@@ -1029,7 +1030,7 @@ class YouTubePrefs
             else
             {
                 //// header
-                echo "<h2>" . '<img src="' . plugins_url('images/epstats16.png', __FILE__) . '" /> ' . __('YouTube Plugin PRO') . "</h2><p class='bold orange'>This tab is here to provide direct access to analytics. Graphs and other data about your site will show below after you activate PRO.</p><br>";
+                echo "<h2>" . '<img style="vertical-align: text-bottom;" src="' . plugins_url('images/iconwizard.png', __FILE__) . '" /> ' . __('YouTube Plugin PRO') . "</h2><p class='bold orange'>This tab is here to provide direct access to analytics. Graphs and other data about your site will show below after you activate PRO.</p><br>";
             }
             ?>
             <iframe class="shadow" src="<?php echo $dashurl ?>" width="1060" height="2700" scrolling="auto"/>
