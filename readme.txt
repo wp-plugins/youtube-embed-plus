@@ -3,7 +3,7 @@ Contributors: embedplus
 Plugin Name: YouTube Embed
 Tags: at a glance, channel, annotations, music, music video, songs, song, lyrics, responsive, short code, shortcode, youtube shortcode, health, diagnostic, youtube status, seo, video seo, rich snippets, reddit, google+, google plus, comments, search, widget, sidebar, responsive, fluid, iphone, mobile, android, tablet, ipad, youtube playlist, playlists, playlist, wmode, hd, autohd, auto hd, video analytics, analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin, https, ssl, secure, no-cookie, cookie, html5, youtube html5
 Requires at least: 2.9
-Tested up to: 3.8.2
+Tested up to: 3.8.3
 Stable tag: 8.2
 License: GPLv3 or later
 
@@ -13,32 +13,34 @@ YouTube embed plugin with basic features and convenient defaults. Upgrade now to
 
 **400,000+ downloads! Here are some recently added features:**
 
-* "At a Glance" direct access to YouTube posts/pages
-* Built-in YouTube video search, viewing, and insertion right from your editor.
-* One-click Video SEO tags.
-* Analytics and deleted video alerts work with past YouTube videos that you embedded with many other YouTube plugins.
-* Alerts when visitors from different countries are blocked from viewing your embeds.
-* Review the latest web discussions about videos you want to embed before embedding.
-* Shortcode support for embedding multiple videos on one line.
-* Music video embedding extras.
+* "At a Glance" direct access to your YouTube posts/pages
+* Visual YouTube video searching and viewing
+* Easy "Insert" button for both the Visual and Text mode of the editor
+* Review the latest web discussions about videos you want to embed before embedding
+* Shortcode support for embedding multiple videos on one line
+* Playlist support
+* (PRO) One-click Video SEO tags
+* (PRO) Analytics and deleted video alerts work with past YouTube videos that you embedded with many other YouTube plugins
+* (PRO) Alerts when visitors from different countries are blocked from viewing your embeds
+* (PRO) Music video embedding extras
 * And more...
 
-This YouTube embed plugin for WordPress keeps things simple, but it can be upgraded for enhanced SEO, performance, privacy and security for you and your visitors. It provides the basic features of the YouTube embedded player and will have you posting videos in seconds after installing it. **All you have to do is simply paste an unformatted YouTube link on its own line (shortcodes are also supported).**  Your YouTube embed will then show up when you preview or publish the post. The settings page has plenty of default options that you can automatically apply to all your embedded YouTube videos:
+This YouTube embed plugin for WordPress keeps things easy and simple, but it can also be upgraded to PRO for enhanced SEO, performance, privacy and security for you and your visitors. It provides the basic features of the YouTube embedded player and will have you posting videos in seconds after installing it. **All you have to do is simply paste an unformatted YouTube link on its own line (shortcodes are also supported).**  Your YouTube embed will then show up when you preview or publish the post. The settings page has plenty of default options that you can automatically apply to all your embedded YouTube videos:
 
 * Force HD quality when available
 * Make your videos responsive so that they dynamically fit in all screen sizes (smart phone, PC and tablet)
 * Modest branding - hide YouTube logo while playing
+* Turn on/off all annotations by default
 * Automatically center all your videos
 * Automatically start playing your videos
-* Turn on/off closed captions by default
-* Show/hide annotations by default
+* Autohide controls until hovering
 * Loop your videos
 * Show/hide related videos at the end
 * Show/hide the video title and other info
 * Use the light theme
 * Show/hide player controls
+* Turn on/off closed captions by default
 * Use "opaque" wmode
-* Autohide controls until hovering
 
 Customizations can be also made to each YouTube embed by adding more to the link as shown below. Adding these will override the above global defaults that you set:
 
@@ -59,6 +61,8 @@ You can also start and end each individual video at particular times. Like the a
 
 * start - Sets the time (in seconds) to start the video. Example: `http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350&start=20`
 * end - Sets the time (in seconds) to stop the video. Example: `http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350&end=100`
+
+**About the PRO version:**
 
 Beyond the above features, you have the option of upgrading to PRO to add enhanced features like the full visual embedding wizard (so you can avoid memorizing codes), priority support, and security/performance. As a PRO user, you also get access to our deleted video alerts to help avoid showing embedded videos that are later removed from YouTube.com. You even get an embedder-centric analytics dashboard that adds view tracking to each of your embeds so that you can answers questions like:
 
@@ -255,4 +259,4 @@ First release uploaded to the plugin repository.
 
 == Other Notes ==
 
-This YouTube plugin includes premium features like [one-click video SEO tags, YouTube embed analytics, and deleted video checking](https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx).
+This YouTube plugin can include premium features like [one-click video SEO tags, YouTube embed analytics, and deleted video checking when you upgrade to PRO](https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx).
