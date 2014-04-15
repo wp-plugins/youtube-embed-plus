@@ -25,7 +25,7 @@ YouTube embed plugin with basic features and convenient defaults. Upgrade now to
 * (PRO) Music video embedding extras
 * And more...
 
-This YouTube embed plugin for WordPress keeps things easy and simple, but it can also be upgraded to PRO for enhanced SEO, performance, privacy and security for you and your visitors. It provides the basic features of the YouTube embedded player and will have you posting videos in seconds after installing it. **All you have to do is simply paste an unformatted YouTube link on its own line (shortcodes are also supported).**  Your YouTube embed will then show up when you preview or publish the post. The settings page has plenty of default options that you can automatically apply to all your embedded YouTube videos:
+This YouTube embed plugin for WordPress keeps things easy and simple, but it can also be upgraded to PRO for enhanced SEO, performance, privacy and security for you and your visitors. It provides the basic features of the YouTube embedded player and will have you posting videos in seconds after installing it. **All you have to do is simply paste an unformatted YouTube link on its own line (shortcodes are also supported).**  Your YouTube embed will then show up when you preview or publish the post. The settings page has plenty of default options that you can automatically apply to all your embedded YouTube videos. **Check out the free options below:**
 
 * Force HD quality when available
 * Make your videos responsive so that they dynamically fit in all screen sizes (smart phone, PC and tablet)
