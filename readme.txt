@@ -3,8 +3,8 @@ Contributors: embedplus
 Plugin Name: YouTube Embed
 Tags: at a glance, channel, annotations, music, music video, songs, song, lyrics, responsive, short code, shortcode, youtube shortcode, health, diagnostic, youtube status, seo, video seo, rich snippets, reddit, google+, google plus, comments, search, widget, sidebar, responsive, fluid, iphone, mobile, android, tablet, ipad, youtube playlist, playlists, playlist, wmode, hd, autohd, auto hd, video analytics, analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin, https, ssl, secure, no-cookie, cookie, html5, youtube html5
 Requires at least: 2.9
-Tested up to: 3.8.3
-Stable tag: 8.2
+Tested up to: 3.9
+Stable tag: 8.3
 License: GPLv3 or later
 
 YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
@@ -71,7 +71,7 @@ Beyond the above features, you have the option of upgrading to PRO to add enhanc
 * What and when are your best and worst performing YouTube embeds?
 * How much do the producers of the YouTube videos you embed rely on **your site**, versus other sites and YouTube.com, for views?
 
-Recently, we also added One-Click Video SEO, which adds markup that can improve your click rates and video SERP rankings.
+Recently, we also added One-Click Video SEO tags, which adds markup that can improve your click rates and video SERP rankings.
 
 See more details after installing. Enjoy!
 
@@ -121,6 +121,9 @@ You can also start and end each individual video at particular times. Like the a
 5. YouTube Embed Screenshot 5: Wizard Search Results Screenshot
 
 == Changelog ==
+
+= YouTube Embed 8.3 =
+Now compatible with WordPress 3.9.
 
 = YouTube Embed 8.2 =
 An at a glance regex impromevent (all users). Dashboard now warns you of embeds that are blocked from your visitors in other countries (PRO).
