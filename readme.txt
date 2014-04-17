@@ -71,7 +71,7 @@ Beyond the above features, you have the option of upgrading to PRO to add enhanc
 * What and when are your best and worst performing YouTube embeds?
 * How much do the producers of the YouTube videos you embed rely on **your site**, versus other sites and YouTube.com, for views?
 
-Recently, we also added One-Click Video SEO, which adds markup that can improve your click rates and video SERP rankings.
+Recently, we also added One-Click Video SEO tags, which adds markup that can improve your click rates and video SERP rankings.
 
 See more details after installing. Enjoy!
 
