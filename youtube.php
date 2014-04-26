@@ -3,14 +3,14 @@
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
-  Version: 8.3
+  Version: 8.4
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
 
 /*
   YouTube
-  Copyright (C) 2013 EmbedPlus.com
+  Copyright (C) 2014 EmbedPlus.com
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@
 class YouTubePrefs
 {
 
-    public static $version = '8.3';
+    public static $version = '8.4';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -73,7 +73,7 @@ class YouTubePrefs
     public static $scriptsprinted = 0;
     public static $badentities = array('&#215;', '×', '&#8211;', '–', '&amp;');
     public static $goodliterals = array('x', 'x', '--', '--', '&');
-
+    //http://jscompress.com/
 
     /*
       listType
@@ -840,8 +840,8 @@ class YouTubePrefs
                     $json = json_decode($raw, true);
                     if (is_array($json))
                     {
-                        $_name = esc_attr(sanitize_text_field($json['entry']['title']['$t']));
-                        $_description = esc_attr(sanitize_text_field($json['entry']['media$group']['media$description']['$t']));
+                        $_name = esc_attr(sanitize_text_field(str_replace("@", "&#64;", $json['entry']['title']['$t'])));
+                        $_description = esc_attr(sanitize_text_field(str_replace("@", "&#64;", $json['entry']['media$group']['media$description']['$t'])));
                         $_thumbnailUrl = esc_url("http://i.ytimg.com/vi/" . $vidid . "/0.jpg");
                         $_duration = self::formatDuration(self::secondsToDuration(intval($json['entry']['media$group']['yt$duration']['seconds'])));
                         $_uploadDate = sanitize_text_field($json['entry']['published']['$t']);
@@ -1179,10 +1179,10 @@ class YouTubePrefs
 
         $new_pointer_content = '<h3>' . __('New Update') . '</h3>'; // ooopointer
 
-        $new_pointer_content .= '<p>' . __('Now compatible with the new WordPress 3.9! '); // ooopointer
+        $new_pointer_content .= '<p>' . __('This update features improved responsive theme support for both Free and PRO versions. '); // ooopointer
         if (!(self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0))
         {
-            $new_pointer_content .= __('This update is applied to both plugin versions, free and <a class="bold orange" target="_blank" href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer&coupon=400K-4OFF' . '">PRO &raquo;</a>');
+            $new_pointer_content .= __('It also adds refined schema tag support to the <a class="bold orange" target="_blank" href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer&coupon=400K-4OFF' . '">Pro SEO feature &raquo;</a>');
         }
         else
         {

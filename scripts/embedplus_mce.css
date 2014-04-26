@@ -91,3 +91,11 @@
     text-shadow: #FFF 0px 1px 0px;
     white-space: nowrap;
 }
+
+#dashboard_right_now .page-count a.ytprefs_glance_button:before, #dashboard_right_now .page-count span.ytprefs_glance_button:before
+{
+    content: '';
+    width: 20px;
+    height: 20px;
+    background:transparent url('../images/youtubeicon16off.png') no-repeat scroll 0px 1px;
+}

@@ -14,7 +14,7 @@
 
     "use strict";
 
-    $.fn.fitVids = function( options ) {
+    $.fn.fitVidsEP = function( options ) {
         var settings = {
             customSelector: null
         };
@@ -39,10 +39,11 @@
         }
 
         return this.each(function(){
-            var selectors = [
-            "iframe[src*='youtube.com']",
-            "iframe[src*='youtube-nocookie.com']"
-            ];
+//            var selectors = [
+//            "iframe[src*='youtube.com']",
+//            "iframe[src*='youtube-nocookie.com']"
+//            ];
+            var selectors = epresponsiveselector;
 
             if (settings.customSelector) {
                 selectors.push(settings.customSelector);
@@ -71,5 +72,5 @@
 // Works with either jQuery or Zepto
 })( window.jQuery || window.Zepto );
 $(document).ready(function(){
-    $("body").fitVids();
+    $("body").fitVidsEP();
 });
