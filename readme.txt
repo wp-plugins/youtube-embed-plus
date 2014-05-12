@@ -3,7 +3,7 @@ Contributors: embedplus
 Plugin Name: YouTube Embed
 Tags: at a glance, channel, annotations, music, music video, songs, song, lyrics, responsive, short code, shortcode, youtube shortcode, health, diagnostic, youtube status, seo, video seo, rich snippets, reddit, google+, google plus, comments, search, widget, sidebar, responsive, fluid, iphone, mobile, android, tablet, ipad, youtube playlist, playlists, playlist, wmode, hd, autohd, auto hd, video analytics, analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin, https, ssl, secure, no-cookie, cookie, html5, youtube html5
 Requires at least: 2.9
-Tested up to: 3.9
+Tested up to: 3.9.1
 Stable tag: 8.4
 License: GPLv3 or later
 
@@ -26,7 +26,7 @@ YouTube embed plugin with basic features and convenient defaults. Upgrade now to
 * (PRO) Music video embedding extras
 * And more...
 
-This YouTube embed plugin for WordPress keeps things easy and simple, but it can also be upgraded to PRO for enhanced SEO, performance, privacy and security for you and your visitors. It provides the basic features of the YouTube embedded player and will have you posting videos in seconds after installing it. **All you have to do is simply paste an unformatted YouTube link on its own line (shortcodes are also supported).**  Your YouTube embed will then show up when you preview or publish the post. The settings page has plenty of default options that you can automatically apply to all your embedded YouTube videos. **Check out the free options below:**
+This plugin helps you easily manage the growing complexity of YouTube. It can also be upgraded to PRO for enhanced SEO, performance, privacy and security for you and your visitors. It provides the basic features of the YouTube embedded player and will have you posting videos in seconds after installing it. **All you have to do is simply paste an unformatted YouTube link on its own line (shortcodes are also supported).**  Your YouTube embed will then show up when you preview or publish the post. The settings page has plenty of default options that you can automatically apply to all your embedded YouTube videos. **Check out the free options below:**
 
 * Force HD quality when available
 * Make your videos responsive so that they dynamically fit in all screen sizes (smart phone, PC and tablet)
