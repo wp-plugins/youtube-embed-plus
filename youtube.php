@@ -315,17 +315,6 @@ class YouTubePrefs
             ?>
             To remove this feature from your dashboard, simply uncheck <i>Show "At a Glance" Embed Links</i> in the <a target="_blank" href="<?php echo admin_url('admin.php?page=youtube-my-preferences#jumpdefaults') ?>">plugin settings page &raquo;</a>.
 
-            <?php
-            if (!(self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0))
-            {
-                ?>
-                <div class="center">
-                    <i>New:</i> <a target="_blank" href="https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx?coupon=400K-4OFF">Coupon code <span class="bold">400K-4OFF</span> is now active &raquo;</a>
-                </div>
-                <?php
-            }
-            ?>
-
         </div>
         <?php
     }
@@ -985,7 +974,6 @@ class YouTubePrefs
             //add_menu_page('YouTube Analytics Dashboard', 'PRO Analytics', 'manage_options', 'youtube-ep-analytics-dashboard', 'YouTubePrefs::epstats_show_options', plugins_url('images/epstats16.png', __FILE__), '10.000492884349');
             add_submenu_page('youtube-my-preferences', '', '', 'manage_options', 'youtube-my-preferences', 'YouTubePrefs::ytprefs_show_options');
             add_submenu_page('youtube-my-preferences', 'YouTube Analytics Dashboard', '<img style="width: 16px; height: 16px; vertical-align: text-top;" src="' . plugins_url('images/epstats16.png', __FILE__) . '" />&nbsp;&nbsp;PRO Analytics', 'manage_options', 'youtube-ep-analytics-dashboard', 'YouTubePrefs::epstats_show_options');
-            
         }
         else
         {
@@ -1027,7 +1015,7 @@ class YouTubePrefs
             $thishost = (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : "");
             $thiskey = self::$alloptions[self::$opt_pro];
 
-            $dashurl = self::$epbase . "/dashboard/pro-easy-video-analytics.aspx?ref=protab&domain=" . $thishost . "&prokey=" . $thiskey . '&coupon=400K-4OFF';
+            $dashurl = self::$epbase . "/dashboard/pro-easy-video-analytics.aspx?ref=protab&domain=" . $thishost . "&prokey=" . $thiskey;
 
             if (self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0)
             {
@@ -1185,7 +1173,7 @@ class YouTubePrefs
         $new_pointer_content .= '<p>' . __('This update features improved responsive theme support for both Free and PRO versions. '); // ooopointer
         if (!(self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0))
         {
-            $new_pointer_content .= __('It also adds refined schema tag support to the <a class="bold orange" target="_blank" href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer&coupon=400K-4OFF' . '">Pro SEO feature &raquo;</a>');
+            $new_pointer_content .= __('It also adds refined schema tag support to the <a class="bold orange" target="_blank" href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer">Pro SEO feature &raquo;</a>');
         }
         else
         {
@@ -1294,7 +1282,7 @@ class YouTubePrefs
             <?php
         }
 
-        $haspro = ($all[self::$opt_pro] && strlen(trim($all[self::$opt_pro])) > 0);
+
         // Now display the settings editing screen
 
         echo '<div class="wrap" style="max-width: 1000px;">';
@@ -1352,6 +1340,7 @@ class YouTubePrefs
             input[type=checkbox] {border: 1px solid #000000;}
             .chktitle {display: inline-block; padding: 1px 3px 1px 3px; border-radius: 3px; background-color: #ffffff; border: 1px solid #dddddd;}
             b, strong {font-weight: bold;}
+            input.checkbox[disabled] {border: 1px dotted #444444;}
         </style>
 
         <div class="ytindent">
@@ -1517,7 +1506,7 @@ class YouTubePrefs
 
                     <p class="smallnote orange">Below are PRO features for enhanced SEO, performance, privacy, and security (works for even past embed links):</p>
                     <?php
-                    if ($haspro)
+                    if ($all[self::$opt_pro] && strlen(trim($all[self::$opt_pro])) > 0)
                     {
                         ?>
                         <p>
@@ -1576,7 +1565,7 @@ class YouTubePrefs
                     <hr>
 
                     <?php
-                    if ($haspro)
+                    if ($all[self::$opt_pro] && strlen(trim($all[self::$opt_pro])) > 0)
                     {
                         ?>
                         <p>
@@ -1629,7 +1618,7 @@ class YouTubePrefs
             <div class="jumper" id="jumppro"></div>
             <div id="goprobox">
                 <?php
-                if ($haspro)
+                if ($all[self::$opt_pro] && strlen(trim($all[self::$opt_pro])) > 0)
                 {
                     echo "<h3>" . __('Thank you for going PRO.');
                     echo ' &nbsp;<input type="submit" name="showkey" class="button-primary" style="vertical-align: 15%;" id="showprokey" value="View my PRO key" />';
@@ -1712,7 +1701,7 @@ class YouTubePrefs
                     <h3 class="bold">Enter and save your PRO key (emailed to you):</h3>
                 <?php } ?>
                 <form name="form2" method="post" action="" id="epform2" class="submitpro" <?php
-                if ($haspro)
+                if ($all[self::$opt_pro] && strlen(trim($all[self::$opt_pro])) > 0)
                 {
                     echo 'style="display: none;"';
                 }
@@ -1721,7 +1710,7 @@ class YouTubePrefs
                     <input name="<?php echo self::$opt_pro; ?>" id="opt_pro" value="<?php echo $all[self::$opt_pro]; ?>" type="text">
                     <input type="submit" name="Submit" class="button-primary" id="prokeysubmit" value="<?php _e('Save Key') ?>" />
                     <?php
-                    if (!$haspro)
+                    if (!($all[self::$opt_pro] && strlen(trim($all[self::$opt_pro])) > 0))
                     {
                         ?>                    
                         &nbsp; &nbsp; &nbsp; <span style="font-size: 25px; color: #cccccc;">|</span> &nbsp; &nbsp; &nbsp; <a href="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx" class="button-primary brightpro" target="_blank">Click here to go PRO &raquo;</a>
@@ -1767,8 +1756,17 @@ class YouTubePrefs
             </p>
 
 
-            <iframe src="<?php echo self::$epbase ?>/dashboard/prosupport.aspx?simple=1&prokey=<?php echo $all[self::$opt_pro]; ?>&domain=<?php echo site_url(); ?>" width="500" height="500"></iframe>
+            <iframe src="<?php echo self::$epbase ?>/dashboard/prosupport.aspx?simple=1&prokey=<?php echo $all[self::$opt_pro]; ?>&domain=<?php echo site_url(); ?>" width="500" height="<?php echo ($all[self::$opt_pro] && strlen(trim($all[self::$opt_pro])) > 0) ? "500" : "140"; ?>"></iframe>
 
+            <?php
+            if (!($all[self::$opt_pro] && strlen(trim($all[self::$opt_pro])) > 0))
+            {
+                ?>
+                <br>
+                <br>
+                <iframe src="<?php echo self::$epbase ?>/dashboard/likecoupon.aspx" width="600" height="500"></iframe>
+                <?php }
+            ?>
 
             <script type="text/javascript">
 
@@ -1998,7 +1996,7 @@ class YouTubePrefs
         add_action('wp_print_scripts', 'youtubeprefs_output_scriptvars');
 
         if (
-                //(!(isset(YouTubePrefs::$alloptions[YouTubePrefs::$opt_pro]) && strlen(trim(YouTubePrefs::$alloptions[YouTubePrefs::$opt_pro])) > 0)) && // display only if not pro ooopointer
+        //(!(isset(YouTubePrefs::$alloptions[YouTubePrefs::$opt_pro]) && strlen(trim(YouTubePrefs::$alloptions[YouTubePrefs::$opt_pro])) > 0)) && // display only if not pro ooopointer
                 (get_bloginfo('version') >= '3.3') && YouTubePrefs::custom_admin_pointers_check()
         )
         {
