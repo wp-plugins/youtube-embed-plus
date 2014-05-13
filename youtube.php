@@ -1410,7 +1410,7 @@ class YouTubePrefs
                     <?php _e("Default YouTube Options") ?> <a href="#top" class="totop">&#9650; top</a>
                 </h3>
                 <p>
-                    <?php _e("Below you can set the default options for all your videos (click \"Save Changes\" when finished). However, you can override them (and more) on a per-video basis. Directions on how to do that are in the next section.") ?>
+                    <?php _e("One of the benefits of using this plugin is that you can set the default options for all your videos (click \"Save Changes\" when finished). However, you can also override them (and more) on a per-video basis. Directions on how to do that are in the next section.") ?>
                 </p>
                 <p class="submit">
                     <input type="submit" onclick="return savevalidate();" name="Submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
@@ -1765,7 +1765,7 @@ class YouTubePrefs
                 <br>
                 <br>
                 <iframe src="<?php echo self::$epbase ?>/dashboard/likecoupon.aspx" width="600" height="500"></iframe>
-                <?php }
+            <?php }
             ?>
 
             <script type="text/javascript">
