@@ -11,7 +11,7 @@ YouTube embed plugin with basic features and convenient defaults. Upgrade now to
 
 == Description ==
 
-**400,000+ downloads! Here are some recently added features:**
+**500,000+ downloads! Here are some recently added features:**
 
 * Embed an entire channel as a playlist
 * "At a Glance" direct access to your YouTube posts/pages
