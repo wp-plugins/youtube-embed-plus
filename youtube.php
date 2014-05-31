@@ -1175,7 +1175,7 @@ class YouTubePrefs
 
         $new_pointer_content = '<h3>' . __('New Update') . '</h3>'; // ooopointer
 
-        $new_pointer_content .= '<p>' . __('This update features a new iOS related option for both Free and PRO users. '); // ooopointer
+        $new_pointer_content .= '<p>' . __('This YouTube plugin update features a new iOS related option for both Free and PRO users. '); // ooopointer
         if (!(self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0))
         {
             $new_pointer_content .= __('PRO users additionally have the new <a class="bold orange" target="_blank" href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer">mobile compatibility checker &raquo;</a>');
@@ -1409,7 +1409,9 @@ class YouTubePrefs
                     <b class="orange">Even more options are available to PRO users!</b> Simply click the <span class="button-primary cuz">&#9658; Customize</span> button on the wizard to further personalize your embeds without having to enter special codes yourself.
                     <br>
                     <br>
-                    <img style="width: 600px;" src="<?php echo plugins_url('images/ssprowizard.png', __FILE__) ?>" >
+
+                    <img style="width: 550px; margin: 0 auto; display: block;" src="<?php echo plugins_url('images/ssprowizard.png', __FILE__) ?>" >
+
                 </p>
                 <div class="jumper" id="jumpdefaults"></div>
                 <h3 class="sect">
@@ -1504,7 +1506,7 @@ class YouTubePrefs
                     </p>
                     <p>
                         <input name="<?php echo self::$opt_playsinline; ?>" id="<?php echo self::$opt_playsinline; ?>" <?php checked($all[self::$opt_playsinline], 1); ?> type="checkbox" class="checkbox">
-                        <label for="<?php echo self::$opt_playsinline; ?>"><?php _e('<b class="chktitle">iOS Playback: <sup class="orange">NEW</sup></b> Check this to allow your embeds to play inline within your page when viewed on iOS browsers. Uncheck it to have iOS launch your embeds in fullscreen instead.') ?></label>
+                        <label for="<?php echo self::$opt_playsinline; ?>"><?php _e('<b class="chktitle">iOS Playback: <sup class="orange">NEW</sup></b> Check this to allow your embeds to play inline within your page when viewed on iOS (iPhone and iPad) browsers. Uncheck it to have iOS launch your embeds in fullscreen instead.') ?></label>
                     </p>
                     <p>
                         <input name="<?php echo self::$opt_oldspacing; ?>" id="<?php echo self::$opt_oldspacing; ?>" <?php checked($all[self::$opt_oldspacing], 1); ?> type="checkbox" class="checkbox">
@@ -1649,11 +1651,12 @@ class YouTubePrefs
                             <li>
                                 <img src="<?php echo plugins_url('images/globe.png', __FILE__) ?>">
                                 Alerts when visitors from different countries are blocked from viewing your embeds <sup class="orange bold">NEW</sup>
-                            </li>                            
+                            </li>                 
                             <li>
-                                <img src="<?php echo plugins_url('images/lock.png', __FILE__) ?>">
-                                HTTPS Secure YouTube player (will even work for your old embeds)
-                            </li>
+                                <img src="<?php echo plugins_url('images/mobilecompat.png', __FILE__) ?>">
+                                Check if your embeds have restrictions that block mobile viewing <sup class="orange bold">NEW</sup>
+                            </li>       
+
 
                         </ul>
                     </div>
@@ -1667,11 +1670,11 @@ class YouTubePrefs
                                 <img src="<?php echo plugins_url('images/bulletgraph45.png', __FILE__) ?>">
                                 User-friendly video analytics dashboard
                             </li>
-                            <li>
-                                <img src="<?php echo plugins_url('images/mobilecompat.png', __FILE__) ?>">
-                                Check if your embeds have restrictions that block mobile viewing <sup class="orange bold">NEW</sup>
-                            </li>                            
 
+                            <li>
+                                <img src="<?php echo plugins_url('images/lock.png', __FILE__) ?>">
+                                HTTPS Secure YouTube player (will even work for your old embeds)
+                            </li>
                             <li>
                                 <img src="<?php echo plugins_url('images/iconythealth.png', __FILE__) ?>">
                                 Instant YouTube embed diagnostic reports
