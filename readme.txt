@@ -4,7 +4,7 @@ Plugin Name: YouTube Embed
 Tags: at a glance, channel, annotations, music, music video, songs, song, lyrics, responsive, short code, shortcode, youtube shortcode, health, diagnostic, youtube status, seo, video seo, rich snippets, reddit, google+, google plus, comments, search, widget, sidebar, responsive, fluid, iphone, mobile, android, tablet, ipad, youtube playlist, playlists, playlist, wmode, hd, autohd, auto hd, video analytics, analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin, https, ssl, secure, no-cookie, cookie, html5, youtube html5
 Requires at least: 2.9
 Tested up to: 3.9.1
-Stable tag: 8.4
+Stable tag: 8.5
 License: GPLv3 or later
 
 YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
@@ -13,6 +13,7 @@ YouTube embed plugin with basic features and convenient defaults. Upgrade now to
 
 **500,000+ downloads! Here are some recently added features:**
 
+* iOS playback preferences
 * Embed an entire channel as a playlist
 * "At a Glance" direct access to your YouTube posts/pages
 * Visual YouTube video searching and viewing
@@ -20,6 +21,7 @@ YouTube embed plugin with basic features and convenient defaults. Upgrade now to
 * Review the latest web discussions about videos you want to embed before embedding
 * Shortcode support for embedding multiple videos on one line
 * Playlist support
+* (PRO) See if your embeds have restrictions that block your site's mobile visitors from viewing
 * (PRO) One-click Video SEO tags
 * (PRO) Analytics and deleted video alerts work with past YouTube videos that you embedded with many other YouTube plugins
 * (PRO) Alerts when visitors from different countries are blocked from viewing your embeds
@@ -122,6 +124,9 @@ You can also start and end each individual video at particular times. Like the a
 5. YouTube Embed Screenshot 5: Wizard Search Results Screenshot
 
 == Changelog ==
+
+= YouTube Embed 8.5 =
+This update features a new iOS related option for both Free and PRO users. PRO users additionally have the new mobile compatibility checker.
 
 = YouTube Embed 8.4 =
 This update features improved responsive theme support for both Free and PRO versions.  It also adds refined schema tag support to the Pro SEO feature.

@@ -3,7 +3,7 @@
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
-  Version: 8.4
+  Version: 8.5
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
@@ -32,7 +32,7 @@
 class YouTubePrefs
 {
 
-    public static $version = '8.4';
+    public static $version = '8.5';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -47,6 +47,7 @@ class YouTubePrefs
     public static $opt_modestbranding = 'modestbranding';
     public static $opt_rel = 'rel';
     public static $opt_showinfo = 'showinfo';
+    public static $opt_playsinline = 'playsinline';
     public static $opt_autohide = 'autohide';
     public static $opt_controls = 'controls';
     public static $opt_theme = 'theme';
@@ -121,6 +122,7 @@ class YouTubePrefs
             self::$opt_modestbranding,
             self::$opt_rel,
             self::$opt_showinfo,
+            self::$opt_playsinline,
             self::$opt_autohide,
             self::$opt_controls,
             self::$opt_html5,
@@ -562,6 +564,7 @@ class YouTubePrefs
         $_defaultdims = 0;
         $_defaultwidth = '';
         $_defaultheight = '';
+        $_playsinline = 0;
 
         $arroptions = get_option(self::$opt_alloptions);
 
@@ -577,6 +580,7 @@ class YouTubePrefs
             $_modestbranding = self::tryget($arroptions, self::$opt_modestbranding, 0);
             $_rel = self::tryget($arroptions, self::$opt_rel, 1);
             $_showinfo = self::tryget($arroptions, self::$opt_showinfo, 1);
+            $_playsinline = self::tryget($arroptions, self::$opt_playsinline, 0);
             $_html5 = self::tryget($arroptions, self::$opt_html5, 0);
             $_theme = self::tryget($arroptions, self::$opt_theme, 'dark');
             $_color = self::tryget($arroptions, self::$opt_color, 'red');
@@ -610,6 +614,7 @@ class YouTubePrefs
             self::$opt_modestbranding => $_modestbranding,
             self::$opt_rel => $_rel,
             self::$opt_showinfo => $_showinfo,
+            self::$opt_playsinline => $_playsinline,
             self::$opt_autohide => $_autohide,
             self::$opt_html5 => $_html5,
             self::$opt_theme => $_theme,
@@ -1170,10 +1175,10 @@ class YouTubePrefs
 
         $new_pointer_content = '<h3>' . __('New Update') . '</h3>'; // ooopointer
 
-        $new_pointer_content .= '<p>' . __('This update features improved responsive theme support for both Free and PRO versions. '); // ooopointer
+        $new_pointer_content .= '<p>' . __('This update features a new iOS related option for both Free and PRO users. '); // ooopointer
         if (!(self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0))
         {
-            $new_pointer_content .= __('It also adds refined schema tag support to the <a class="bold orange" target="_blank" href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer">Pro SEO feature &raquo;</a>');
+            $new_pointer_content .= __('PRO users additionally have the new <a class="bold orange" target="_blank" href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer">mobile compatibility checker &raquo;</a>');
         }
         else
         {
@@ -1235,6 +1240,7 @@ class YouTubePrefs
             $new_options[self::$opt_modestbranding] = self::postchecked(self::$opt_modestbranding) ? 1 : 0;
             $new_options[self::$opt_rel] = self::postchecked(self::$opt_rel) ? 1 : 0;
             $new_options[self::$opt_showinfo] = self::postchecked(self::$opt_showinfo) ? 1 : 0;
+            $new_options[self::$opt_playsinline] = self::postchecked(self::$opt_playsinline) ? 1 : 0;
             $new_options[self::$opt_controls] = self::postchecked(self::$opt_controls) ? 2 : 0;
             $new_options[self::$opt_autohide] = self::postchecked(self::$opt_autohide) ? 1 : 2;
             $new_options[self::$opt_html5] = self::postchecked(self::$opt_html5) ? 1 : 0;
@@ -1400,17 +1406,17 @@ class YouTubePrefs
                     The ability to read the latest Internet discussions about the videos you want to embed is now free to all users.
                 </p>
                 <p>
-                    <b class="orange">Even more options are available to PRO users!</b> Simply click the <span class="button-primary cuz">&#9658; Customize</span> button on the wizard to further personalize your embeds without having to enter special codes yourself. No memorization needed!
+                    <b class="orange">Even more options are available to PRO users!</b> Simply click the <span class="button-primary cuz">&#9658; Customize</span> button on the wizard to further personalize your embeds without having to enter special codes yourself.
                     <br>
                     <br>
-                    <img src="<?php echo plugins_url('images/ssprowizard.png', __FILE__) ?>" >
+                    <img style="width: 600px;" src="<?php echo plugins_url('images/ssprowizard.png', __FILE__) ?>" >
                 </p>
                 <div class="jumper" id="jumpdefaults"></div>
                 <h3 class="sect">
                     <?php _e("Default YouTube Options") ?> <a href="#top" class="totop">&#9650; top</a>
                 </h3>
                 <p>
-                    <?php _e("One of the benefits of using this plugin is that you can set the default options for all your videos (click \"Save Changes\" when finished). However, you can also override them (and more) on a per-video basis. Directions on how to do that are in the next section.") ?>
+                    <?php _e("One of the benefits of using this plugin is that you can set site-wide default options for all your videos (click \"Save Changes\" when finished). However, you can also override them (and more) on a per-video basis. Directions on how to do that are in the next section.") ?>
                 </p>
                 <p class="submit">
                     <input type="submit" onclick="return savevalidate();" name="Submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
@@ -1497,6 +1503,10 @@ class YouTubePrefs
                         <label for="<?php echo self::$opt_autohide; ?>"><?php _e('<b class="chktitle">Autohide Controls:</b> Slide away the control bar after the video starts playing. It will automatically slide back in again if you mouse over the video.') ?></label>
                     </p>
                     <p>
+                        <input name="<?php echo self::$opt_playsinline; ?>" id="<?php echo self::$opt_playsinline; ?>" <?php checked($all[self::$opt_playsinline], 1); ?> type="checkbox" class="checkbox">
+                        <label for="<?php echo self::$opt_playsinline; ?>"><?php _e('<b class="chktitle">iOS Playback: <sup class="orange">NEW</sup></b> Check this to allow your embeds to play inline within your page when viewed on iOS browsers. Uncheck it to have iOS launch your embeds in fullscreen instead.') ?></label>
+                    </p>
+                    <p>
                         <input name="<?php echo self::$opt_oldspacing; ?>" id="<?php echo self::$opt_oldspacing; ?>" <?php checked($all[self::$opt_oldspacing], 1); ?> type="checkbox" class="checkbox">
                         <label for="<?php echo self::$opt_oldspacing; ?>">
                             <b class="chktitle">Legacy Spacing:</b> Continue the spacing style from version 4.0 and older. Those versions required you to manually add spacing above and below your video. Unchecking this will automatically add the spacing.
@@ -1512,13 +1522,13 @@ class YouTubePrefs
                         <p>
                             <input name="<?php echo self::$opt_ssl; ?>" id="<?php echo self::$opt_ssl; ?>" <?php checked($all[self::$opt_ssl], 1); ?> type="checkbox" class="checkbox">
                             <label for="<?php echo self::$opt_ssl; ?>">
-                                <b>(PRO)</b> <b class="chktitle">HTTPS/SSL Player:</b> Use the secure YouTube player for all of your visitors and videos you embed. This will go back and also secure your past embeds as they are loaded on their pages.
+                                <b>(PRO)</b> <b class="chktitle">HTTPS/SSL Player:</b> Use the secure YouTube player for all of your past and future embeds.
                             </label>
                         </p>
                         <p>
                             <input name="<?php echo self::$opt_html5; ?>" id="<?php echo self::$opt_html5; ?>" <?php checked($all[self::$opt_html5], 1); ?> type="checkbox" class="checkbox">
                             <label for="<?php echo self::$opt_html5; ?>">
-                                <b>(PRO)</b> <b class="chktitle">HTML5 First:</b> Speed up your pages containing YouTube videos by using YouTube's HTML5 player instead of the Flash player when available.  It's been noted that using the HTML5 player offers visibly lower page load times than Flash.  Our own internal tests along with data from some beta testers suggest the same thing. In fact, some experiments show that pages (with multiple embeds) can have over four times less size with HTML5 than Flash. <br><span class="italic">So what does this all mean?</span>  Well given that site speed may have an effect on search engine rankings, we suggest checking this option if you typically embed videos in your posts as it may have a site-wide benefit. Our code will even go back and load your older posted videos as HTML5 instead of Flash, where possible.
+                                <b>(PRO)</b> <b class="chktitle">HTML5 First:</b> Speed up your pages containing YouTube videos by using YouTube's HTML5 player instead of the Flash player when available.  It's been noted that using the HTML5 player offers visibly lower page load times than Flash.  Our own internal tests along with data from some beta testers suggest the same thing. In fact, some experiments show that pages (with multiple embeds) can have over four times less size with HTML5 than Flash.
                             </label>
                         </p>
                         <p>
@@ -1537,13 +1547,13 @@ class YouTubePrefs
                         <p>
                             <input disabled type="checkbox" class="checkbox">
                             <label>
-                                <b class="chktitle">HTTPS/SSL Player:</b>  <span class="pronon">(PRO Users)</span> Use the secure YouTube player for all of your visitors and videos you embed. This will go back and also secure your past embeds as they are loaded on their pages.
+                                <b class="chktitle">HTTPS/SSL Player:</b>  <span class="pronon">(PRO Users)</span> Use the secure YouTube player for all of your past and future embeds.
                             </label>
                         </p>
                         <p>
                             <input disabled type="checkbox" class="checkbox">
                             <label>
-                                <b class="chktitle">HTML5 First:</b>  <span class="pronon">(PRO Users)</span> Speed up your pages containing YouTube videos by using YouTube's HTML5 player instead of the Flash player when available.  It's been noted that using the HTML5 player offers visibly lower page load times than Flash.  Our own internal tests along with data from some beta testers suggest the same thing. <b>In fact, some experiments show that pages (with multiple embeds) can have over four times less size with HTML5 than Flash.</b> <br><span class="italic">So what does this all mean?</span>  Well given that site speed may have an effect on search engine rankings, we suggest checking this option if you typically embed videos in your posts. Our code will even go back and load your older posted videos as HTML5 instead of Flash, where possible.
+                                <b class="chktitle">HTML5 First:</b>  <span class="pronon">(PRO Users)</span> Speed up your pages containing YouTube videos by using YouTube's HTML5 player instead of the Flash player when available.  It's been noted that using the HTML5 player offers visibly lower page load times than Flash.  Our own internal tests along with data from some beta testers suggest the same thing. <b>In fact, some experiments show that pages (with multiple embeds) can have over four times less size with HTML5 than Flash.</b>
                             </label>
                         </p>
                         <p>
@@ -1564,23 +1574,6 @@ class YouTubePrefs
 
                     <hr>
 
-                    <?php
-                    if ($all[self::$opt_pro] && strlen(trim($all[self::$opt_pro])) > 0)
-                    {
-                        ?>
-                        <p>
-                            <b>(PRO)</b> We plan to promote this plugin right from our <a target="_blank" href="<?php echo self::$epbase; ?>">embedplus.com</a> homepage by listing example sites that use it. <a id="showcase-validate" class="button-primary" target="_blank">Click this button</a> to automatically include your site for evaluation. It will give you a chance to promote your quality site.
-                        </p>
-                        <?php
-                    }
-                    else
-                    {
-                        ?>
-
-                        <p>
-                            <span class="pronon">(PRO Users)</span> We plan to promote this plugin right from our <a target="_blank" href="<?php echo self::$epbase; ?>">embedplus.com</a> homepage by listing example sites that use it. <a class="button-primary" disabled>Click this button</a> to automatically include your site for evaluation. It will give you a chance to promote your quality site.
-                        </p>
-                    <?php } ?>
                 </div>
                 <div class="jumper" id="jumpoverride"></div>
 
@@ -1605,6 +1598,7 @@ class YouTubePrefs
                     _e("<li><strong>vq</strong> - Set this to 'hd720' or 'hd1080' to force the video to have HD quality. Leave blank to let YouTube decide. <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&vq=hd720</strong></em> </li>");
                     _e("<li><strong>controls</strong> - Set this to 0 to completely hide the video controls (or 2 to show it). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&controls=0</strong></em> </li>");
                     _e("<li><strong>autohide</strong> - Set this to 1 to slide away the control bar after the video starts playing. It will automatically slide back in again if you mouse over the video. (Set to  2 to always show it). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&autohide=1</strong></em> </li>");
+                    _e("<li><strong>playsinline</strong> - Set this to 1 to allow videos play inline with the page on iOS browsers. (Set to 0 to have iOS launch videos in fullscreen instead). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&playsinline=1</strong></em> </li>");
                     _e('</ul>');
 
                     _e("<p>You can also start and end each individual video at particular times. Like the above, each option should begin with '&'</p>");
@@ -1642,7 +1636,7 @@ class YouTubePrefs
                             </li>
                             <li>
                                 <img src="<?php echo plugins_url('images/vseo.png', __FILE__) ?>">
-                                One-Click Video SEO Tags (markup that can help drive more traffic)
+                                One-Click Video SEO Tags (will even work for your old embeds)
                             </li>
                             <li>
                                 <img src="<?php echo plugins_url('images/html5.png', __FILE__) ?>">
@@ -1674,20 +1668,22 @@ class YouTubePrefs
                                 User-friendly video analytics dashboard
                             </li>
                             <li>
-                                <img src="<?php echo plugins_url('images/iconmusic.png', __FILE__) ?>">
-                                Music video extras to inspire your posts <sup class="orange bold">NEW</sup>
-                            </li>
+                                <img src="<?php echo plugins_url('images/mobilecompat.png', __FILE__) ?>">
+                                Check if your embeds have restrictions that block mobile viewing <sup class="orange bold">NEW</sup>
+                            </li>                            
+
                             <li>
                                 <img src="<?php echo plugins_url('images/iconythealth.png', __FILE__) ?>">
                                 Instant YouTube embed diagnostic reports
                             </li>                            
                             <li>
+                                <img src="<?php echo plugins_url('images/iconmusic.png', __FILE__) ?>">
+                                Music video extras to inspire your posts <sup class="orange bold">NEW</sup>
+                            </li>
+
+                            <li>
                                 <img src="<?php echo plugins_url('images/infinity.png', __FILE__) ?>">
                                 Unlimited PRO upgrades and downloads
-                            </li>
-                            <li>
-                                <img src="<?php echo plugins_url('images/showcase.png', __FILE__) ?>">
-                                A chance to showcase your site right from our homepage
                             </li>
                             <!--                            <li>
                                                             <img src="<?php echo plugins_url('images/questionsale.png', __FILE__) ?>">
@@ -1752,7 +1748,7 @@ class YouTubePrefs
                 Priority Support <span class="pronon">(<a href="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx" target="_blank">PRO Users &raquo;</a>)</span><a href="#top" class="totop">&#9650; top</a>
             </h3>
             <p>
-                <strong>PRO users:</strong> Below, We've enabled the ability to have priority support with our team.  Use this to get one-on-one help with any issues you might have or to send us suggestions for future features.  We typically respond within minutes during normal work hours.  
+                <strong>PRO users:</strong> Below, We've enabled the ability to have priority support with our team.  Use this to get one-on-one help with any issues you might have or to send us suggestions for future features.  We typically respond within minutes during normal work hours. We're always happy to accept any testimonials you might have as well. 
             </p>
 
 
