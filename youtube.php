@@ -1690,9 +1690,7 @@ class YouTubePrefs
                         </ul>
                     </div>
                     <div style="clear: both;"></div>
-                    <div class="italic pad10">
-                        Deleted video alerts and country block checking might be an attractive addition if you regularly embed music videos. <a href="http://www.huffingtonpost.com/2014/06/17/youtube-block-adele-arctic-monkeys_n_5503143.html" target="_blank">Read about why here &raquo;</a>
-                    </div>
+                    <br>
                     <h3 class="bold">Enter and save your PRO key (emailed to you):</h3>
                 <?php } ?>
                 <form name="form2" method="post" action="" id="epform2" class="submitpro" <?php
