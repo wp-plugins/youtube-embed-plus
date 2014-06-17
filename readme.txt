@@ -4,7 +4,7 @@ Plugin Name: YouTube Embed
 Tags: at a glance, channel, annotations, music, music video, songs, song, lyrics, responsive, short code, shortcode, youtube shortcode, health, diagnostic, youtube status, seo, video seo, rich snippets, reddit, google+, google plus, comments, search, widget, sidebar, responsive, fluid, iphone, mobile, android, tablet, ipad, youtube playlist, playlists, playlist, wmode, hd, autohd, auto hd, video analytics, analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin, https, ssl, secure, no-cookie, cookie, html5, youtube html5
 Requires at least: 2.9
 Tested up to: 3.9.1
-Stable tag: 8.5
+Stable tag: 8.6
 License: GPLv3 or later
 
 YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
@@ -21,14 +21,15 @@ YouTube embed plugin with basic features and convenient defaults. Upgrade now to
 * Review the latest web discussions about videos you want to embed before embedding
 * Shortcode support for embedding multiple videos on one line
 * Playlist support
-* (PRO) See if your embeds have restrictions that block your site's mobile visitors from viewing
-* (PRO) One-click Video SEO tags
+* Instant HTTPS support. It can even convert past videos non-HTTPS oembeds to HTTPS.
+* (PRO) See if your embeds have restrictions that can block your site's mobile visitors from viewing
+* (PRO) Automatic tagging for video SEO
 * (PRO) Analytics and deleted video alerts work with past YouTube videos that you embedded with many other YouTube plugins
 * (PRO) Alerts when visitors from different countries are blocked from viewing your embeds
 * (PRO) Music video embedding extras
 * And more...
 
-This plugin helps you easily manage the growing complexity of YouTube. It can also be upgraded to PRO for enhanced SEO, performance, privacy and security for you and your visitors. It provides the basic features of the YouTube embedded player and will have you posting videos in seconds after installing it. **All you have to do is simply paste an unformatted YouTube link on its own line (shortcodes are also supported).**  Your YouTube embed will then show up when you preview or publish the post. The settings page has plenty of default options that you can automatically apply to all your embedded YouTube videos. **Check out the free options below:**
+This plugin helps you easily manage the growing complexity of YouTube. It can also be upgraded to PRO for enhanced SEO and performance for you and your visitors. It provides the basic features of the YouTube embedded player and will have you posting videos in seconds after installing it. **All you have to do is simply paste an unformatted YouTube link on its own line (shortcodes are also supported).**  Your YouTube embed will then show up when you preview or publish the post. The settings page has plenty of default options that you can automatically apply to all your embedded YouTube videos. **Check out the free options below:**
 
 * Force HD quality when available
 * Make your videos responsive so that they dynamically fit in all screen sizes (smart phone, PC and tablet)
@@ -73,8 +74,9 @@ Beyond the above features, you have the option of upgrading to PRO to add enhanc
 * How does the view activity on your site compare to other sites like it?
 * What and when are your best and worst performing YouTube embeds?
 * How much do the producers of the YouTube videos you embed rely on **your site**, versus other sites and YouTube.com, for views?
+* Are you embedding videos that are blocked in other countries?
 
-Recently, we also added One-Click Video SEO tags, which adds markup that can improve your click rates and video SERP rankings.
+Recently, we also added Video SEO tags, which adds markup that can improve your click rates and video SERP rankings.
 
 See more details after installing. Enjoy!
 
@@ -124,6 +126,9 @@ You can also start and end each individual video at particular times. Like the a
 5. YouTube Embed Screenshot 5: Wizard Search Results Screenshot
 
 == Changelog ==
+
+= YouTube Embed 8.6 =
+HTTPS/SSL embedding is now free.
 
 = YouTube Embed 8.5 =
 This update features a new iOS related option for both Free and PRO users. PRO users additionally have the new mobile compatibility checker.
@@ -185,7 +190,7 @@ Easier access to general settings and dashboard.
 = YouTube Embed 6.0 =
 This version opens up the ability to view Internet video discussions to all wizard users.
 **Also, due to numerous users being unable to find the wizard button, we moved it up next to the "Add Media" button.**
-Finally, we added One-Click Video SEO tags as a PRO option. 
+Finally, we added Video SEO tags as a PRO option. 
 
 = YouTube Embed 5.1 =
 Added ability to set default dimensions.
@@ -271,4 +276,4 @@ First release uploaded to the plugin repository.
 
 == Other Notes ==
 
-This YouTube plugin can include premium features like [one-click video SEO tags, YouTube embed analytics, and deleted video checking when you upgrade to PRO](https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx).
+[This YouTube plugin can include premium features like automatic schema tagging for video SEO, mobile compatibility checking, and deleted video alerts when you upgrade to PRO.](https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx).

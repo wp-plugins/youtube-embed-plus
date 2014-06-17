@@ -3,7 +3,7 @@
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
-  Version: 8.5
+  Version: 8.6
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
@@ -32,7 +32,7 @@
 class YouTubePrefs
 {
 
-    public static $version = '8.5';
+    public static $version = '8.6';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -728,13 +728,13 @@ class YouTubePrefs
             $youtubebaseurl = 'youtube-nocookie';
         }
 
+        if (self::$alloptions[self::$opt_ssl] == 1)
+        {
+            $linkscheme = 'https';
+        }
+
         if (self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0)
         {
-            if (self::$alloptions[self::$opt_ssl] == 1)
-            {
-                $linkscheme = 'https';
-            }
-
             if (isset($finalparams[self::$opt_html5]) && $finalparams[self::$opt_html5] == 0)
             {
                 unset($finalparams[self::$opt_html5]);
@@ -1175,14 +1175,14 @@ class YouTubePrefs
 
         $new_pointer_content = '<h3>' . __('New Update') . '</h3>'; // ooopointer
 
-        $new_pointer_content .= '<p>' . __('This YouTube plugin update features a new iOS related option for both Free and PRO users. '); // ooopointer
+        $new_pointer_content .= '<p>'; // . __(''); // ooopointer
         if (!(self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0))
         {
-            $new_pointer_content .= __('PRO users additionally have the new <a class="bold orange" target="_blank" href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer">mobile compatibility checker &raquo;</a>');
+            $new_pointer_content .= __('This YouTube plugin update makes HTTPS embedding available for both FREE and <a class="orange" href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer" target="_blank">PRO &raquo;</a> users. Please view this settings page to see the option. It will even automatically go and secure the non-HTTPS embeds you made in the past.');
         }
         else
         {
-            $new_pointer_content .= __('');
+            //$new_pointer_content .= __('');
         }
         $new_pointer_content .= '</p>';
 
@@ -1385,7 +1385,7 @@ class YouTubePrefs
                     Always follow these rules for any URL:
                 </p>
                 <ul class="reglist">
-                    <li>Make sure the URL is really on its own line by itself. Or, if you need multiple videos on the same line, make sure each URL is wrapped properly with the shortcode (Example:  <code>[embedyt]http://www.youtube.com/watch?v=ABCDEFGHIJK&width=400$height=250[/embedyt]</code>)</li>
+                    <li>Make sure the URL is really on its own line by itself. Or, if you need multiple videos on the same line, make sure each URL is wrapped properly with the shortcode (Example:  <code>[embedyt]http://www.youtube.com/watch?v=ABCDEFGHIJK&width=400&height=250[/embedyt]</code>)</li>
                     <li>Make sure the URL is <strong>not</strong> an active hyperlink (i.e., it should just be plain text). Otherwise, highlight the URL and click the "unlink" button in your editor: <img src="<?php echo plugins_url('images/unlink.png', __FILE__) ?>"/></li>
                     <li>Make sure you did <strong>not</strong> format or align the URL in any way. If your URL still appears in your actual post instead of a video, highlight it and click the "remove formatting" button (formatting can be invisible sometimes): <img src="<?php echo plugins_url('images/erase.png', __FILE__) ?>"/></li>
                     <li>If you really want to align the video, try wrapping the link with the shortcode first. For example: <code>[embedyt]http://www.youtube.com/watch?v=ABCDEFGHIJK[/embedyt]</code> Using the shortcode also allows you to have two or more videos next to each other on the same line.  Just put the shortcoded links together on the same line. For example:<br>
@@ -1514,19 +1514,19 @@ class YouTubePrefs
                             <b class="chktitle">Legacy Spacing:</b> Continue the spacing style from version 4.0 and older. Those versions required you to manually add spacing above and below your video. Unchecking this will automatically add the spacing.
                         </label>
                     </p>
+                    <p>
+                        <input name="<?php echo self::$opt_ssl; ?>" id="<?php echo self::$opt_ssl; ?>" <?php checked($all[self::$opt_ssl], 1); ?> type="checkbox" class="checkbox">
+                        <label for="<?php echo self::$opt_ssl; ?>">
+                            <b class="chktitle">HTTPS/SSL Player:</b> Do you have a website that uses HTTPS? Check this to use the secure YouTube player for all of your past and future embeds.
+                        </label>
+                    </p>
 
 
-                    <p class="smallnote orange">Below are PRO features for enhanced SEO, performance, privacy, and security (works for even past embed links):</p>
+                    <p class="smallnote orange">Below are PRO features for enhanced SEO and performance (works for even past embed links):</p>
                     <?php
                     if ($all[self::$opt_pro] && strlen(trim($all[self::$opt_pro])) > 0)
                     {
                         ?>
-                        <p>
-                            <input name="<?php echo self::$opt_ssl; ?>" id="<?php echo self::$opt_ssl; ?>" <?php checked($all[self::$opt_ssl], 1); ?> type="checkbox" class="checkbox">
-                            <label for="<?php echo self::$opt_ssl; ?>">
-                                <b>(PRO)</b> <b class="chktitle">HTTPS/SSL Player:</b> Use the secure YouTube player for all of your past and future embeds.
-                            </label>
-                        </p>
                         <p>
                             <input name="<?php echo self::$opt_html5; ?>" id="<?php echo self::$opt_html5; ?>" <?php checked($all[self::$opt_html5], 1); ?> type="checkbox" class="checkbox">
                             <label for="<?php echo self::$opt_html5; ?>">
@@ -1546,12 +1546,6 @@ class YouTubePrefs
                     else
                     {
                         ?>
-                        <p>
-                            <input disabled type="checkbox" class="checkbox">
-                            <label>
-                                <b class="chktitle">HTTPS/SSL Player:</b>  <span class="pronon">(PRO Users)</span> Use the secure YouTube player for all of your past and future embeds.
-                            </label>
-                        </p>
                         <p>
                             <input disabled type="checkbox" class="checkbox">
                             <label>
@@ -1638,7 +1632,7 @@ class YouTubePrefs
                             </li>
                             <li>
                                 <img src="<?php echo plugins_url('images/vseo.png', __FILE__) ?>">
-                                One-Click Video SEO Tags (will even work for your old embeds)
+                                Automatic tagging for video SEO (will even work for your old embeds)
                             </li>
                             <li>
                                 <img src="<?php echo plugins_url('images/html5.png', __FILE__) ?>">
@@ -1654,7 +1648,7 @@ class YouTubePrefs
                             </li>                 
                             <li>
                                 <img src="<?php echo plugins_url('images/mobilecompat.png', __FILE__) ?>">
-                                Check if your embeds have restrictions that block mobile viewing <sup class="orange bold">NEW</sup>
+                                Check if your embeds have restrictions that can block mobile viewing <sup class="orange bold">NEW</sup>
                             </li>       
 
 
@@ -1671,10 +1665,10 @@ class YouTubePrefs
                                 User-friendly video analytics dashboard
                             </li>
 
-                            <li>
-                                <img src="<?php echo plugins_url('images/lock.png', __FILE__) ?>">
-                                HTTPS Secure YouTube player (will even work for your old embeds)
-                            </li>
+                            <!--                            <li>
+                                                            <img src="<?php echo plugins_url('images/lock.png', __FILE__) ?>">
+                                                            HTTPS Secure YouTube player (will even work for your old embeds)
+                                                        </li>-->
                             <li>
                                 <img src="<?php echo plugins_url('images/iconythealth.png', __FILE__) ?>">
                                 Instant YouTube embed diagnostic reports
@@ -1688,10 +1682,10 @@ class YouTubePrefs
                                 <img src="<?php echo plugins_url('images/infinity.png', __FILE__) ?>">
                                 Unlimited PRO upgrades and downloads
                             </li>
-                            <!--                            <li>
-                                                            <img src="<?php echo plugins_url('images/questionsale.png', __FILE__) ?>">
-                                                            What else? You tell us!                                
-                                                        </li>                           -->
+                            <li>
+                                <img src="<?php echo plugins_url('images/questionsale.png', __FILE__) ?>">
+                                What else? You tell us!                                
+                            </li>                           
                         </ul>
                     </div>
                     <br>
@@ -1719,7 +1713,7 @@ class YouTubePrefs
                     <br>
                     <span style="display: none;" id="prokeyloading" class="orange bold">Verifying...</span>
                     <span  class="orange bold" style="display: none;" id="prokeysuccess">Success! Please refresh this page.</span>
-                    <span class="orange bold" style="display: none;" id="prokeyfailed">Sorry, that seems to be an invalid key.</span>
+                    <span class="orange bold" style="display: none;" id="prokeyfailed">Sorry, that seems to be an invalid key, or it has been used already.</span>
 
                 </form>
 
@@ -1734,7 +1728,7 @@ class YouTubePrefs
                 <h3 class="bold">Support tips for non-PRO users</h3>
                 We've found that a common support request has been from users that are pasting video links on single lines, as required, but are not seeing the video embed show up. One of these suggestions is usually the fix:
                 <ul class="reglist">
-                    <li>Make sure the URL is really on its own line by itself. Or, if you need multiple videos on the same line, make sure each URL is wrapped properly with the shortcode (Example:  <code>[embedyt]http://www.youtube.com/watch?v=ABCDEFGHIJK&width=400$height=250[/embedyt]</code>)</li>
+                    <li>Make sure the URL is really on its own line by itself. Or, if you need multiple videos on the same line, make sure each URL is wrapped properly with the shortcode (Example:  <code>[embedyt]http://www.youtube.com/watch?v=ABCDEFGHIJK&width=400&height=250[/embedyt]</code>)</li>
                     <li>Make sure the URL is not an active hyperlink (i.e., it should just be plain text). Otherwise, highlight the URL and click the "unlink" button in your editor: <img src="<?php echo plugins_url('images/unlink.png', __FILE__) ?>"/>.</li>
                     <li>Make sure you did <strong>not</strong> format or align the URL in any way. If your URL still appears in your actual post instead of a video, highlight it and click the "remove formatting" button (formatting can be invisible sometimes): <img src="<?php echo plugins_url('images/erase.png', __FILE__) ?>"/></li>
                     <li>Try wrapping the URL with the <code>[embedyt]...[/embedyt]</code> shortcode. For example: <code>[embedyt]http://www.youtube.com/watch?v=ABCDEFGHIJK[/embedyt]</code> Using the shortcode also allows you to have two or more videos next to each other on the same line.  Just put the shortcoded links together on the same line. For example:<br>
@@ -1995,7 +1989,7 @@ class YouTubePrefs
         add_action('wp_print_scripts', 'youtubeprefs_output_scriptvars');
 
         if (
-        //(!(isset(YouTubePrefs::$alloptions[YouTubePrefs::$opt_pro]) && strlen(trim(YouTubePrefs::$alloptions[YouTubePrefs::$opt_pro])) > 0)) && // display only if not pro ooopointer
+                (!(isset(YouTubePrefs::$alloptions[YouTubePrefs::$opt_pro]) && strlen(trim(YouTubePrefs::$alloptions[YouTubePrefs::$opt_pro])) > 0)) && // display only if not pro ooopointer
                 (get_bloginfo('version') >= '3.3') && YouTubePrefs::custom_admin_pointers_check()
         )
         {
