@@ -1347,6 +1347,7 @@ class YouTubePrefs
             .chktitle {display: inline-block; padding: 1px 3px 1px 3px; border-radius: 3px; background-color: #ffffff; border: 1px solid #dddddd;}
             b, strong {font-weight: bold;}
             input.checkbox[disabled] {border: 1px dotted #444444;}
+            .pad10 {padding: 10px;}
         </style>
 
         <div class="ytindent">
@@ -1688,9 +1689,10 @@ class YouTubePrefs
                             </li>                           
                         </ul>
                     </div>
-                    <br>
-                    <br>
                     <div style="clear: both;"></div>
+                    <div class="italic pad10">
+                        Deleted video alerts and country block checking might be an attractive addition if you regularly embed music videos. <a href="http://www.huffingtonpost.com/2014/06/17/youtube-block-adele-arctic-monkeys_n_5503143.html" target="_blank">Read about why here &raquo;</a>
+                    </div>
                     <h3 class="bold">Enter and save your PRO key (emailed to you):</h3>
                 <?php } ?>
                 <form name="form2" method="post" action="" id="epform2" class="submitpro" <?php
