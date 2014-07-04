@@ -4,7 +4,7 @@ Plugin Name: YouTube Embed
 Tags: at a glance, channel, annotations, music, music video, songs, song, lyrics, responsive, short code, shortcode, youtube shortcode, health, diagnostic, youtube status, seo, video seo, rich snippets, reddit, google+, google plus, comments, search, widget, sidebar, responsive, fluid, iphone, mobile, android, tablet, ipad, youtube playlist, playlists, playlist, wmode, hd, autohd, auto hd, video analytics, analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin, https, ssl, secure, no-cookie, cookie, html5, youtube html5
 Requires at least: 2.9
 Tested up to: 3.9.1
-Stable tag: 8.6
+Stable tag: 8.7
 License: GPLv3 or later
 
 YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
@@ -22,6 +22,7 @@ YouTube embed plugin with basic features and convenient defaults. Upgrade now to
 * Shortcode support for embedding multiple videos on one line
 * Playlist support
 * Instant HTTPS support. It can even convert past videos non-HTTPS oembeds to HTTPS.
+* (PRO) Automatic Open Graph tagging for Facebook
 * (PRO) See if your embeds have restrictions that can block your site's mobile visitors from viewing
 * (PRO) Automatic tagging for video SEO
 * (PRO) Analytics and deleted video alerts work with past YouTube videos that you embedded with many other YouTube plugins
@@ -126,6 +127,9 @@ You can also start and end each individual video at particular times. Like the a
 5. YouTube Embed Screenshot 5: Wizard Search Results Screenshot
 
 == Changelog ==
+
+= YouTube Embed 8.7 =
+(PRO) Extends the plugin’s existing tagging capabilities by also adding Open Graph markup to enhance Facebook sharing/discovery of your pages.
 
 = YouTube Embed 8.6 =
 HTTPS/SSL embedding is now free.

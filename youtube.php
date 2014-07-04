@@ -3,7 +3,7 @@
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
-  Version: 8.6
+  Version: 8.7
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
@@ -32,7 +32,7 @@
 class YouTubePrefs
 {
 
-    public static $version = '8.6';
+    public static $version = '8.7';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -57,6 +57,7 @@ class YouTubePrefs
     public static $opt_vq = 'vq';
     public static $opt_html5 = 'html5';
     public static $opt_ssl = 'ssl';
+    public static $opt_ogvideo = 'ogvideo';
     public static $opt_nocookie = 'nocookie';
     public static $opt_pro = 'pro';
     public static $opt_oldspacing = 'oldspacing';
@@ -150,6 +151,10 @@ class YouTubePrefs
         {
             add_action('wp_print_scripts', array('YouTubePrefs', 'jsvars'));
             add_action('wp_enqueue_scripts', array('YouTubePrefs', 'fitvids'));
+            if (self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0 && self::$alloptions[self::$opt_ogvideo] == 1)
+            {
+                add_action('wp_head', array('YouTubePrefs', 'do_ogvideo'));
+            }
         }
     }
 
@@ -556,6 +561,7 @@ class YouTubePrefs
         $_pro = '';
         $_ssl = 0;
         $_nocookie = 0;
+        $_ogvideo = 0;
         $_controls = 2;
         $_oldspacing = 1;
         $_responsive = 0;
@@ -589,6 +595,7 @@ class YouTubePrefs
             $_pro = self::tryget($arroptions, self::$opt_pro, '');
             $_ssl = self::tryget($arroptions, self::$opt_ssl, 0);
             $_nocookie = self::tryget($arroptions, self::$opt_nocookie, 0);
+            $_ogvideo = self::tryget($arroptions, self::$opt_ogvideo, 0);
             $_controls = self::tryget($arroptions, self::$opt_controls, 2);
             $_autohide = self::tryget($arroptions, self::$opt_autohide, 2);
             $_oldspacing = self::tryget($arroptions, self::$opt_oldspacing, 1);
@@ -624,6 +631,7 @@ class YouTubePrefs
             self::$opt_pro => $_pro,
             self::$opt_ssl => $_ssl,
             self::$opt_nocookie => $_nocookie,
+            self::$opt_ogvideo => $_ogvideo,
             self::$opt_controls => $_controls,
             self::$opt_oldspacing => $_oldspacing,
             self::$opt_responsive => $_responsive,
@@ -969,6 +977,44 @@ class YouTubePrefs
         return $aspectheight;
     }
 
+    public static function do_ogvideo()
+    {
+        global $wp_query;
+        $the_content = $wp_query->post->post_content;
+        $matches = Array();
+        $ismatch = preg_match_all(self::$justurlregex, $the_content, $matches);
+
+        if ($ismatch)
+        {
+            $match = $matches[0][0];
+
+            $link = trim(preg_replace('/&amp;/i', '&', $match));
+            $link = preg_replace('/\s/', '', $link);
+            $link = trim(str_replace(self::$badentities, self::$goodliterals, $link));
+
+            $linkparamstemp = explode('?', $link);
+
+            $linkparams = array();
+            if (count($linkparamstemp) > 1)
+            {
+                $linkparams = self::keyvalue($linkparamstemp[1], true);
+            }
+            if (strpos($linkparamstemp[0], 'youtu.be') !== false && !isset($linkparams['v']))
+            {
+                $vtemp = explode('/', $linkparamstemp[0]);
+                $linkparams['v'] = array_pop($vtemp);
+            }
+            ?>
+            <meta property="og:type" content="video">
+            <meta property="og:video" content="https://www.youtube.com/v/<?php echo $linkparams['v']; ?>?autohide=1&amp;version=3">
+            <meta property="og:video:type" content="application/x-shockwave-flash">
+            <meta property="og:video:width" content="480">
+            <meta property="og:video:height" content="360">
+            <meta property="og:image" content="https://img.youtube.com/vi/<?php echo $linkparams['v']; ?>/0.jpg">
+            <?php
+        }
+    }
+
     public static function ytprefs_plugin_menu()
     {
         //add_menu_page('YouTube Settings', 'YouTube', 'manage_options', 'youtube-my-preferences', 'YouTubePrefs::ytprefs_show_options', plugins_url('images/youtubeicon16.png', __FILE__), '10.00392854349');
@@ -1178,7 +1224,8 @@ class YouTubePrefs
         $new_pointer_content .= '<p>'; // . __(''); // ooopointer
         if (!(self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0))
         {
-            $new_pointer_content .= __('This YouTube plugin update makes HTTPS embedding available for both FREE and <a class="orange" href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer" target="_blank">PRO &raquo;</a> users. Please view this settings page to see the option. It will even automatically go and secure the non-HTTPS embeds you made in the past.');
+            $new_pointer_content .= __("(PRO) Extends the plugin\'s existing tagging capabilities by also adding Open Graph markup to enhance Facebook sharing/discovery of your pages. Read more in the plugin\'s <a href=\"" . admin_url('admin.php?page=youtube-my-preferences') . "#jumppro\">settings page &raquo;</a>");
+            //$new_pointer_content .= __('This YouTube plugin update makes HTTPS embedding available for both FREE and <a class="orange" href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer" target="_blank">PRO &raquo;</a> users. Please view this settings page to see the option. It will even automatically go and secure the non-HTTPS embeds you made in the past.');
         }
         else
         {
@@ -1249,6 +1296,7 @@ class YouTubePrefs
             $new_options[self::$opt_wmode] = self::postchecked(self::$opt_wmode) ? 'opaque' : 'transparent';
             $new_options[self::$opt_vq] = self::postchecked(self::$opt_vq) ? 'hd720' : '';
             $new_options[self::$opt_nocookie] = self::postchecked(self::$opt_nocookie) ? 1 : 0;
+            $new_options[self::$opt_ogvideo] = self::postchecked(self::$opt_ogvideo) ? 1 : 0;
             $new_options[self::$opt_ssl] = self::postchecked(self::$opt_ssl) ? 1 : 0;
             $new_options[self::$opt_oldspacing] = self::postchecked(self::$opt_oldspacing) ? 1 : 0;
             $new_options[self::$opt_responsive] = self::postchecked(self::$opt_responsive) ? 1 : 0;
@@ -1540,8 +1588,14 @@ class YouTubePrefs
                             <label for="<?php echo self::$opt_schemaorg; ?>">
                                 <b>(PRO)</b> <b class="chktitle">Video SEO Tags:</b> Automatically add Google, Bing, and Yahoo friendly markup so that your pages with video embeds can be indexed to have a greater chance of showing up in search engine results for those particular videos, even if you aren't the owner. This markup also promotes the chances of your pages showing up with actual video thumbnails within search results (see example on the right).
                             </label>
-
                         </p>
+                        <p>
+                            <input name="<?php echo self::$opt_ogvideo; ?>" id="<?php echo self::$opt_ogvideo; ?>" <?php checked($all[self::$opt_ogvideo], 1); ?> type="checkbox" class="checkbox">
+                            <label for="<?php echo self::$opt_ogvideo; ?>">
+                                <b>(PRO)</b> <b class="chktitle">Facebook Open Graph Markup:</b>  <span class="pronon">(NEW: PRO Users)</span> Automatically add Open Graph markup on your pages with YouTube embeds to enhance Facebook sharing and discovery of the pages.  Your shared pages, for example, will also display embedded video thumbnails on Facebook Timelines.
+                            </label>
+                        </p>
+
                         <?php
                     }
                     else
@@ -1557,7 +1611,13 @@ class YouTubePrefs
                             <img class="ssschema" src="<?php echo plugins_url('images/ssschemaorg.jpg', __FILE__) ?>" />
                             <input disabled type="checkbox" class="checkbox">
                             <label>
-                                <b class="chktitle">Video SEO Tags:</b> <span class="pronon">(NEW: PRO Users)</span>  Automatically add Google, Bing, and Yahoo friendly markup so that your pages with video embeds can be indexed to have a greater chance of showing up in search engine results for those particular videos, even if you aren't the owner. This markup also promotes the chances of your pages showing up with actual video thumbnails within search results (see example on the right).
+                                <b class="chktitle">Video SEO Tags:</b>  Automatically add Google, Bing, and Yahoo friendly markup so that your pages with video embeds can be indexed to have a greater chance of showing up in search engine results for those particular videos, even if you aren't the owner. This markup also promotes the chances of your pages showing up with actual video thumbnails within search results (see example on the right).
+                            </label>
+                        </p>
+                        <p>
+                            <input disabled type="checkbox" class="checkbox">
+                            <label>
+                                <b class="chktitle">Facebook Open Graph Markup:</b> <span class="pronon">(NEW: PRO Users)</span>  Automatically add Open Graph markup on your pages with YouTube embeds to enhance Facebook sharing and discovery of the pages.  Your shared pages, for example, will also display embedded video thumbnails on Facebook Timelines.
                             </label>
                         </p>
 
@@ -1578,7 +1638,7 @@ class YouTubePrefs
                     <?php _e("How To Override Defaults / Other Options") ?> <a href="#top" class="totop">&#9650; top</a>
                 </h3>
                 <p>Suppose you have a few videos that need to be different from the above defaults. You can add options to the end of a link as displayed below to override the above defaults. Each option should begin with '&'.
-                    <br><span class="pronon">PRO users: You can use the <span class="button-primary cuz">&#9658; Customize</span> button in the wizard instead of memorizing the following.</span>
+                    <br><span class="pronon">PRO users: You can use the <span class="button-primary cuz">&#9658; Customize</span> button that you will see inside the wizard, instead of memorizing the following.</span>
                     <?php
                     _e('<ul>');
                     _e("<li><strong>width</strong> - Sets the width of your player. If omitted, the default width will be the width of your theme's content.<em> Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&width=500</strong>&height=350</em></li>");
@@ -1666,10 +1726,10 @@ class YouTubePrefs
                                 User-friendly video analytics dashboard
                             </li>
 
-                            <!--                            <li>
-                                                            <img src="<?php echo plugins_url('images/lock.png', __FILE__) ?>">
-                                                            HTTPS Secure YouTube player (will even work for your old embeds)
-                                                        </li>-->
+                            <li id="fbstuff">
+                                <img src="<?php echo plugins_url('images/iconfb.png', __FILE__) ?>">
+                                Automatic Open Graph tagging for Facebook <sup class="orange bold">NEW</sup>
+                            </li>
                             <li>
                                 <img src="<?php echo plugins_url('images/iconythealth.png', __FILE__) ?>">
                                 Instant YouTube embed diagnostic reports
@@ -1683,10 +1743,10 @@ class YouTubePrefs
                                 <img src="<?php echo plugins_url('images/infinity.png', __FILE__) ?>">
                                 Unlimited PRO upgrades and downloads
                             </li>
-                            <li>
+<!--                            <li>
                                 <img src="<?php echo plugins_url('images/questionsale.png', __FILE__) ?>">
                                 What else? You tell us!                                
-                            </li>                           
+                            </li>                           -->
                         </ul>
                     </div>
                     <div style="clear: both;"></div>
