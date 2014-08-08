@@ -13,7 +13,7 @@ YouTube embed plugin with basic features and convenient defaults. Upgrade now to
 
 **500,000+ downloads! Here are some recently added features:**
 
-* Instant HTTPS support. It can even convert past non-HTTPS videos to HTTPS.  Did you know that Google uses HTTPS support as a ranking signal for SERP?  [Read more here >>](http://googlewebmastercentral.blogspot.com/2014/08/https-as-ranking-signal.html)
+* Instant HTTPS support. It can even convert past non-HTTPS videos to HTTPS. 
 * iOS playback preferences
 * Embed an entire channel as a playlist
 * "At a Glance" direct access to your YouTube posts/pages
