@@ -3,7 +3,7 @@
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
-  Version: 8.7
+  Version: 8.8
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
@@ -32,7 +32,7 @@
 class YouTubePrefs
 {
 
-    public static $version = '8.7';
+    public static $version = '8.8';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -65,6 +65,8 @@ class YouTubePrefs
     public static $opt_defaultdims = 'defaultdims';
     public static $opt_defaultwidth = 'width';
     public static $opt_defaultheight = 'height';
+    public static $opt_defaultvol = 'defaultvol';
+    public static $opt_vol = 'vol';
     public static $opt_schemaorg = 'schemaorg';
     public static $opt_alloptions = 'youtubeprefs_alloptions';
     public static $alloptions = null;
@@ -501,24 +503,91 @@ class YouTubePrefs
     {
         if (is_plugin_active('embedplus-for-wordpress/embedplus.php'))
         {
-            self::$double_plugin = true;
+            add_action('admin_notices', array("YouTubePrefs", "double_plugin_warning"));
+            //self::$double_plugin = true;
         }
     }
 
     public static function double_plugin_warning()
     {
-        ?>
-        <style type="text/css">
-            .embedpluswarning img
+        global $pagenow;
+        $user_id = get_current_user_id();
+        if ($pagenow != 'plugins.php' || get_user_meta($user_id, 'embedplus_double_plugin_warning', true) != 1)
+        {
+            //echo '<div class="error">' . $_SERVER['QUERY_STRING'] .'</div>';
+            if ($pagenow == 'plugins.php' || strpos($_SERVER['QUERY_STRING'], 'youtube-my-preferences') !== false ||
+                    strpos($_SERVER['QUERY_STRING'], 'embedplus-video-analytics-dashboard') !== false ||
+                    strpos($_SERVER['QUERY_STRING'], 'youtube-ep-analytics-dashboard') !== false ||
+                    strpos($_SERVER['QUERY_STRING'], 'embedplus-official-options') !== false)
             {
-                vertical-align: text-bottom;
+                ?>
+                <style type="text/css">
+                    .embedpluswarning img
+                    {
+                        vertical-align: text-bottom;
+                    }
+                    div.bgyellow {background-color: #FCFC94; position: relative;}
+                    a.epxout, a.epxout:hover {font-weight: bold; color: #ffffff; background-color: #ff8888; text-decoration: none;
+                                              border-radius: 20px; font-size: 15px; position: absolute; top: 3px; right: 3px;
+                                              line-height: 20px; text-align: center; width: 20px; height: 20px; display: block; cursor: pointer;}
+                    </style>
+                    <div class="error bgyellow embedpluswarningbox">
+                    <p class="embedpluswarning">
+                        <?php
+                        if ($pagenow == 'plugins.php')
+                        {
+                            echo '<a class="epxout">&times;</a>';
+                        }
+                        ?>
+                        Seems like you have two different YouTube plugins by the EmbedPlus Team installed: <b><img src="<?php echo plugins_url('images/youtubeicon16.png', __FILE__) ?>" /> YouTube</b> and <b><img src="<?php echo plugins_url('images/btn_embedpluswiz.png', __FILE__) ?>" /> Advanced YouTube Embed.</b> We strongly suggest keeping only the one you prefer, so that they don't conflict with each other while trying to create your embeds.</p>
+                </div>
+                <iframe allowTransparency="true" src="<?php echo self::$epbase . '/both-plugins-conflict.aspx' ?>" style="width:2px; height: 2px;" ></iframe>
+                <script type="text/javascript">
+                    (function($) {
+                        $(document).ready(function() {
+                            $('.epxout').click(function() {
+                                $.ajax({
+                                    type: "post",
+                                    dataType: "json",
+                                    timeout: 30000,
+                                    url: wpajaxurl,
+                                    data: {action: 'my_embedplus_dismiss_double_plugin_warning'},
+                                    success: function(response) {
+                                        if (response.type == "success") {
+                                            $(".embedpluswarningbox").hide();
+                                        }
+                                    },
+                                    error: function(xhr, ajaxOptions, thrownError) {
+                                    },
+                                    complete: function() {
+                                    }
+                                });
+                            });
+
+                        });
+                    })(jQuery);
+                </script>
+                <?php
             }
-        </style>
-        <div class="error">
-            <p class="embedpluswarning">Seems like you have two different YouTube plugins by the EmbedPlus Team installed: <b><img src="<?php echo plugins_url('images/youtubeicon16.png', __FILE__) ?>" /> YouTube</b> and <b><img src="<?php echo plugins_url('images/btn_embedpluswiz.png', __FILE__) ?>" /> Advanced YouTube Embed.</b> We strongly suggest keeping only the one you prefer, so that they don't conflict with each other while trying to create your embeds.</p>
-        </div>
-        <iframe allowTransparency="true" src="<?php echo self::$epbase . '/both-plugins-conflict.aspx' ?>" style="width:2px; height: 2px;" ></iframe>
-        <?php
+        }
+    }
+
+    public static function my_embedplus_dismiss_double_plugin_warning()
+    {
+        $result = array();
+        if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')
+        {
+            $user_id = get_current_user_id();
+            update_user_meta($user_id, 'embedplus_double_plugin_warning', 1);
+            $result['type'] = 'success';
+            echo json_encode($result);
+        }
+        else
+        {
+            $result['type'] = 'error';
+            header("Location: " . $_SERVER["HTTP_REFERER"]);
+        }
+        die();
     }
 
     public static function jsvars()
@@ -571,6 +640,8 @@ class YouTubePrefs
         $_defaultwidth = '';
         $_defaultheight = '';
         $_playsinline = 0;
+// epvol       $_defaultvol = 0;
+// epvol       $_vol = '';
 
         $arroptions = get_option(self::$opt_alloptions);
 
@@ -604,6 +675,8 @@ class YouTubePrefs
             $_defaultdims = self::tryget($arroptions, self::$opt_defaultdims, 0);
             $_defaultwidth = self::tryget($arroptions, self::$opt_defaultwidth, '');
             $_defaultheight = self::tryget($arroptions, self::$opt_defaultheight, '');
+// epvol           $_defaultvol = self::tryget($arroptions, self::$opt_defaultvol, 0);
+// epvol           $_vol = self::tryget($arroptions, self::$opt_vol, '');
         }
         else
         {
@@ -638,7 +711,9 @@ class YouTubePrefs
             self::$opt_schemaorg => $_schemaorg,
             self::$opt_defaultdims => $_defaultdims,
             self::$opt_defaultwidth => $_defaultwidth,
-            self::$opt_defaultheight => $_defaultheight
+            self::$opt_defaultheight => $_defaultheight,
+// epvol           self::$opt_defaultvol => $_defaultvol,
+// epvol            self::$opt_vol => $_vol
         );
 
         update_option(self::$opt_alloptions, $all);
@@ -726,6 +801,7 @@ class YouTubePrefs
         $linkscheme = 'http';
         $youtubebaseurl = 'youtube';
         $schemaorgoutput = '';
+        // epvol $voloutput = '';
 
         $finalparams = $linkparams + self::$alloptions;
 
@@ -1117,6 +1193,7 @@ class YouTubePrefs
 
     public static function custom_admin_pointers_check()
     {
+        return false; // ooopointer shut all off;
         $admin_pointers = self::custom_admin_pointers();
         foreach ($admin_pointers as $pointer => $array)
         {
@@ -1302,6 +1379,7 @@ class YouTubePrefs
             $new_options[self::$opt_responsive] = self::postchecked(self::$opt_responsive) ? 1 : 0;
             $new_options[self::$opt_schemaorg] = self::postchecked(self::$opt_schemaorg) ? 1 : 0;
             $new_options[self::$opt_defaultdims] = self::postchecked(self::$opt_defaultdims) ? 1 : 0;
+            // epvol $new_options[self::$opt_defaultvol] = self::postchecked(self::$opt_defaultvol) ? 1 : 0;
 
             $_defaultwidth = '';
             try
@@ -1324,6 +1402,17 @@ class YouTubePrefs
                 
             }
             $new_options[self::$opt_defaultheight] = $_defaultheight;
+
+// epvol           $_vol = '';
+// epvol           try
+//epvol            {
+//                $_vol = is_numeric(trim($_POST[self::$opt_vol])) ? intval(trim($_POST[self::$opt_vol])) : $_vol;
+//epvol            }
+//            catch (Exception $ex)
+//            {
+//   epvol             
+//            }
+//epvol            $new_options[self::$opt_vol] = $_vol;
 
             $all = $new_options + $all;
 
@@ -1381,12 +1470,15 @@ class YouTubePrefs
             .cuz {background-image: linear-gradient(to bottom,#4983FF,#0C5597) !important; color: #ffffff;}
             .brightpro {background-image: linear-gradient(to bottom,#ff5500,#cc2200) !important; color: #ffffff;}
             #boxdefaultdims {font-weight: bold; padding: 0px 10px; <?php echo $all[self::$opt_defaultdims] ? '' : 'display: none;' ?>}
+            #boxdefaultvol {font-weight: bold; padding: 0px 10px;  <?php echo $all[self::$opt_defaultvol] ? '' : 'display: none;' ?>}
+            .vol-output {display: inline-block; width: 30px; color: #008800;}
+            input#vol {vertical-align: middle;}
             .textinput {border-width: 2px !important;}
             h3.sect {border-radius: 10px; background-color: #D9E9F7; padding: 5px 5px 5px 10px; position: relative; font-weight: bold;}
             h3.sect a {text-decoration: none; color: #E20000;}
             h3.sect a.button-primary {color: #ffffff;} 
-            #ytnav {margin-bottom: 15px;}
-            #ytnav a {font-weight: bold; display: inline-block; padding: 5px 10px; margin: 0px 20px 0px 0px; border: 1px solid #cccccc; border-radius: 6px;
+            .ytnav {margin-bottom: 15px;}
+            .ytnav a {font-weight: bold; display: inline-block; padding: 5px 10px; margin: 0px 20px 0px 0px; border: 1px solid #cccccc; border-radius: 6px;
                       text-decoration: none; background-color: #ffffff;}
             .jumper {height: 25px;}
             .ssschema {float: right; width: 350px; height: auto; margin-right: 10px;}
@@ -1402,7 +1494,7 @@ class YouTubePrefs
         <div class="ytindent">
             <br>
             <div id="jumphowto"></div>
-            <div id="ytnav">
+            <div class="ytnav">
                 <a href="#jumphowto">How To Embed</a>
                 <a href="#jumpwiz">Visual YouTube Wizard</a>
                 <a href="#jumpdefaults">Set Defaults</a>
@@ -1460,7 +1552,7 @@ class YouTubePrefs
                     <br>
                     <br>
 
-                    <img style="width: 550px; margin: 0 auto; display: block;" src="<?php echo plugins_url('images/ssprowizard.png', __FILE__) ?>" >
+                    <img style="width: 500px; margin: 0 auto; display: block;" src="<?php echo plugins_url('images/ssprowizard.png', __FILE__) ?>" >
 
                 </p>
                 <div class="jumper" id="jumpdefaults"></div>
@@ -1567,7 +1659,8 @@ class YouTubePrefs
                     <p>
                         <input name="<?php echo self::$opt_ssl; ?>" id="<?php echo self::$opt_ssl; ?>" <?php checked($all[self::$opt_ssl], 1); ?> type="checkbox" class="checkbox">
                         <label for="<?php echo self::$opt_ssl; ?>">
-                            <b class="chktitle">HTTPS/SSL Player:</b> Do you have a website that uses HTTPS? Check this to use the secure YouTube player for all of your past and future embeds.
+                            <b class="chktitle">HTTPS/SSL Player:</b> Do you have a website that uses HTTPS? Check this to use the secure YouTube player for all of your embeds.
+                            This will go back and also secure your past embeds as they are loaded on their pages. Most web browsers will warn users when they access web pages via HTTPS that contain embedded content loaded via HTTP. If your main site is currently accessed via HTTPS, using HTTPS URLs for your YouTube embeds will prevent your users from running into that warning. If you're not currently supporting HTTPS/SSL, <a href="http://embedplus.com/convert-old-youtube-embeds-to-https-ssl.aspx" target="_blank">here's some motivation from Google &raquo;</a>
                         </label>
                     </p>
 
@@ -1587,7 +1680,7 @@ class YouTubePrefs
                             <img class="ssschema" src="<?php echo plugins_url('images/ssschemaorg.jpg', __FILE__) ?>" />
                             <input name="<?php echo self::$opt_schemaorg; ?>" id="<?php echo self::$opt_schemaorg; ?>" <?php checked($all[self::$opt_schemaorg], 1); ?> type="checkbox" class="checkbox">
                             <label for="<?php echo self::$opt_schemaorg; ?>">
-                                <b>(PRO)</b> <b class="chktitle">Video SEO Tags:</b> Automatically add Google, Bing, and Yahoo friendly markup so that your pages with video embeds can be indexed to have a greater chance of showing up in search engine results for those particular videos, even if you aren't the owner. This markup also promotes the chances of your pages showing up with actual video thumbnails within search results (see example on the right).
+                                <b>(PRO)</b> <b class="chktitle">Video SEO Tags:</b> Update your YouTube embeds with Google, Bing, and Yahoo friendly SEO markup. This markup promotes the chances of your pages showing up with actual video thumbnails within search results (see example on the right).
                             </label>
                         </p>
                         <p>
@@ -1595,9 +1688,16 @@ class YouTubePrefs
                             <img class="ssfb" src="<?php echo plugins_url('images/ssfb.jpg', __FILE__) ?>" />
                             <input name="<?php echo self::$opt_ogvideo; ?>" id="<?php echo self::$opt_ogvideo; ?>" <?php checked($all[self::$opt_ogvideo], 1); ?> type="checkbox" class="checkbox">
                             <label for="<?php echo self::$opt_ogvideo; ?>">
-                                <b>(PRO)</b> <b class="chktitle">Facebook Open Graph Markup:</b>  <span class="pronon">(NEW: PRO Users)</span> Automatically add Open Graph markup on your pages with YouTube embeds to enhance Facebook sharing and discovery of the pages.  Your shared pages, for example, will also display embedded video thumbnails on Facebook Timelines.
+                                <b>(PRO)</b> <b class="chktitle">Facebook Open Graph Markup:</b>  <span class="pronon">(NEW: PRO Users)</span> Update YouTube embeds on your pages with Open Graph markup to enhance Facebook sharing and discovery of the pages. Your shared pages, for example, will also display embedded video thumbnails on Facebook Timelines.
                             </label>
                         </p>
+            <!-- epvol                       <p>
+                            <input name="<?php echo self::$opt_defaultvol; ?>" id="<?php echo self::$opt_defaultvol; ?>" <?php checked($all[self::$opt_defaultvol], 1); ?> type="checkbox" class="checkbox">                        
+                            <span id="boxdefaultvol">
+                                Volume: <span class="vol-output"></span> <input min="0" max="100" step="1" type="range" name="<?php echo self::$opt_vol; ?>" id="<?php echo self::$opt_vol; ?>" value="<?php echo trim($all[self::$opt_vol]); ?>" >
+                            </span>
+                            <label for="<?php echo self::$opt_defaultvol; ?>"><b>(PRO)</b> <b class="chktitle">Default Volume:</b> <span class="pronon">(NEW: PRO Users)</span> Make my videos have a default volume</label>
+                        </p>-->
 
                         <?php
                     }
@@ -1614,7 +1714,7 @@ class YouTubePrefs
                             <img class="ssschema" src="<?php echo plugins_url('images/ssschemaorg.jpg', __FILE__) ?>" />
                             <input disabled type="checkbox" class="checkbox">
                             <label>
-                                <b class="chktitle">Video SEO Tags:</b>  Automatically add Google, Bing, and Yahoo friendly markup so that your pages with video embeds can be indexed to have a greater chance of showing up in search engine results for those particular videos, even if you aren't the owner. This markup also promotes the chances of your pages showing up with actual video thumbnails within search results (see example on the right).
+                                <b class="chktitle">Video SEO Tags:</b>  <span class="pronon">(PRO Users)</span> Update your YouTube embeds with Google, Bing, and Yahoo friendly SEO markup. This markup promotes the chances of your pages showing up with actual video thumbnails within search results (see example on the right).
                             </label>
                         </p>
                         <p>
@@ -1622,7 +1722,7 @@ class YouTubePrefs
                             <img class="ssfb" src="<?php echo plugins_url('images/ssfb.jpg', __FILE__) ?>" />
                             <input disabled type="checkbox" class="checkbox">
                             <label>
-                                <b class="chktitle">Facebook Open Graph Markup:</b> <span class="pronon">(NEW: PRO Users)</span>  Automatically add Open Graph markup on your pages with YouTube embeds to enhance Facebook sharing and discovery of the pages.  Your shared pages, for example, will also display embedded video thumbnails on Facebook Timelines.
+                                <b class="chktitle">Facebook Open Graph Markup:</b> <span class="pronon">(NEW: PRO Users)</span>  Update YouTube embeds on your pages with Open Graph markup to enhance Facebook sharing and discovery of the pages. Your shared pages, for example, will also display embedded video thumbnails on Facebook Timelines.
                             </label>
                         </p>
 
@@ -1749,10 +1849,10 @@ class YouTubePrefs
                                 <img src="<?php echo plugins_url('images/infinity.png', __FILE__) ?>">
                                 Unlimited PRO upgrades and downloads
                             </li>
-<!--                            <li>
-                                <img src="<?php echo plugins_url('images/questionsale.png', __FILE__) ?>">
-                                What else? You tell us!                                
-                            </li>                           -->
+                            <!--                            <li>
+                                                            <img src="<?php echo plugins_url('images/questionsale.png', __FILE__) ?>">
+                                                            What else? You tell us!                                
+                                                        </li>                           -->
                         </ul>
                     </div>
                     <div style="clear: both;"></div>
@@ -1826,25 +1926,47 @@ class YouTubePrefs
                 <iframe src="<?php echo self::$epbase ?>/dashboard/likecoupon.aspx" width="600" height="500"></iframe>
             <?php }
             ?>
+            <div class="ytnav">
+                <a href="#jumphowto">How To Embed</a>
+                <a href="#jumpwiz">Visual YouTube Wizard</a>
+                <a href="#jumpdefaults">Set Defaults</a>
+                <a href="#jumpoverride">How To Override Defaults</a>
+                <a href="#jumppro" style="border-color: #888888;">Go PRO!</a>
+                <a href="#jumpsupport">Support</a>
+            </div>
+
 
             <script type="text/javascript">
 
                 function savevalidate()
                 {
                     var valid = true;
-
+                    var alertmessage = '';
                     if (jQuery("#<?php echo self::$opt_defaultdims; ?>").is(":checked"))
                     {
                         if (!(jQuery.isNumeric(jQuery.trim(jQuery("#<?php echo self::$opt_defaultwidth; ?>").val())) &&
                                 jQuery.isNumeric(jQuery.trim(jQuery("#<?php echo self::$opt_defaultheight; ?>").val()))))
                         {
-                            alert("Please enter valid numbers for default height and width, or uncheck the option.");
+                            alertmessage += "Please enter valid numbers for default height and width, or uncheck the option.";
                             jQuery("#boxdefaultdims input").css("background-color", "#ffcccc").css("border", "2px solid #000000");
                             valid = false;
                         }
                     }
 
+                    // epvol                   if (jQuery("#<?php echo self::$opt_defaultvol; ?>").is(":checked"))
+                    //     epvol               {
+                    //                        if (!(jQuery.isNumeric(jQuery.trim(jQuery("#<?php echo self::$opt_vol; ?>").val()))))
+                    //                        {
+                    //   epvol                         alertmessage += "Please enter a number between 0 and 100 for the default volume, or uncheck the option.";
+                    //                            jQuery("#boxdefaultvol input").css("background-color", "#ffcccc").css("border", "2px solid #000000");
+                    //                            valid = false;
+                    // epvol                       }
+                    // epvol                   }
 
+                    if (!valid)
+                    {
+                        alert(alertmessage);
+                    }
                     return valid;
                 }
 
@@ -1864,6 +1986,24 @@ class YouTubePrefs
                         }
 
                     });
+
+                    // epvol                   jQuery('#<?php echo self::$opt_defaultvol; ?>').change(function()
+                    //                    {
+                    //                        if (jQuery(this).is(":checked"))
+                    //                        {
+                    //    epvol                        jQuery("#boxdefaultvol").show(500);
+                    //                        }
+                    //                        else
+                    //                        {
+                    //                            jQuery("#boxdefaultvol").hide(500);
+                    //                        }
+                    //
+                    //     epvol               });
+                    //
+                    //                    $("input#vol").on("input change", function() {
+                    //                        $('.vol-output').text($(this).val() > 0 ? $(this).val() + '%' : 'Mute');
+                    //                    });
+                    //  epvol                  $('.vol-output').text($("input#vol").val() > 0 ? $("input#vol").val() + '%' : 'Mute');
 
                     jQuery("#showcase-validate").click(function() {
                         window.open("<?php echo self::$epbase . "/showcase-validate.aspx?prokey=" . self::$alloptions[self::$opt_pro] ?>" + "&domain=" + mydomain);
@@ -2043,7 +2183,7 @@ class YouTubePrefs
     add_action("wp_ajax_my_embedplus_pro_record", array('YouTubePrefs', 'my_embedplus_pro_record'));
     add_action("wp_ajax_my_embedplus_glance_vids", array('YouTubePrefs', 'my_embedplus_glance_vids'));
     add_action("wp_ajax_my_embedplus_glance_count", array('YouTubePrefs', 'my_embedplus_glance_count'));
-
+    add_action("wp_ajax_my_embedplus_dismiss_double_plugin_warning", array('YouTubePrefs', 'my_embedplus_dismiss_double_plugin_warning'));
 
     $youtubeplg = new YouTubePrefs();
 

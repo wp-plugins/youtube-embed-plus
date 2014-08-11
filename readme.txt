@@ -4,16 +4,16 @@ Plugin Name: YouTube Embed
 Tags: at a glance, channel, annotations, music, music video, songs, song, lyrics, responsive, short code, shortcode, youtube shortcode, health, diagnostic, youtube status, seo, video seo, rich snippets, reddit, google+, google plus, comments, search, widget, sidebar, responsive, fluid, iphone, mobile, android, tablet, ipad, youtube playlist, playlists, playlist, wmode, hd, autohd, auto hd, video analytics, analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin, https, ssl, secure, no-cookie, cookie, html5, youtube html5
 Requires at least: 2.9
 Tested up to: 3.9.2
-Stable tag: 8.7
+Stable tag: 8.8
 License: GPLv3 or later
 
 YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
 
 == Description ==
 
-**500,000+ downloads! Here are some recently added features:**
+**600,000+ downloads! Here are some recently added features:**
 
-* Instant HTTPS support. It can even convert past non-HTTPS videos to HTTPS.
+* Instant HTTPS support. It can even convert past non-HTTPS videos to HTTPS.  Did you know that Google uses [HTTPS/SSL support as a ranking signal for SERP?](http://embedplus.com/convert-old-youtube-embeds-to-https-ssl.aspx)
 * iOS playback preferences
 * Embed an entire channel as a playlist
 * "At a Glance" direct access to your YouTube posts/pages
@@ -128,11 +128,16 @@ You can also start and end each individual video at particular times. Like the a
 
 == Changelog ==
 
+= YouTube Embed 8.8 =
+* Better embedplus plugin conflict notifications.
+* Greater emphasis on HTTPS support due to Google's recent announcement about [HTTPS/SSL as an SEO/SERP signal](http://embedplus.com/convert-old-youtube-embeds-to-https-ssl.aspx).
+* Supports latest version of WordPress (3.9.2).
+
 = YouTube Embed 8.7 =
-(PRO) Extends the plugin’s existing tagging capabilities by also adding Open Graph markup to enhance Facebook sharing/discovery of your pages.
+(PRO) Extends the plugin's existing tagging capabilities by also adding Open Graph markup to enhance Facebook sharing/discovery of your pages.
 
 = YouTube Embed 8.6 =
-HTTPS/SSL embedding is now free.
+Expanded HTTPS/SSL support.
 
 = YouTube Embed 8.5 =
 This update features a new iOS related option for both Free and PRO users. PRO users additionally have the new mobile compatibility checker.
@@ -231,7 +236,7 @@ Enhanced deleted video checker for PRO users
 Added ability to try to force HTML5 player to speed up page loading
 
 = YouTube Embed 3.3 =
-HTTPS: Added secure YouTube embedding for PRO users
+HTTPS: Added secure YouTube embedding
 
 = YouTube Embed 3.2 =
 Ensures video-specific height overrides defaults properly
@@ -280,4 +285,4 @@ First release uploaded to the plugin repository.
 
 == Other Notes ==
 
-[This YouTube plugin can include premium features like automatic schema tagging for video SEO, mobile compatibility checking, and deleted video alerts when you upgrade to PRO.](https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx).
+This YouTube plugin can include premium features like automatic schema tagging for video SEO, mobile compatibility checking, and deleted video alerts when you [upgrade to PRO.](https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx).
