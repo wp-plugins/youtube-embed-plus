@@ -3,7 +3,7 @@
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
-  Version: 8.8
+  Version: 8.9
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
@@ -32,7 +32,7 @@
 class YouTubePrefs
 {
 
-    public static $version = '8.8';
+    public static $version = '8.9';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -601,6 +601,7 @@ class YouTubePrefs
         <script type="text/javascript">
             var eppathtoscripts = "<?php echo plugins_url('scripts/', __FILE__); ?>";
             var epresponsiveselector = <?php echo $responsiveselector; ?>;
+            var epdovol = true; //<?php echo (self::$alloptions[self::$opt_defaultvol] == 1 ? 'true' : 'false') ?>;
         </script>
         <?php
     }
@@ -640,8 +641,8 @@ class YouTubePrefs
         $_defaultwidth = '';
         $_defaultheight = '';
         $_playsinline = 0;
-// epvol       $_defaultvol = 0;
-// epvol       $_vol = '';
+        $_defaultvol = 0;
+        $_vol = '';
 
         $arroptions = get_option(self::$opt_alloptions);
 
@@ -675,8 +676,8 @@ class YouTubePrefs
             $_defaultdims = self::tryget($arroptions, self::$opt_defaultdims, 0);
             $_defaultwidth = self::tryget($arroptions, self::$opt_defaultwidth, '');
             $_defaultheight = self::tryget($arroptions, self::$opt_defaultheight, '');
-// epvol           $_defaultvol = self::tryget($arroptions, self::$opt_defaultvol, 0);
-// epvol           $_vol = self::tryget($arroptions, self::$opt_vol, '');
+            $_defaultvol = self::tryget($arroptions, self::$opt_defaultvol, 0);
+            $_vol = self::tryget($arroptions, self::$opt_vol, '');
         }
         else
         {
@@ -712,8 +713,8 @@ class YouTubePrefs
             self::$opt_defaultdims => $_defaultdims,
             self::$opt_defaultwidth => $_defaultwidth,
             self::$opt_defaultheight => $_defaultheight,
-// epvol           self::$opt_defaultvol => $_defaultvol,
-// epvol            self::$opt_vol => $_vol
+            self::$opt_defaultvol => $_defaultvol,
+            self::$opt_vol => $_vol
         );
 
         update_option(self::$opt_alloptions, $all);
@@ -801,7 +802,7 @@ class YouTubePrefs
         $linkscheme = 'http';
         $youtubebaseurl = 'youtube';
         $schemaorgoutput = '';
-        // epvol $voloutput = '';
+        $voloutput = '';
 
         $finalparams = $linkparams + self::$alloptions;
 
@@ -817,6 +818,12 @@ class YouTubePrefs
             $linkscheme = 'https';
         }
 
+        if (self::$alloptions[self::$opt_defaultvol] == 1)
+        {
+            $voloutput = ' data-vol="' . self::$alloptions[self::$opt_vol] . '" ';
+        }
+
+
         if (self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0)
         {
             if (isset($finalparams[self::$opt_html5]) && $finalparams[self::$opt_html5] == 0)
@@ -828,12 +835,21 @@ class YouTubePrefs
             {
                 $schemaorgoutput = self::getschemaorgoutput($finalparams['v']);
             }
+
+            if (isset($linkparams[self::$opt_vol]) && is_numeric(trim($linkparams[self::$opt_vol])))
+            {
+                $voloutput = ' data-vol="' . $linkparams[self::$opt_vol] . '" ';
+            }
         }
         else
         {
             if (isset($finalparams[self::$opt_html5]))
             {
                 unset($finalparams[self::$opt_html5]);
+            }
+            if (isset($finalparams[self::$opt_vol]))
+            {
+                unset($finalparams[self::$opt_vol]);
             }
         }
 
@@ -846,7 +862,7 @@ class YouTubePrefs
         $code1 = '<iframe ' . $centercode . ' id="_ytid_' . rand(10000, 99999) . '" width="' . self::$defaultwidth . '" height="' . self::$defaultheight .
                 '" src="' . $linkscheme . '://www.' . $youtubebaseurl . '.com/embed/' . (isset($linkparams['v']) ? $linkparams['v'] : '') . '?';
         $code2 = '" frameborder="0" type="text/html" class="__youtube_prefs__' . ($iscontent ? '' : ' __youtube_prefs_widget__') .
-                '" allowfullscreen webkitallowfullscreen mozallowfullscreen ></iframe>' . $schemaorgoutput;
+                '"' . $voloutput . ' allowfullscreen webkitallowfullscreen mozallowfullscreen ></iframe>' . $schemaorgoutput;
 
         $origin = '';
 
@@ -1193,7 +1209,7 @@ class YouTubePrefs
 
     public static function custom_admin_pointers_check()
     {
-        return false; // ooopointer shut all off;
+        //return false; // ooopointer shut all off;
         $admin_pointers = self::custom_admin_pointers();
         foreach ($admin_pointers as $pointer => $array)
         {
@@ -1284,7 +1300,7 @@ class YouTubePrefs
         ?>
             }
 
-            ep_do_pointers(jQuery); // switch off all pointers ooopointer
+            ep_do_pointers(jQuery); // switch off all pointers via js ooopointer
             /* ]]> */
         </script>
         <?php
@@ -1301,11 +1317,12 @@ class YouTubePrefs
         $new_pointer_content .= '<p>'; // . __(''); // ooopointer
         if (!(self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0))
         {
-            $new_pointer_content .= __("(PRO) Extends the plugin\'s existing tagging capabilities by also adding Open Graph markup to enhance Facebook sharing/discovery of your pages. Read more in the plugin\'s <a href=\"" . admin_url('admin.php?page=youtube-my-preferences') . "#jumppro\">settings page &raquo;</a>");
+            $new_pointer_content .= __("This update allows volume level initialization for your YouTube embeds.  <a href=\"" . admin_url('admin.php?page=youtube-my-preferences') . "#jumpdefaults\">See the settings page for more details &raquo;</a>");
             //$new_pointer_content .= __('This YouTube plugin update makes HTTPS embedding available for both FREE and <a class="orange" href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer" target="_blank">PRO &raquo;</a> users. Please view this settings page to see the option. It will even automatically go and secure the non-HTTPS embeds you made in the past.');
         }
         else
         {
+            $new_pointer_content .= __("This update allows volume level initialization for your YouTube embeds.  <a href=\"" . admin_url('admin.php?page=youtube-my-preferences') . "#jumpdefaults\">See the settings page for more details &raquo;</a>");
             //$new_pointer_content .= __('');
         }
         $new_pointer_content .= '</p>';
@@ -1379,7 +1396,7 @@ class YouTubePrefs
             $new_options[self::$opt_responsive] = self::postchecked(self::$opt_responsive) ? 1 : 0;
             $new_options[self::$opt_schemaorg] = self::postchecked(self::$opt_schemaorg) ? 1 : 0;
             $new_options[self::$opt_defaultdims] = self::postchecked(self::$opt_defaultdims) ? 1 : 0;
-            // epvol $new_options[self::$opt_defaultvol] = self::postchecked(self::$opt_defaultvol) ? 1 : 0;
+            $new_options[self::$opt_defaultvol] = self::postchecked(self::$opt_defaultvol) ? 1 : 0;
 
             $_defaultwidth = '';
             try
@@ -1403,16 +1420,16 @@ class YouTubePrefs
             }
             $new_options[self::$opt_defaultheight] = $_defaultheight;
 
-// epvol           $_vol = '';
-// epvol           try
-//epvol            {
-//                $_vol = is_numeric(trim($_POST[self::$opt_vol])) ? intval(trim($_POST[self::$opt_vol])) : $_vol;
-//epvol            }
-//            catch (Exception $ex)
-//            {
-//   epvol             
-//            }
-//epvol            $new_options[self::$opt_vol] = $_vol;
+            $_vol = '';
+            try
+            {
+                $_vol = is_numeric(trim($_POST[self::$opt_vol])) ? intval(trim($_POST[self::$opt_vol])) : $_vol;
+            }
+            catch (Exception $ex)
+            {
+                
+            }
+            $new_options[self::$opt_vol] = $_vol;
 
             $all = $new_options + $all;
 
@@ -1458,7 +1475,7 @@ class YouTubePrefs
             #nonprosupport {border-radius: 15px; padding: 5px 10px 10px 10px;  border: 3px solid #ff6655;}
             .pronon {font-weight: bold; color: #f85d00;}
             ul.reglist li {margin: 0px 0px 0px 30px; list-style: disc outside none;}
-            .procol {width: 465px; float: left;}
+            .procol {width: 475px; float: left;}
             .smallnote {font-style: italic; font-size: 10px;}
             .italic {font-style: italic;}
             .ytindent h3 {font-size: 15px; line-height: 22px; margin: 5px 0px 10px 0px;}
@@ -1470,9 +1487,6 @@ class YouTubePrefs
             .cuz {background-image: linear-gradient(to bottom,#4983FF,#0C5597) !important; color: #ffffff;}
             .brightpro {background-image: linear-gradient(to bottom,#ff5500,#cc2200) !important; color: #ffffff;}
             #boxdefaultdims {font-weight: bold; padding: 0px 10px; <?php echo $all[self::$opt_defaultdims] ? '' : 'display: none;' ?>}
-            #boxdefaultvol {font-weight: bold; padding: 0px 10px;  <?php echo $all[self::$opt_defaultvol] ? '' : 'display: none;' ?>}
-            .vol-output {display: inline-block; width: 30px; color: #008800;}
-            input#vol {vertical-align: middle;}
             .textinput {border-width: 2px !important;}
             h3.sect {border-radius: 10px; background-color: #D9E9F7; padding: 5px 5px 5px 10px; position: relative; font-weight: bold;}
             h3.sect a {text-decoration: none; color: #E20000;}
@@ -1489,6 +1503,12 @@ class YouTubePrefs
             b, strong {font-weight: bold;}
             input.checkbox[disabled] {border: 1px dotted #444444;}
             .pad10 {padding: 10px;}
+
+            #boxdefaultvol {font-weight: bold; padding: 0px 10px;  <?php echo $all[self::$opt_defaultvol] ? '' : 'display: none;' ?>}
+            .vol-output {display: none; width: 30px; color: #008800;}
+            .vol-range {background-color: #dddddd; border-radius: 3px; cursor: pointer;}
+            input#vol {vertical-align: middle;}
+            .vol-seeslider {display: none;}
         </style>
 
         <div class="ytindent">
@@ -1663,6 +1683,16 @@ class YouTubePrefs
                             This will go back and also secure your past embeds as they are loaded on their pages. Most web browsers will warn users when they access web pages via HTTPS that contain embedded content loaded via HTTP. If your main site is currently accessed via HTTPS, using HTTPS URLs for your YouTube embeds will prevent your users from running into that warning. If you're not currently supporting HTTPS/SSL, <a href="http://embedplus.com/convert-old-youtube-embeds-to-https-ssl.aspx" target="_blank">here's some motivation from Google &raquo;</a>
                         </label>
                     </p>
+                    <p>
+                        <input name="<?php echo self::$opt_defaultvol; ?>" id="<?php echo self::$opt_defaultvol; ?>" <?php checked($all[self::$opt_defaultvol], 1); ?> type="checkbox" class="checkbox">                        
+                        <span id="boxdefaultvol">
+                            Volume: <span class="vol-output"></span> <input min="0" max="100" step="1" type="text" name="<?php echo self::$opt_vol; ?>" id="<?php echo self::$opt_vol; ?>" value="<?php echo trim($all[self::$opt_vol]); ?>" >
+                        </span>
+                        <label for="<?php echo self::$opt_defaultvol; ?>">
+                            <b class="chktitle">Volume Initialization: <sup class="orange">NEW</sup></b>
+                            Set an initial volume level for all of your embedded videos.  Check this and you'll see a <span class="vol-seeslider">slider</span> <span class="vol-seetextbox">textbox</span> for setting the start volume to a value between 0 (mute) and 100 (max) percent.  Leaving it unchecked means you want the visitor's default behavior. Read more about why you might want to <a href="<?php echo self::$epbase ?>/mute-volume-youtube-wordpress.aspx" target="_blank">initialize YouTube embed volume here &raquo;</a>
+                        </label>
+                    </p>
 
 
                     <p class="smallnote orange">Below are PRO features for enhanced SEO and performance (works for even past embed links):</p>
@@ -1691,13 +1721,6 @@ class YouTubePrefs
                                 <b>(PRO)</b> <b class="chktitle">Facebook Open Graph Markup:</b>  <span class="pronon">(NEW: PRO Users)</span> Update YouTube embeds on your pages with Open Graph markup to enhance Facebook sharing and discovery of the pages. Your shared pages, for example, will also display embedded video thumbnails on Facebook Timelines.
                             </label>
                         </p>
-            <!-- epvol                       <p>
-                            <input name="<?php echo self::$opt_defaultvol; ?>" id="<?php echo self::$opt_defaultvol; ?>" <?php checked($all[self::$opt_defaultvol], 1); ?> type="checkbox" class="checkbox">                        
-                            <span id="boxdefaultvol">
-                                Volume: <span class="vol-output"></span> <input min="0" max="100" step="1" type="range" name="<?php echo self::$opt_vol; ?>" id="<?php echo self::$opt_vol; ?>" value="<?php echo trim($all[self::$opt_vol]); ?>" >
-                            </span>
-                            <label for="<?php echo self::$opt_defaultvol; ?>"><b>(PRO)</b> <b class="chktitle">Default Volume:</b> <span class="pronon">(NEW: PRO Users)</span> Make my videos have a default volume</label>
-                        </p>-->
 
                         <?php
                     }
@@ -1818,10 +1841,9 @@ class YouTubePrefs
                                 Check if your embeds have restrictions that can block mobile viewing <sup class="orange bold">NEW</sup>
                             </li>       
 
-
                         </ul>
                     </div>
-                    <div class="procol" style="max-width: 400px;">
+                    <div class="procol" style="max-width: 465px;">
                         <ul class="gopro">
                             <li>
                                 <img src="<?php echo plugins_url('images/prioritysupport.png', __FILE__) ?>">
@@ -1841,18 +1863,18 @@ class YouTubePrefs
                                 Instant YouTube embed diagnostic reports
                             </li>                            
                             <li>
-                                <img src="<?php echo plugins_url('images/iconmusic.png', __FILE__) ?>">
-                                Music video extras to inspire your posts <sup class="orange bold">NEW</sup>
-                            </li>
+                                <img src="<?php echo plugins_url('images/iconvolume.png', __FILE__) ?>">
+                                Fine-Grained Volume Initialization – Make individual video volume settings in the wizard <sup class="orange bold">NEW</sup>
+                            </li>       
 
                             <li>
                                 <img src="<?php echo plugins_url('images/infinity.png', __FILE__) ?>">
                                 Unlimited PRO upgrades and downloads
                             </li>
-                            <!--                            <li>
-                                                            <img src="<?php echo plugins_url('images/questionsale.png', __FILE__) ?>">
-                                                            What else? You tell us!                                
-                                                        </li>                           -->
+<!--                            <li>
+                                <img src="<?php echo plugins_url('images/questionsale.png', __FILE__) ?>">
+                                What else? You tell us!                                
+                            </li>                           -->
                         </ul>
                     </div>
                     <div style="clear: both;"></div>
@@ -1953,15 +1975,15 @@ class YouTubePrefs
                         }
                     }
 
-                    // epvol                   if (jQuery("#<?php echo self::$opt_defaultvol; ?>").is(":checked"))
-                    //     epvol               {
-                    //                        if (!(jQuery.isNumeric(jQuery.trim(jQuery("#<?php echo self::$opt_vol; ?>").val()))))
-                    //                        {
-                    //   epvol                         alertmessage += "Please enter a number between 0 and 100 for the default volume, or uncheck the option.";
-                    //                            jQuery("#boxdefaultvol input").css("background-color", "#ffcccc").css("border", "2px solid #000000");
-                    //                            valid = false;
-                    // epvol                       }
-                    // epvol                   }
+                    if (jQuery("#<?php echo self::$opt_defaultvol; ?>").is(":checked"))
+                    {
+                        if (!(jQuery.isNumeric(jQuery.trim(jQuery("#<?php echo self::$opt_vol; ?>").val()))))
+                        {
+                            alertmessage += "Please enter a number between 0 and 100 for the default volume, or uncheck the option.";
+                            jQuery("#boxdefaultvol input").css("background-color", "#ffcccc").css("border", "2px solid #000000");
+                            valid = false;
+                        }
+                    }
 
                     if (!valid)
                     {
@@ -1987,23 +2009,39 @@ class YouTubePrefs
 
                     });
 
-                    // epvol                   jQuery('#<?php echo self::$opt_defaultvol; ?>').change(function()
-                    //                    {
-                    //                        if (jQuery(this).is(":checked"))
-                    //                        {
-                    //    epvol                        jQuery("#boxdefaultvol").show(500);
-                    //                        }
-                    //                        else
-                    //                        {
-                    //                            jQuery("#boxdefaultvol").hide(500);
-                    //                        }
-                    //
-                    //     epvol               });
-                    //
-                    //                    $("input#vol").on("input change", function() {
-                    //                        $('.vol-output').text($(this).val() > 0 ? $(this).val() + '%' : 'Mute');
-                    //                    });
-                    //  epvol                  $('.vol-output').text($("input#vol").val() > 0 ? $("input#vol").val() + '%' : 'Mute');
+
+
+
+                    jQuery('#<?php echo self::$opt_defaultvol; ?>').change(function()
+                    {
+                        if (jQuery(this).is(":checked"))
+                        {
+                            jQuery("#boxdefaultvol").show(500);
+                        }
+                        else
+                        {
+                            jQuery("#boxdefaultvol").hide(500);
+                        }
+
+                    });
+
+                    var rangedetect = document.createElement("input");
+                    rangedetect.setAttribute("type", "range");
+                    var canrange = rangedetect.type !== "text";
+                    //canrange = false;
+                    if (canrange)
+                    {
+                        $("input#vol").prop("type", "range").addClass("vol-range").on("input change", function() {
+                            $('.vol-output').text($(this).val() > 0 ? $(this).val() + '%' : 'Mute');
+                        });
+                        $('.vol-output').css("display", "inline-block").text($("input#vol").val() > 0 ? $("input#vol").val() + '%' : 'Mute');
+                        $('.vol-seeslider').show();
+                        $('.vol-seetextbox').hide();
+                    }
+                    else
+                    {
+                        $("input#vol").width(40);
+                    }
 
                     jQuery("#showcase-validate").click(function() {
                         window.open("<?php echo self::$epbase . "/showcase-validate.aspx?prokey=" . self::$alloptions[self::$opt_pro] ?>" + "&domain=" + mydomain);
@@ -2025,7 +2063,7 @@ class YouTubePrefs
                         tempscript.src = "//www.embedplus.com/dashboard/wordpress-pro-validatejp.aspx?simple=1&prokey=" + prokeyval + "&domain=" + mydomain;
                         var n = document.getElementsByTagName("head")[0].appendChild(tempscript);
                         setTimeout(function() {
-                            n.parentNode.removeChild(n)
+                            n.parentNode.removeChild(n);
                         }, 500);
                         return false;
                     });
@@ -2195,7 +2233,7 @@ class YouTubePrefs
         add_action('wp_print_scripts', 'youtubeprefs_output_scriptvars');
 
         if (
-                (!(isset(YouTubePrefs::$alloptions[YouTubePrefs::$opt_pro]) && strlen(trim(YouTubePrefs::$alloptions[YouTubePrefs::$opt_pro])) > 0)) && // display only if not pro ooopointer
+                //(!(isset(YouTubePrefs::$alloptions[YouTubePrefs::$opt_pro]) && strlen(trim(YouTubePrefs::$alloptions[YouTubePrefs::$opt_pro])) > 0)) && // display only if not pro ooopointer
                 (get_bloginfo('version') >= '3.3') && YouTubePrefs::custom_admin_pointers_check()
         )
         {
