@@ -23,13 +23,18 @@ YouTube embed plugin with basic features and convenient defaults. Upgrade now to
 * Shortcode support for embedding multiple videos on one line
 * Playlist support
 * Volume level initialization ( [helpful for autoplay >>](http://www.embedplus.com/mute-volume-youtube-wordpress.aspx) )
-* (PRO) Automatic Open Graph tagging for Facebook
-* (PRO) See if your embeds have restrictions that can block your site's mobile visitors from viewing
-* (PRO) Automatic tagging for video SEO
-* (PRO) Analytics and deleted video alerts work with past YouTube videos that you embedded with many other YouTube plugins
-* (PRO) Alerts when visitors from different countries are blocked from viewing your embeds
-* (PRO) Music video embedding extras
+
+You can even extend the plugin with PRO features like:
+
+* Automatic Open Graph tagging for Facebook
+* See if your embeds have restrictions that can block your site's mobile visitors from viewing
+* Automatic tagging for video SEO
+* Analytics and deleted video alerts work with past YouTube videos that you embedded with many other YouTube plugins
+* Alerts when visitors from different countries are blocked from viewing your embeds
+* Music video embedding extras
 * And more...
+
+Click the Download Version button to start exploring now, or take a look at some details below.
 
 This plugin helps you easily manage the growing complexity of YouTube. It can also be upgraded to PRO for enhanced SEO and performance for you and your visitors. It provides the basic features of the YouTube embedded player and will have you posting videos in seconds after installing it. **All you have to do is simply paste an unformatted YouTube link on its own line (shortcodes are also supported).**  Your YouTube embed will then show up when you preview or publish the post. The settings page has plenty of default options that you can automatically apply to all your embedded YouTube videos. **Check out the free options below:**
 
