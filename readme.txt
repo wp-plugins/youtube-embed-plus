@@ -26,17 +26,18 @@ YouTube embed plugin with basic features and convenient defaults. Upgrade now to
 
 You can even extend the plugin with PRO features like:
 
-* Automatic Open Graph tagging for Facebook
-* See if your embeds have restrictions that can block your site's mobile visitors from viewing
 * Automatic tagging for video SEO
-* Analytics and deleted video alerts work with past YouTube videos that you embedded with many other YouTube plugins
+* Automatic Open Graph tagging for Facebook
+* Deleted video alerts (i.e., did Google remove or take down videos I previously embedded?) 
+* Mobile compatibility checking (i.e., see if your embeds have restrictions that can block your site's mobile visitors from viewing)
 * Alerts when visitors from different countries are blocked from viewing your embeds
-* Music video embedding extras
-* And more...
+* And more features and analytics...
 
-Click the Download Version button to start exploring now, or take a look at some details below.
+**Click the Download button to start exploring now, or take a look at some details below.**
 
-This plugin helps you easily manage the growing complexity of YouTube. It can also be upgraded to PRO for enhanced SEO and performance for you and your visitors. It provides the basic features of the YouTube embedded player and will have you posting videos in seconds after installing it. **All you have to do is simply paste an unformatted YouTube link on its own line (shortcodes are also supported).**  Your YouTube embed will then show up when you preview or publish the post. The settings page has plenty of default options that you can automatically apply to all your embedded YouTube videos. **Check out the free options below:**
+This plugin helps you easily manage the growing complexity of YouTube embedding. It provides a spectrum of basic and advanced features of the YouTube embedded player and will have you posting videos in seconds after installing it. **All you have to do is simply paste an unformatted YouTube link on its own line (shortcodes are also supported).** Your YouTube embeds will then show up when you preview or publish the post.
+
+The settings page has plenty of default options that you can automatically apply to all your embedded YouTube videos. **Check out the free options below:**
 
 * Force HD quality when available
 * Make your videos responsive so that they dynamically fit in all screen sizes (smart phone, PC and tablet)
@@ -82,8 +83,6 @@ Beyond the above features, you have the option of upgrading to PRO to add enhanc
 * What and when are your best and worst performing YouTube embeds?
 * How much do the producers of the YouTube videos you embed rely on **your site**, versus other sites and YouTube.com, for views?
 * Are you embedding videos that are blocked in other countries?
-
-Recently, we also added Video SEO tags, which adds markup that can improve your click rates and video SERP rankings.
 
 See more details after installing. Enjoy!
 
