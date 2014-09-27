@@ -3,7 +3,7 @@
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
-  Version: 8.9
+  Version: 9.0
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
@@ -32,7 +32,7 @@
 class YouTubePrefs
 {
 
-    public static $version = '8.9';
+    public static $version = '9.0';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -56,6 +56,8 @@ class YouTubePrefs
     public static $opt_wmode = 'wmode';
     public static $opt_vq = 'vq';
     public static $opt_html5 = 'html5';
+    public static $opt_dohl = 'dohl';
+    public static $opt_hl = 'hl';
     public static $opt_ssl = 'ssl';
     public static $opt_ogvideo = 'ogvideo';
     public static $opt_nocookie = 'nocookie';
@@ -129,6 +131,7 @@ class YouTubePrefs
             self::$opt_autohide,
             self::$opt_controls,
             self::$opt_html5,
+            self::$opt_hl,
             self::$opt_theme,
             self::$opt_color,
             self::$opt_listType,
@@ -643,6 +646,8 @@ class YouTubePrefs
         $_playsinline = 0;
         $_defaultvol = 0;
         $_vol = '';
+        $_hl = '';
+        $_dohl = 0;
 
         $arroptions = get_option(self::$opt_alloptions);
 
@@ -660,6 +665,8 @@ class YouTubePrefs
             $_showinfo = self::tryget($arroptions, self::$opt_showinfo, 1);
             $_playsinline = self::tryget($arroptions, self::$opt_playsinline, 0);
             $_html5 = self::tryget($arroptions, self::$opt_html5, 0);
+            $_hl = self::tryget($arroptions, self::$opt_hl, '');
+            $_dohl = self::tryget($arroptions, self::$opt_dohl, 0);
             $_theme = self::tryget($arroptions, self::$opt_theme, 'dark');
             $_color = self::tryget($arroptions, self::$opt_color, 'red');
             $_wmode = self::tryget($arroptions, self::$opt_wmode, 'opaque');
@@ -698,6 +705,8 @@ class YouTubePrefs
             self::$opt_playsinline => $_playsinline,
             self::$opt_autohide => $_autohide,
             self::$opt_html5 => $_html5,
+            self::$opt_hl => $_hl,
+            self::$opt_dohl => $_dohl,
             self::$opt_theme => $_theme,
             self::$opt_color => $_color,
             self::$opt_wmode => $_wmode,
@@ -823,6 +832,11 @@ class YouTubePrefs
             $voloutput = ' data-vol="' . self::$alloptions[self::$opt_vol] . '" ';
         }
 
+
+        if (!(self::$alloptions[self::$opt_dohl] == 1 && isset($finalparams[self::$opt_hl]) && strlen($finalparams[self::$opt_hl]) == 2))
+        {
+            unset($finalparams[self::$opt_hl]);
+        }
 
         if (self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0)
         {
@@ -1317,12 +1331,13 @@ class YouTubePrefs
         $new_pointer_content .= '<p>'; // . __(''); // ooopointer
         if (!(self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0))
         {
-            $new_pointer_content .= __("This update allows volume level initialization for your YouTube embeds.  <a href=\"" . admin_url('admin.php?page=youtube-my-preferences') . "#jumpdefaults\">See the settings page for more details &raquo;</a>");
-            //$new_pointer_content .= __('This YouTube plugin update makes HTTPS embedding available for both FREE and <a class="orange" href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer" target="_blank">PRO &raquo;</a> users. Please view this settings page to see the option. It will even automatically go and secure the non-HTTPS embeds you made in the past.');
+            $new_pointer_content .= __('This update adds the ability to change the player&#39;s interface language from English to another language preferred by you and/or your visitors (for both Free and <a href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer" target="_blank">PRO &raquo;</a> users).');
+//<a href=\"" . admin_url('admin.php?page=youtube-my-preferences') . "#jumpdefaults\">See the settings page for more details &raquo;</a>"            
+//$new_pointer_content .= __('This YouTube plugin update makes HTTPS embedding available for both FREE and <a class="orange" href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer" target="_blank">PRO &raquo;</a> users. Please view this settings page to see the option. It will even automatically go and secure the non-HTTPS embeds you made in the past.');
         }
         else
         {
-            $new_pointer_content .= __("This update allows volume level initialization for your YouTube embeds.  <a href=\"" . admin_url('admin.php?page=youtube-my-preferences') . "#jumpdefaults\">See the settings page for more details &raquo;</a>");
+            $new_pointer_content .= __("Language update. <a href=\"" . admin_url('admin.php?page=youtube-my-preferences') . "#jumpdefaults\">See the settings page for more details &raquo;</a>");
             //$new_pointer_content .= __('');
         }
         $new_pointer_content .= '</p>';
@@ -1397,6 +1412,7 @@ class YouTubePrefs
             $new_options[self::$opt_schemaorg] = self::postchecked(self::$opt_schemaorg) ? 1 : 0;
             $new_options[self::$opt_defaultdims] = self::postchecked(self::$opt_defaultdims) ? 1 : 0;
             $new_options[self::$opt_defaultvol] = self::postchecked(self::$opt_defaultvol) ? 1 : 0;
+            $new_options[self::$opt_dohl] = self::postchecked(self::$opt_dohl) ? 1 : 0;
 
             $_defaultwidth = '';
             try
@@ -1430,6 +1446,20 @@ class YouTubePrefs
                 
             }
             $new_options[self::$opt_vol] = $_vol;
+
+
+            $_hl = '';
+            try
+            {
+                $temphl = strtolower(trim($_POST[self::$opt_hl]));
+                $_hl = preg_match('/^[a-z][a-z]$/i', $temphl) ? $temphl : '';
+            }
+            catch (Exception $ex)
+            {
+                
+            }
+            $new_options[self::$opt_hl] = $_hl;
+
 
             $all = $new_options + $all;
 
@@ -1503,6 +1533,7 @@ class YouTubePrefs
             b, strong {font-weight: bold;}
             input.checkbox[disabled] {border: 1px dotted #444444;}
             .pad10 {padding: 10px;}
+            #boxdohl {font-weight: bold; padding: 0px 10px;  <?php echo $all[self::$opt_dohl] ? '' : 'display: none;' ?>}
 
             #boxdefaultvol {font-weight: bold; padding: 0px 10px;  <?php echo $all[self::$opt_defaultvol] ? '' : 'display: none;' ?>}
             .vol-output {display: none; width: 30px; color: #008800;}
@@ -1572,7 +1603,7 @@ class YouTubePrefs
                     <br>
                     <br>
 
-                    <img style="width: 500px; margin: 0 auto; display: block;" src="<?php echo plugins_url('images/ssprowizard.png', __FILE__) ?>" >
+                    <a href="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx" target="_blank" style="text-decoration: none;"><img style="width: 500px; margin: 0 auto; display: block;" src="<?php echo plugins_url('images/ssprowizard.png', __FILE__) ?>" ></a>
 
                 </p>
                 <div class="jumper" id="jumpdefaults"></div>
@@ -1694,8 +1725,16 @@ class YouTubePrefs
                         </label>
                     </p>
 
+                    <p>
+                        <input name="<?php echo self::$opt_dohl; ?>" id="<?php echo self::$opt_dohl; ?>" <?php checked($all[self::$opt_dohl], 1); ?> type="checkbox" class="checkbox">                        
+                        <span id="boxdohl">
+                            Language: <input type="text" name="<?php echo self::$opt_hl; ?>" id="<?php echo self::$opt_hl; ?>" value="<?php echo trim($all[self::$opt_hl]); ?>" class="textinput" style="width: 50px;" maxlength="2">
+                        </span>
+                        <label for="<?php echo self::$opt_dohl; ?>"><b class="chktitle">Player Localization/Internationalization: <sup class="orange">NEW</sup></b>
+                            Change the player's interface language from English to another language preferred by you and/or your visitors. This will set the player's tooltips and default caption track depending on the availability of your desired language. Checking this option will display a box to enter the appropriate two-letter language code. <a href="<?php echo self::$epbase ?>/youtube-iso-639-1-language-codes.aspx" target="_blank">See here for a mapping of languages to YouTube supported codes &raquo;</a></label>
+                    </p>                    
 
-                    <p class="smallnote orange">Below are PRO features for enhanced SEO and performance (works for even past embed links):</p>
+                    <p class="smallnote orange">Below are PRO features for enhanced SEO and performance (works for even past embed links). <a href="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx" target="_blank">Activate them &raquo;</a></p>
                     <?php
                     if ($all[self::$opt_pro] && strlen(trim($all[self::$opt_pro])) > 0)
                     {
@@ -1767,7 +1806,7 @@ class YouTubePrefs
                     <?php _e("How To Override Defaults / Other Options") ?> <a href="#top" class="totop">&#9650; top</a>
                 </h3>
                 <p>Suppose you have a few videos that need to be different from the above defaults. You can add options to the end of a link as displayed below to override the above defaults. Each option should begin with '&'.
-                    <br><span class="pronon">PRO users: You can use the <span class="button-primary cuz">&#9658; Customize</span> button that you will see inside the wizard, instead of memorizing the following.</span>
+                    <br><span class="smallnote orange">PRO users: You can use the <span class="button-primary cuz">&#9658; Customize</span> button that you will see inside the wizard, instead of memorizing the following.</span>
                     <?php
                     _e('<ul>');
                     _e("<li><strong>width</strong> - Sets the width of your player. If omitted, the default width will be the width of your theme's content.<em> Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&width=500</strong>&height=350</em></li>");
@@ -1864,17 +1903,17 @@ class YouTubePrefs
                             </li>                            
                             <li>
                                 <img src="<?php echo plugins_url('images/iconvolume.png', __FILE__) ?>">
-                                Fine-Grained Volume Initialization – Make individual video volume settings in the wizard <sup class="orange bold">NEW</sup>
+                                Fine-Grained Volume Initialization – Individual video volume settings in the wizard <sup class="orange bold">NEW</sup>
                             </li>       
 
                             <li>
                                 <img src="<?php echo plugins_url('images/infinity.png', __FILE__) ?>">
                                 Unlimited PRO upgrades and downloads
                             </li>
-<!--                            <li>
-                                <img src="<?php echo plugins_url('images/questionsale.png', __FILE__) ?>">
-                                What else? You tell us!                                
-                            </li>                           -->
+                            <!--                            <li>
+                                                            <img src="<?php echo plugins_url('images/questionsale.png', __FILE__) ?>">
+                                                            What else? You tell us!                                
+                                                        </li>                           -->
                         </ul>
                     </div>
                     <div style="clear: both;"></div>
@@ -1985,6 +2024,16 @@ class YouTubePrefs
                         }
                     }
 
+                    if (jQuery("#<?php echo self::$opt_dohl; ?>").is(":checked"))
+                    {
+                        if (!(/^[A-Za-z][A-Za-z]$/.test(jQuery.trim(jQuery("#<?php echo self::$opt_hl; ?>").val()))))
+                        {
+                            alertmessage += "Please enter a valid 2-letter language code.";
+                            jQuery("#boxdohl input").css("background-color", "#ffcccc").css("border", "2px solid #000000");
+                            valid = false;
+                        }
+                    }
+
                     if (!valid)
                     {
                         alert(alertmessage);
@@ -2009,6 +2058,19 @@ class YouTubePrefs
 
                     });
 
+
+                    jQuery('#<?php echo self::$opt_dohl; ?>').change(function()
+                    {
+                        if (jQuery(this).is(":checked"))
+                        {
+                            jQuery("#boxdohl").show(500);
+                        }
+                        else
+                        {
+                            jQuery("#boxdohl").hide(500);
+                        }
+
+                    });
 
 
 
@@ -2233,7 +2295,7 @@ class YouTubePrefs
         add_action('wp_print_scripts', 'youtubeprefs_output_scriptvars');
 
         if (
-                //(!(isset(YouTubePrefs::$alloptions[YouTubePrefs::$opt_pro]) && strlen(trim(YouTubePrefs::$alloptions[YouTubePrefs::$opt_pro])) > 0)) && // display only if not pro ooopointer
+        (!(isset(YouTubePrefs::$alloptions[YouTubePrefs::$opt_pro]) && strlen(trim(YouTubePrefs::$alloptions[YouTubePrefs::$opt_pro])) > 0)) && // display only if not pro ooopointer
                 (get_bloginfo('version') >= '3.3') && YouTubePrefs::custom_admin_pointers_check()
         )
         {

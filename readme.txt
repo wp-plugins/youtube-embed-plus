@@ -1,10 +1,10 @@
 === YouTube ===
 Contributors: embedplus
 Plugin Name: YouTube Embed
-Tags: audio, initialize, mute, sound, track, volume, at a glance, channel, annotations, music, music video, songs, song, lyrics, responsive, short code, shortcode, youtube shortcode, health, diagnostic, youtube status, seo, video seo, rich snippets, reddit, google+, google plus, comments, search, widget, sidebar, responsive, fluid, iphone, mobile, android, tablet, ipad, youtube playlist, playlists, playlist, wmode, hd, autohd, auto hd, video analytics, analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin, https, ssl, secure, no-cookie, cookie, html5, youtube html5
+Tags: translator, locale, country code, country, TinyMCE, localization, internationalization, language, multi-language, translate, captions, subtitles, hl, audio, initialize, mute, sound, track, volume, at a glance, channel, annotations, music, music video, songs, song, lyrics, responsive, short code, shortcode, youtube shortcode, health, diagnostic, youtube status, seo, video seo, rich snippets, reddit, google+, google plus, comments, search, widget, sidebar, responsive, fluid, iphone, mobile, android, tablet, ipad, youtube playlist, playlists, playlist, wmode, hd, autohd, auto hd, video analytics, analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin, https, ssl, secure, no-cookie, cookie, html5, youtube html5
 Requires at least: 2.9
 Tested up to: 4.0
-Stable tag: 8.9
+Stable tag: 9.0
 License: GPLv3 or later
 
 YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
@@ -23,6 +23,7 @@ YouTube embed plugin with basic features and convenient defaults. Upgrade now to
 * Shortcode support for embedding multiple videos on one line
 * Playlist support
 * Volume level initialization ( [helpful for autoplay >>](http://www.embedplus.com/mute-volume-youtube-wordpress.aspx) )
+* Localization/internationalization so you can set the player's interface [language from English to another >>](http://www.embedplus.com/youtube-iso-639-1-language-codes.aspx)
 
 You can even extend the plugin with PRO features like:
 
@@ -132,6 +133,9 @@ You can also start and end each individual video at particular times. Like the a
 5. YouTube Embed Screenshot 5: Wizard Search Results Screenshot
 
 == Changelog ==
+
+= YouTube Embed 9.0 =
+Adds automatic localization/internationalization so you can set the player's interface language from English to another.
 
 = YouTube Embed 8.9 =
 Allows volume level initialization.
