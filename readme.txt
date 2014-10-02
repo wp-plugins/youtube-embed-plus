@@ -13,6 +13,7 @@ YouTube embed plugin with basic features and convenient defaults. Upgrade now to
 
 **600,000+ downloads! Here are some recently added features:**
 
+* Localization/internationalization so you can set the player's interface [language from English to another >>](http://www.embedplus.com/youtube-iso-639-1-language-codes.aspx)
 * Instant HTTPS support. It can even convert past non-HTTPS videos to HTTPS.  Did you know that Google uses [HTTPS/SSL support as a ranking signal for SERP?](http://embedplus.com/convert-old-youtube-embeds-to-https-ssl.aspx)
 * iOS playback preferences
 * Embed an entire channel as a playlist
@@ -23,7 +24,6 @@ YouTube embed plugin with basic features and convenient defaults. Upgrade now to
 * Shortcode support for embedding multiple videos on one line
 * Playlist support
 * Volume level initialization ( [helpful for autoplay >>](http://www.embedplus.com/mute-volume-youtube-wordpress.aspx) )
-* Localization/internationalization so you can set the player's interface [language from English to another >>](http://www.embedplus.com/youtube-iso-639-1-language-codes.aspx)
 
 You can even extend the plugin with PRO features like:
 
@@ -131,6 +131,7 @@ You can also start and end each individual video at particular times. Like the a
 3. YouTube Embed Screenshot 3: Visual YouTube Wizard and Search Tool
 4. YouTube Embed Screenshot 4: Wizard Insert Search Result Screenshot
 5. YouTube Embed Screenshot 5: Wizard Search Results Screenshot
+6. YouTube Embed Screenshot 6: Localization/internationalization so you can set the player's interface language
 
 == Changelog ==
 
