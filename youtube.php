@@ -3,7 +3,7 @@
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
-  Version: 9.0
+  Version: 9.1
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
@@ -32,7 +32,7 @@
 class YouTubePrefs
 {
 
-    public static $version = '9.0';
+    public static $version = '9.1';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -70,6 +70,7 @@ class YouTubePrefs
     public static $opt_defaultvol = 'defaultvol';
     public static $opt_vol = 'vol';
     public static $opt_schemaorg = 'schemaorg';
+    public static $opt_dynload = 'dynload';
     public static $opt_alloptions = 'youtubeprefs_alloptions';
     public static $alloptions = null;
     public static $yt_options = array();
@@ -598,7 +599,7 @@ class YouTubePrefs
         $responsiveselector = '["iframe.__youtube_prefs_widget__"]';
         if (self::$alloptions[self::$opt_responsive] == 1)
         {
-            $responsiveselector = '["iframe[src*=\'youtube.com\']","iframe[src*=\'youtube-nocookie.com\']"]';
+            $responsiveselector = '["iframe[src*=\'youtube.com\']","iframe[src*=\'youtube-nocookie.com\']","iframe[data-ep-src*=\'youtube.com\']","iframe[data-ep-src*=\'youtube-nocookie.com\']"]';
         }
         ?>
         <script type="text/javascript">
@@ -639,6 +640,7 @@ class YouTubePrefs
         $_oldspacing = 1;
         $_responsive = 0;
         $_schemaorg = 0;
+        $_dynload = 0;
         $_wmode = 'opaque';
         $_defaultdims = 0;
         $_defaultwidth = '';
@@ -680,6 +682,7 @@ class YouTubePrefs
             $_oldspacing = self::tryget($arroptions, self::$opt_oldspacing, 1);
             $_responsive = self::tryget($arroptions, self::$opt_responsive, 0);
             $_schemaorg = self::tryget($arroptions, self::$opt_schemaorg, 0);
+            $_dynload = self::tryget($arroptions, self::$opt_dynload, 0);
             $_defaultdims = self::tryget($arroptions, self::$opt_defaultdims, 0);
             $_defaultwidth = self::tryget($arroptions, self::$opt_defaultwidth, '');
             $_defaultheight = self::tryget($arroptions, self::$opt_defaultheight, '');
@@ -719,6 +722,7 @@ class YouTubePrefs
             self::$opt_oldspacing => $_oldspacing,
             self::$opt_responsive => $_responsive,
             self::$opt_schemaorg => $_schemaorg,
+            self::$opt_dynload => $_dynload,
             self::$opt_defaultdims => $_defaultdims,
             self::$opt_defaultwidth => $_defaultwidth,
             self::$opt_defaultheight => $_defaultheight,
@@ -791,7 +795,6 @@ class YouTubePrefs
 
     public static function get_html($m, $iscontent)
     {
-        //$link = trim(preg_replace('/&amp;/i', '&', $m[0]));
         $link = trim(str_replace(self::$badentities, self::$goodliterals, $m[0]));
 
         $link = preg_replace('/\s/', '', $link);
@@ -812,6 +815,7 @@ class YouTubePrefs
         $youtubebaseurl = 'youtube';
         $schemaorgoutput = '';
         $voloutput = '';
+        $dynsrc = '';
 
         $finalparams = $linkparams + self::$alloptions;
 
@@ -833,7 +837,16 @@ class YouTubePrefs
         }
 
 
-        if (!(self::$alloptions[self::$opt_dohl] == 1 && isset($finalparams[self::$opt_hl]) && strlen($finalparams[self::$opt_hl]) == 2))
+//        if (!(self::$alloptions[self::$opt_dohl] == 1 && isset($finalparams[self::$opt_hl]) && strlen($finalparams[self::$opt_hl]) == 2))
+//        {
+//            unset($finalparams[self::$opt_hl]);
+//        }
+        if (self::$alloptions[self::$opt_dohl] == 1)
+        {
+            $locale = get_locale();
+            $finalparams[self::$opt_hl] = $locale;
+        }
+        else
         {
             unset($finalparams[self::$opt_hl]);
         }
@@ -849,6 +862,13 @@ class YouTubePrefs
             {
                 $schemaorgoutput = self::getschemaorgoutput($finalparams['v']);
             }
+
+//            if (self::$alloptions[self::$opt_dynload] == 1
+//                    //&& $finalparams[self::$opt_autoplay] != 1
+//                    )
+//            {
+//                $dynsrc = 'data-ep-';
+//            }
 
             if (isset($linkparams[self::$opt_vol]) && is_numeric(trim($linkparams[self::$opt_vol])))
             {
@@ -874,7 +894,7 @@ class YouTubePrefs
         }
 
         $code1 = '<iframe ' . $centercode . ' id="_ytid_' . rand(10000, 99999) . '" width="' . self::$defaultwidth . '" height="' . self::$defaultheight .
-                '" src="' . $linkscheme . '://www.' . $youtubebaseurl . '.com/embed/' . (isset($linkparams['v']) ? $linkparams['v'] : '') . '?';
+                '" ' . $dynsrc . 'src="' . $linkscheme . '://www.' . $youtubebaseurl . '.com/embed/' . (isset($linkparams['v']) ? $linkparams['v'] : '') . '?';
         $code2 = '" frameborder="0" type="text/html" class="__youtube_prefs__' . ($iscontent ? '' : ' __youtube_prefs_widget__') .
                 '"' . $voloutput . ' allowfullscreen webkitallowfullscreen mozallowfullscreen ></iframe>' . $schemaorgoutput;
 
@@ -1331,13 +1351,13 @@ class YouTubePrefs
         $new_pointer_content .= '<p>'; // . __(''); // ooopointer
         if (!(self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0))
         {
-            $new_pointer_content .= __('This update adds the ability to change the player&#39;s interface language from English to another language preferred by you and/or your visitors (for both Free and <a href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer" target="_blank">PRO &raquo;</a> users).');
+            $new_pointer_content .= __('With this version, the plugin can now automatically detect your site\\\'s default language and set the interface of the embedded YouTube player to match it (for FREE and <a href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer" target="_blank">PRO versions &raquo;)</a>.');
 //<a href=\"" . admin_url('admin.php?page=youtube-my-preferences') . "#jumpdefaults\">See the settings page for more details &raquo;</a>"            
 //$new_pointer_content .= __('This YouTube plugin update makes HTTPS embedding available for both FREE and <a class="orange" href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer" target="_blank">PRO &raquo;</a> users. Please view this settings page to see the option. It will even automatically go and secure the non-HTTPS embeds you made in the past.');
         }
         else
         {
-            $new_pointer_content .= __("Language update. <a href=\"" . admin_url('admin.php?page=youtube-my-preferences') . "#jumpdefaults\">See the settings page for more details &raquo;</a>");
+            $new_pointer_content .= __('With this version, the plugin can now automatically detect your site\\\'s default language and set the interface of the embedded YouTube player to match (for FREE and <a href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer" target="_blank">PRO versions &raquo;)</a>.');
             //$new_pointer_content .= __('');
         }
         $new_pointer_content .= '</p>';
@@ -1410,6 +1430,7 @@ class YouTubePrefs
             $new_options[self::$opt_oldspacing] = self::postchecked(self::$opt_oldspacing) ? 1 : 0;
             $new_options[self::$opt_responsive] = self::postchecked(self::$opt_responsive) ? 1 : 0;
             $new_options[self::$opt_schemaorg] = self::postchecked(self::$opt_schemaorg) ? 1 : 0;
+            //$new_options[self::$opt_dynload] = self::postchecked(self::$opt_dynload) ? 1 : 0;
             $new_options[self::$opt_defaultdims] = self::postchecked(self::$opt_defaultdims) ? 1 : 0;
             $new_options[self::$opt_defaultvol] = self::postchecked(self::$opt_defaultvol) ? 1 : 0;
             $new_options[self::$opt_dohl] = self::postchecked(self::$opt_dohl) ? 1 : 0;
@@ -1676,7 +1697,7 @@ class YouTubePrefs
                     </p>
                     <p>
                         <input name="<?php echo self::$opt_responsive; ?>" id="<?php echo self::$opt_responsive; ?>" <?php checked($all[self::$opt_responsive], 1); ?> type="checkbox" class="checkbox">
-                        <label for="<?php echo self::$opt_responsive; ?>"><?php _e('<b class="chktitle">Responsive Video Sizing:</b> Make my videos responsive so that they dynamically fit in all screen sizes (smart phone, PC and tablet). NOTE: While this is checked, any custom hardcoded widths and heights you may have set will dynamically change too.') ?></label>
+                        <label for="<?php echo self::$opt_responsive; ?>"><?php _e('<b class="chktitle">Responsive Video Sizing:</b> Make your videos responsive so that they dynamically fit in all screen sizes (smart phone, PC and tablet). NOTE: While this is checked, any custom hardcoded widths and heights you may have set will dynamically change too.') ?></label>
                     </p>
                     <p>
                         <input name="<?php echo self::$opt_defaultdims; ?>" id="<?php echo self::$opt_defaultdims; ?>" <?php checked($all[self::$opt_defaultdims], 1); ?> type="checkbox" class="checkbox">                        
@@ -1685,7 +1706,7 @@ class YouTubePrefs
                             Height: <input type="text" name="<?php echo self::$opt_defaultheight; ?>" id="<?php echo self::$opt_defaultheight; ?>" value="<?php echo trim($all[self::$opt_defaultheight]); ?>" class="textinput" style="width: 50px;">
                         </span>
 
-                        <label for="<?php echo self::$opt_defaultdims; ?>"><?php _e('<b class="chktitle">Default Dimensions:</b> Make my videos have a default size (NOTE: Checking the responsive option will override this size setting) ') ?></label>
+                        <label for="<?php echo self::$opt_defaultdims; ?>"><?php _e('<b class="chktitle">Default Dimensions:</b> Make your videos have a default size (NOTE: Checking the responsive option will override this size setting) ') ?></label>
                     </p>
                     <p>
                         <input name="<?php echo self::$opt_nocookie; ?>" id="<?php echo self::$opt_nocookie; ?>" <?php checked($all[self::$opt_nocookie], 1); ?> type="checkbox" class="checkbox">
@@ -1727,11 +1748,11 @@ class YouTubePrefs
 
                     <p>
                         <input name="<?php echo self::$opt_dohl; ?>" id="<?php echo self::$opt_dohl; ?>" <?php checked($all[self::$opt_dohl], 1); ?> type="checkbox" class="checkbox">                        
-                        <span id="boxdohl">
+<!--                        <span id="boxdohl">
                             Language: <input type="text" name="<?php echo self::$opt_hl; ?>" id="<?php echo self::$opt_hl; ?>" value="<?php echo trim($all[self::$opt_hl]); ?>" class="textinput" style="width: 50px;" maxlength="2">
-                        </span>
-                        <label for="<?php echo self::$opt_dohl; ?>"><b class="chktitle">Player Localization/Internationalization: <sup class="orange">NEW</sup></b>
-                            Change the player's interface language from English to another language preferred by you and/or your visitors. This will set the player's tooltips and default caption track depending on the availability of your desired language. Checking this option will display a box to enter the appropriate two-letter language code. <a href="<?php echo self::$epbase ?>/youtube-iso-639-1-language-codes.aspx" target="_blank">See here for a mapping of languages to YouTube supported codes &raquo;</a></label>
+                        </span>-->
+                        <label for="<?php echo self::$opt_dohl; ?>"><b class="chktitle">Player Localization / Internationalization: <sup class="orange">NEW</sup></b>
+                            Automatically detect your site's default language (using get_locale) and set your YouTube embeds interface language so that it matches. Specifically, this will set the player's tooltips and caption track if your language is natively supported by YouTube. We suggest checking this if English is not your site's default language.  <a href="<?php echo self::$epbase ?>/youtube-iso-639-1-language-codes.aspx" target="_blank">See here for more details &raquo;</a></label>
                     </p>                    
 
                     <p class="smallnote orange">Below are PRO features for enhanced SEO and performance (works for even past embed links). <a href="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx" target="_blank">Activate them &raquo;</a></p>
@@ -1760,7 +1781,15 @@ class YouTubePrefs
                                 <b>(PRO)</b> <b class="chktitle">Facebook Open Graph Markup:</b>  <span class="pronon">(NEW: PRO Users)</span> Update YouTube embeds on your pages with Open Graph markup to enhance Facebook sharing and discovery of the pages. Your shared pages, for example, will also display embedded video thumbnails on Facebook Timelines.
                             </label>
                         </p>
-
+                        <input name="<?php echo self::$opt_dynload; ?>" type="hidden" value="0" />
+                        <!--
+                        <p>
+                            <input name="<?php echo self::$opt_dynload; ?>" id="<?php echo self::$opt_dynload; ?>" <?php checked($all[self::$opt_dynload], 1); ?> type="checkbox" class="checkbox">
+                            <label for="<?php echo self::$opt_dynload; ?>">
+                                <b>(PRO)</b> <b class="chktitle"></b>
+                            </label>
+                        </p>
+                        -->
                         <?php
                     }
                     else
@@ -1787,6 +1816,13 @@ class YouTubePrefs
                                 <b class="chktitle">Facebook Open Graph Markup:</b> <span class="pronon">(NEW: PRO Users)</span>  Update YouTube embeds on your pages with Open Graph markup to enhance Facebook sharing and discovery of the pages. Your shared pages, for example, will also display embedded video thumbnails on Facebook Timelines.
                             </label>
                         </p>
+                        
+<!--                        <p>
+                            <input disabled type="checkbox" class="checkbox">
+                            <label>
+                                <b class="chktitle"></b>  <span class="pronon"></span> 
+                            </label>
+                        </p>-->
 
                         <?php
                     }
@@ -2024,15 +2060,15 @@ class YouTubePrefs
                         }
                     }
 
-                    if (jQuery("#<?php echo self::$opt_dohl; ?>").is(":checked"))
-                    {
-                        if (!(/^[A-Za-z][A-Za-z]$/.test(jQuery.trim(jQuery("#<?php echo self::$opt_hl; ?>").val()))))
-                        {
-                            alertmessage += "Please enter a valid 2-letter language code.";
-                            jQuery("#boxdohl input").css("background-color", "#ffcccc").css("border", "2px solid #000000");
-                            valid = false;
-                        }
-                    }
+//                    if (jQuery("#<?php echo self::$opt_dohl; ?>").is(":checked"))
+//                    {
+//                        if (!(/^[A-Za-z][A-Za-z]$/.test(jQuery.trim(jQuery("#<?php echo self::$opt_hl; ?>").val()))))
+//                        {
+//                            alertmessage += "Please enter a valid 2-letter language code.";
+//                            jQuery("#boxdohl input").css("background-color", "#ffcccc").css("border", "2px solid #000000");
+//                            valid = false;
+//                        }
+//                    }
 
                     if (!valid)
                     {
@@ -2059,18 +2095,18 @@ class YouTubePrefs
                     });
 
 
-                    jQuery('#<?php echo self::$opt_dohl; ?>').change(function()
-                    {
-                        if (jQuery(this).is(":checked"))
-                        {
-                            jQuery("#boxdohl").show(500);
-                        }
-                        else
-                        {
-                            jQuery("#boxdohl").hide(500);
-                        }
-
-                    });
+//                    jQuery('#<?php echo self::$opt_dohl; ?>').change(function()
+//                    {
+//                        if (jQuery(this).is(":checked"))
+//                        {
+//                            jQuery("#boxdohl").show(500);
+//                        }
+//                        else
+//                        {
+//                            jQuery("#boxdohl").hide(500);
+//                        }
+//
+//                    });
 
 
 
@@ -2173,6 +2209,10 @@ class YouTubePrefs
         public static function ytprefsscript()
         {
             wp_enqueue_script('__ytprefs__', plugins_url('scripts/ytprefs.min.js', __FILE__));
+//            if (!is_admin() && (self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0) && self::$alloptions[self::$opt_dynload] == 1)
+//            {
+//                wp_enqueue_script('__dynload__', plugins_url('scripts/jquery.lazyloadxt.extra.js', __FILE__));
+//            }
         }
 
         public static function get_blogwidth()
@@ -2279,13 +2319,14 @@ class YouTubePrefs
 
 
     register_activation_hook(__FILE__, array('YouTubePrefs', 'initoptions'));
+    $youtubeplgplus = new YouTubePrefs();
+    
+    
     add_action('wp_enqueue_scripts', array('YouTubePrefs', 'ytprefsscript'));
     add_action("wp_ajax_my_embedplus_pro_record", array('YouTubePrefs', 'my_embedplus_pro_record'));
     add_action("wp_ajax_my_embedplus_glance_vids", array('YouTubePrefs', 'my_embedplus_glance_vids'));
     add_action("wp_ajax_my_embedplus_glance_count", array('YouTubePrefs', 'my_embedplus_glance_count'));
     add_action("wp_ajax_my_embedplus_dismiss_double_plugin_warning", array('YouTubePrefs', 'my_embedplus_dismiss_double_plugin_warning'));
-
-    $youtubeplg = new YouTubePrefs();
 
     add_action('admin_enqueue_scripts', 'youtubeprefs_admin_enqueue_scripts');
 
@@ -2295,7 +2336,7 @@ class YouTubePrefs
         add_action('wp_print_scripts', 'youtubeprefs_output_scriptvars');
 
         if (
-        (!(isset(YouTubePrefs::$alloptions[YouTubePrefs::$opt_pro]) && strlen(trim(YouTubePrefs::$alloptions[YouTubePrefs::$opt_pro])) > 0)) && // display only if not pro ooopointer
+        //(!(isset(YouTubePrefs::$alloptions[YouTubePrefs::$opt_pro]) && strlen(trim(YouTubePrefs::$alloptions[YouTubePrefs::$opt_pro])) > 0)) && // display only if not pro ooopointer
                 (get_bloginfo('version') >= '3.3') && YouTubePrefs::custom_admin_pointers_check()
         )
         {
