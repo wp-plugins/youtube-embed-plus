@@ -13,7 +13,7 @@ YouTube embed plugin. Responsive sizing and many other conveniences. Upgrade for
 
 **600,000+ downloads! Here are some recently added features:**
 
-* Automatic ocalization/internationalization so you can set the player's interface [language from English to another >>](http://www.embedplus.com/youtube-iso-639-1-language-codes.aspx)
+* Automatic localization/internationalization so you can set the player's interface [language from English to another >>](http://www.embedplus.com/youtube-iso-639-1-language-codes.aspx)
 * Instant HTTPS support. It can even convert past non-HTTPS videos to HTTPS.  Did you know that Google uses [HTTPS/SSL support as a ranking signal for SERP?](http://embedplus.com/convert-old-youtube-embeds-to-https-ssl.aspx)
 * iOS playback preferences
 * Embed an entire channel as a playlist
