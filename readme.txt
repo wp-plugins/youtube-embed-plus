@@ -3,17 +3,17 @@ Contributors: embedplus
 Plugin Name: YouTube Embed
 Tags: get_locale, translator, locale, country code, country, TinyMCE, localization, internationalization, language, multi-language, translate, captions, subtitles, hl, audio, initialize, mute, sound, track, volume, at a glance, channel, annotations, music, music video, songs, song, lyrics, responsive, short code, shortcode, youtube shortcode, health, diagnostic, youtube status, seo, video seo, rich snippets, reddit, google+, google plus, comments, search, widget, sidebar, responsive, fluid, iphone, mobile, android, tablet, ipad, youtube playlist, playlists, playlist, wmode, hd, autohd, auto hd, video analytics, analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin, https, ssl, secure, no-cookie, cookie, html5, youtube html5, multilingual, multi-lingual, l10n, i18n
 Requires at least: 2.9
-Tested up to: 4.0
-Stable tag: 9.1
+Tested up to: 4.0.1
+Stable tag: 9.2
 License: GPLv3 or later
 
 YouTube embed plugin. Responsive sizing and many other conveniences. Upgrade for performance, analytics, SEO tags and more!
 
 == Description ==
 
-**600,000+ downloads! Here are some recently added features:**
+**700,000+ downloads! Here are some recently added features:**
 
-* Automatic localization/internationalization so you can set the player's interface [language from English to another >>](http://www.embedplus.com/youtube-iso-639-1-language-codes.aspx)
+* [Automatic localization/internationalization](http://www.embedplus.com/youtube-iso-639-1-language-codes.aspx) so you can set the player's interface language from English to another
 * Instant HTTPS support. It can even convert past non-HTTPS videos to HTTPS.  Did you know that Google uses [HTTPS/SSL support as a ranking signal for SERP?](http://embedplus.com/convert-old-youtube-embeds-to-https-ssl.aspx)
 * iOS playback preferences
 * Embed an entire channel as a playlist
@@ -134,6 +134,9 @@ You can also start and end each individual video at particular times. Like the a
 6. YouTube Embed Screenshot 6: Localization/internationalization so you can set the player's interface language
 
 == Changelog ==
+
+= YouTube Embed 9.2 =
+HTTPS/SSL detection is now fully automatic. The manual checkbox is no longer needed.
 
 = YouTube Embed 9.1 =
 With this version, the plugin can now automatically detect your site's default language and set the interface of the embedded YouTube player to match.
