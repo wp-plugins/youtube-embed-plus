@@ -59,7 +59,7 @@ Customizations can be also made to each YouTube embed by adding more to the link
 
 * width - Sets the width of your player. If omitted, the default width will be the width of your theme's content. Example: `http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350`
 * height - Sets the height of your player. If omitted, this will be calculated for you automatically. Example: `http://www.youtube.com/watch?v=quwebVjAEJA&width=500&height=350`
-* vq - Set this to `hd720` or `hd1080` to force the video to play in HD quality. Example: `http://www.youtube.com/watch?v=quwebVjAEJA&vq=hd720`
+* vq - Set this to `hd720` or `hd1080` to force the video to play in HD quality, if available. Example: `http://www.youtube.com/watch?v=quwebVjAEJA&vq=hd720`
 * autoplay - Set this to 1 to autoplay the video (or 0 to play the video once). Example: `http://www.youtube.com/watch?v=quwebVjAEJA&autoplay=1`
 * cc_load_policy - Set this to 1 to turn on closed captioning (or 0 to leave them off). Example: `http://www.youtube.com/watch?v=quwebVjAEJA&cc_load_policy=1`
 * iv_load_policy - Set this to 3 to turn off annotations (or 1 to show them). Example: `http://www.youtube.com/watch?v=quwebVjAEJA&iv_load_policy=3`
