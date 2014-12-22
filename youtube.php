@@ -3,7 +3,7 @@
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
-  Version: 9.2
+  Version: 9.3
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
@@ -32,7 +32,7 @@
 class YouTubePrefs
 {
 
-    public static $version = '9.2';
+    public static $version = '9.3';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -70,7 +70,8 @@ class YouTubePrefs
     public static $opt_defaultvol = 'defaultvol';
     public static $opt_vol = 'vol';
     public static $opt_schemaorg = 'schemaorg';
-    //public static $opt_dynload = 'dynload'; ooodyn
+    public static $opt_dynload = 'dynload';
+    public static $opt_dyntype = 'dyntype';
     public static $opt_alloptions = 'youtubeprefs_alloptions';
     public static $alloptions = null;
     public static $yt_options = array();
@@ -640,7 +641,8 @@ class YouTubePrefs
         $_oldspacing = 1;
         $_responsive = 0;
         $_schemaorg = 0;
-        //$_dynload = 0; ooodyn
+        $_dynload = 0;
+        $_dyntype = '';
         $_wmode = 'opaque';
         $_defaultdims = 0;
         $_defaultwidth = '';
@@ -682,7 +684,8 @@ class YouTubePrefs
             $_oldspacing = self::tryget($arroptions, self::$opt_oldspacing, 1);
             $_responsive = self::tryget($arroptions, self::$opt_responsive, 0);
             $_schemaorg = self::tryget($arroptions, self::$opt_schemaorg, 0);
-            //$_dynload = self::tryget($arroptions, self::$opt_dynload, 0); ooodyn
+            $_dynload = self::tryget($arroptions, self::$opt_dynload, 0);
+            $_dyntype = self::tryget($arroptions, self::$opt_dyntype, '');
             $_defaultdims = self::tryget($arroptions, self::$opt_defaultdims, 0);
             $_defaultwidth = self::tryget($arroptions, self::$opt_defaultwidth, '');
             $_defaultheight = self::tryget($arroptions, self::$opt_defaultheight, '');
@@ -722,7 +725,8 @@ class YouTubePrefs
             self::$opt_oldspacing => $_oldspacing,
             self::$opt_responsive => $_responsive,
             self::$opt_schemaorg => $_schemaorg,
-            //self::$opt_dynload => $_dynload, ooodyn
+            self::$opt_dynload => $_dynload,
+            self::$opt_dyntype => $_dyntype,
             self::$opt_defaultdims => $_defaultdims,
             self::$opt_defaultwidth => $_defaultwidth,
             self::$opt_defaultheight => $_defaultheight,
@@ -815,7 +819,8 @@ class YouTubePrefs
         $youtubebaseurl = 'youtube';
         $schemaorgoutput = '';
         $voloutput = '';
-        //$dynsrc = ''; ooodyn
+        $dynsrc = '';
+        $dyntype = '';
 
         $finalparams = $linkparams + self::$alloptions;
 
@@ -851,12 +856,13 @@ class YouTubePrefs
             unset($finalparams[self::$opt_hl]);
         }
 
+        if (isset($finalparams[self::$opt_html5]) && $finalparams[self::$opt_html5] == 0)
+        {
+            unset($finalparams[self::$opt_html5]);
+        }
+
         if (self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0)
         {
-            if (isset($finalparams[self::$opt_html5]) && $finalparams[self::$opt_html5] == 0)
-            {
-                unset($finalparams[self::$opt_html5]);
-            }
 
             if (self::$alloptions[self::$opt_schemaorg] == 1 && isset($finalparams['v']))
             {
@@ -864,14 +870,15 @@ class YouTubePrefs
             }
 
 
-            /* ooodyn
-              if (self::$alloptions[self::$opt_dynload] == 1
-              //&& $finalparams[self::$opt_autoplay] != 1
-              )
-              {
-              $dynsrc = 'data-ep-';
-              }
-             */
+
+            if (self::$alloptions[self::$opt_dynload] == 1
+            //&& $finalparams[self::$opt_autoplay] != 1
+            )
+            {
+                $dynsrc = 'data-ep-';
+                $dyntype = ' data-ep-a="' . self::$alloptions[self::$opt_dyntype] . '" ';
+            }
+
             if (isset($linkparams[self::$opt_vol]) && is_numeric(trim($linkparams[self::$opt_vol])))
             {
                 $voloutput = ' data-vol="' . $linkparams[self::$opt_vol] . '" ';
@@ -879,10 +886,6 @@ class YouTubePrefs
         }
         else
         {
-            if (isset($finalparams[self::$opt_html5]))
-            {
-                unset($finalparams[self::$opt_html5]);
-            }
             if (isset($finalparams[self::$opt_vol]))
             {
                 unset($finalparams[self::$opt_vol]);
@@ -895,8 +898,8 @@ class YouTubePrefs
             $centercode = ' style="display: block; margin: 0px auto;" ';
         }
 
-        $code1 = '<iframe ' . $centercode . ' id="_ytid_' . rand(10000, 99999) . '" width="' . self::$defaultwidth . '" height="' . self::$defaultheight .
-                '" ' /* . $dynsrc ooodyn */ . 'src="' . '//www.' . $youtubebaseurl . '.com/embed/' . (isset($linkparams['v']) ? $linkparams['v'] : '') . '?';
+        $code1 = '<iframe ' . $dyntype . $centercode . ' id="_ytid_' . rand(10000, 99999) . '" width="' . self::$defaultwidth . '" height="' . self::$defaultheight .
+                '" ' . $dynsrc . 'src="' . '//www.' . $youtubebaseurl . '.com/embed/' . (isset($linkparams['v']) ? $linkparams['v'] : '') . '?';
         $code2 = '" frameborder="0" type="text/html" class="__youtube_prefs__' . ($iscontent ? '' : ' __youtube_prefs_widget__') .
                 '"' . $voloutput . ' allowfullscreen webkitallowfullscreen mozallowfullscreen ></iframe>' . $schemaorgoutput;
 
@@ -1353,7 +1356,7 @@ class YouTubePrefs
         $new_pointer_content .= '<p>'; // . __(''); // ooopointer
         if (!(self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0))
         {
-            $new_pointer_content .= __('HTTPS/SSL detection is now fully automatic. The manual checkbox is no longer needed (for FREE and <a href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer" target="_blank">PRO versions &raquo;</a>).');
+            $new_pointer_content .= __('Improved mute/volume setting behavior (Free and <a href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer" target="_blank">Pro</a>).  Special effects options added to  <a target="_blank" href="' . self::$epbase . '/add-special-effects-to-youtube-embeds-in-wordpress.aspx">Pro version &raquo;</a>');
             //$new_pointer_content .= __('With this version, the plugin can now automatically detect your site\\\'s default language and set the interface of the embedded YouTube player to match it (for FREE and <a href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer" target="_blank">PRO versions &raquo;)</a>.');
 //<a href=\"" . admin_url('admin.php?page=youtube-my-preferences') . "#jumpdefaults\">See the settings page for more details &raquo;</a>"            
 //$new_pointer_content .= __('This YouTube plugin update makes HTTPS embedding available for both FREE and <a class="orange" href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer" target="_blank">PRO &raquo;</a> users. Please view this settings page to see the option. It will even automatically go and secure the non-HTTPS embeds you made in the past.');
@@ -1434,7 +1437,7 @@ class YouTubePrefs
             $new_options[self::$opt_oldspacing] = self::postchecked(self::$opt_oldspacing) ? 1 : 0;
             $new_options[self::$opt_responsive] = self::postchecked(self::$opt_responsive) ? 1 : 0;
             $new_options[self::$opt_schemaorg] = self::postchecked(self::$opt_schemaorg) ? 1 : 0;
-            //$new_options[self::$opt_dynload] = self::postchecked(self::$opt_dynload) ? 1 : 0; ooodyn
+            $new_options[self::$opt_dynload] = self::postchecked(self::$opt_dynload) ? 1 : 0;
             $new_options[self::$opt_defaultdims] = self::postchecked(self::$opt_defaultdims) ? 1 : 0;
             $new_options[self::$opt_defaultvol] = self::postchecked(self::$opt_defaultvol) ? 1 : 0;
             $new_options[self::$opt_dohl] = self::postchecked(self::$opt_dohl) ? 1 : 0;
@@ -1484,6 +1487,18 @@ class YouTubePrefs
                 
             }
             $new_options[self::$opt_hl] = $_hl;
+
+            $_dyntype = '';
+            try
+            {
+                $tempdyntype = trim($_POST[self::$opt_dyntype]);
+                $_dyntype = preg_match('/^[a-zA-Z-]+$/i', $tempdyntype) ? $tempdyntype : '';
+            }
+            catch (Exception $ex)
+            {
+                
+            }
+            $new_options[self::$opt_dyntype] = $_dyntype;
 
 
             $all = $new_options + $all;
@@ -1536,6 +1551,17 @@ class YouTubePrefs
             .ytindent h3 {font-size: 15px; line-height: 22px; margin: 5px 0px 10px 0px;}
             #wizleftlink {float: left; display: block; width: 240px; font-style: italic; text-align: center; text-decoration: none;}
             .button-primary {font-weight: bold; white-space: nowrap;}
+            .wp-core-ui p.submit .button-primary {font-size: 20px; height: 50px; padding: 0 20px 1px;
+                                                  background: #2ea2cc; /* Old browsers */
+                                                  background: -moz-linear-gradient(top,  #2ea2cc 0%, #007396 98%); /* FF3.6+ */
+                                                  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#2ea2cc), color-stop(98%,#007396)); /* Chrome,Safari4+ */
+                                                  background: -webkit-linear-gradient(top,  #2ea2cc 0%,#007396 98%); /* Chrome10+,Safari5.1+ */
+                                                  background: -o-linear-gradient(top,  #2ea2cc 0%,#007396 98%); /* Opera 11.10+ */
+                                                  background: -ms-linear-gradient(top,  #2ea2cc 0%,#007396 98%); /* IE10+ */
+                                                  background: linear-gradient(to bottom,  #2ea2cc 0%,#007396 98%); /* W3C */
+                                                  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2ea2cc', endColorstr='#007396',GradientType=0 ); /* IE6-9 */
+            }
+            p.submit em {display: inline-block; padding-left: 20px; vertical-align: middle; width: 220px; margin-top: -6px;}
             #opt_pro {box-shadow: 0px 0px 5px 0px #1870D5; width: 320px;vertical-align: top;}
             #goprobox h3 {font-size: 13px;}
             .chx p {margin: 0px 0px 5px 0px;}
@@ -1559,6 +1585,7 @@ class YouTubePrefs
             input.checkbox[disabled] {border: 1px dotted #444444;}
             .pad10 {padding: 10px;}
             #boxdohl {font-weight: bold; padding: 0px 10px;  <?php echo $all[self::$opt_dohl] ? '' : 'display: none;' ?>}
+            #boxdyn {font-weight: bold; padding: 0px 10px;  <?php echo $all[self::$opt_dynload] ? '' : 'display: none;' ?>}
 
             #boxdefaultvol {font-weight: bold; padding: 0px 10px;  <?php echo $all[self::$opt_defaultvol] ? '' : 'display: none;' ?>}
             .vol-output {display: none; width: 30px; color: #008800;}
@@ -1640,6 +1667,7 @@ class YouTubePrefs
                 </p>
                 <p class="submit">
                     <input type="submit" onclick="return savevalidate();" name="Submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
+                    <em>If you're using a caching plugin and you do not see your changes after saving, you might want to reset your cache.</em>
                 </p>
 
                 <div class="ytindent chx">
@@ -1746,7 +1774,7 @@ class YouTubePrefs
                         </span>
                         <label for="<?php echo self::$opt_defaultvol; ?>">
                             <b class="chktitle">Volume Initialization: <sup class="orange">NEW</sup></b>
-                            Set an initial volume level for all of your embedded videos.  Check this and you'll see a <span class="vol-seeslider">slider</span> <span class="vol-seetextbox">textbox</span> for setting the start volume to a value between 0 (mute) and 100 (max) percent.  Leaving it unchecked means you want the visitor's default behavior. Read more about why you might want to <a href="<?php echo self::$epbase ?>/mute-volume-youtube-wordpress.aspx" target="_blank">initialize YouTube embed volume here &raquo;</a>
+                            Set an initial volume level for all of your embedded videos.  Check this and you'll see a <span class="vol-seeslider">slider</span> <span class="vol-seetextbox">textbox</span> for setting the start volume to a value between 0 (mute) and 100 (max) percent.  Leaving it unchecked means you want the visitor's default behavior.  This feature is experimental and is less predictable on a page with more than one embed. Read more about why you might want to <a href="<?php echo self::$epbase ?>/mute-volume-youtube-wordpress.aspx" target="_blank">initialize YouTube embed volume here &raquo;</a>
                         </label>
                     </p>
 
@@ -1758,19 +1786,42 @@ class YouTubePrefs
                         <label for="<?php echo self::$opt_dohl; ?>"><b class="chktitle">Player Localization / Internationalization: <sup class="orange">NEW</sup></b>
                             Automatically detect your site's default language (using get_locale) and set your YouTube embeds interface language so that it matches. Specifically, this will set the player's tooltips and caption track if your language is natively supported by YouTube. We suggest checking this if English is not your site's default language.  <a href="<?php echo self::$epbase ?>/youtube-iso-639-1-language-codes.aspx" target="_blank">See here for more details &raquo;</a></label>
                     </p>                    
+                    <p>
+                        <input name="<?php echo self::$opt_html5; ?>" id="<?php echo self::$opt_html5; ?>" <?php checked($all[self::$opt_html5], 1); ?> type="checkbox" class="checkbox">
+                        <label for="<?php echo self::$opt_html5; ?>">
+                            <b class="chktitle">HTML5 First:</b> 
+                            Use YouTube's HTML5 player instead of the Flash player when available. 
+                        </label>
+                    </p>
 
                     <p class="smallnote orange">Below are PRO features for enhanced SEO and performance (works for even past embed links). <a href="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx" target="_blank">Activate them &raquo;</a></p>
                     <?php
                     if ($all[self::$opt_pro] && strlen(trim($all[self::$opt_pro])) > 0)
                     {
                         ?>
+
                         <p>
-                            <input name="<?php echo self::$opt_html5; ?>" id="<?php echo self::$opt_html5; ?>" <?php checked($all[self::$opt_html5], 1); ?> type="checkbox" class="checkbox">
-                            <label for="<?php echo self::$opt_html5; ?>">
-                                <b>(PRO)</b> <b class="chktitle">HTML5 First:</b> 
-                                Use YouTube's HTML5 player instead of the Flash player when available. 
+                            <input name="<?php echo self::$opt_dynload; ?>" id="<?php echo self::$opt_dynload; ?>" <?php checked($all[self::$opt_dynload], 1); ?> type="checkbox" class="checkbox">                        
+                            <span id="boxdyn">
+                                Animation:
+                                <?php $cleandyn = trim($all[self::$opt_dyntype]); ?>
+                                <select name="<?php echo self::$opt_dyntype; ?>" id="<?php echo self::$opt_dyntype; ?>" >
+                                    <option value="">Select type</option>
+                                    <option value="rotateIn" <?php echo 'rotateIn' === $cleandyn ? 'selected' : '' ?> >rotate in</option>
+                                    <option value="slideInRight" <?php echo 'slideInRight' === $cleandyn ? 'selected' : '' ?> >slide from right</option>
+                                    <option value="bounceIn" <?php echo 'bounceIn' === $cleandyn ? 'selected' : '' ?> >bounce in</option>
+                                    <option value="flipInX" <?php echo 'flipInX' === $cleandyn ? 'selected' : '' ?> >flip up/down</option>
+                                    <option value="flipInY" <?php echo 'flipInY' === $cleandyn ? 'selected' : '' ?> >flip left/right</option>
+                                    <option value="pulse" <?php echo 'pulse' === $cleandyn ? 'selected' : '' ?> >pulse</option>
+                                    <option value="tada" <?php echo 'tada' === $cleandyn ? 'selected' : '' ?> >jiggle</option>
+                                </select>
+                            </span>
+                            <label for="<?php echo self::$opt_dynload; ?>">
+                                <b>(PRO)</b>  <b class="chktitle">Special Loading Effects: <sup class="orange">NEW</sup></b>
+                                Add eye-catching special effects that will make your YouTube embeds bounce, flip, pulse, or slide as they load on the screen.  Check this box to select your desired effect. <a target="_blank" href="<?php echo self::$epbase ?>/add-special-effects-to-youtube-embeds-in-wordpress.aspx">Read more here &raquo;</a>
                             </label>
                         </p>
+
                         <p>
                             <img class="ssschema" src="<?php echo plugins_url('images/ssschemaorg.jpg', __FILE__) ?>" />
                             <input name="<?php echo self::$opt_schemaorg; ?>" id="<?php echo self::$opt_schemaorg; ?>" <?php checked($all[self::$opt_schemaorg], 1); ?> type="checkbox" class="checkbox">
@@ -1786,7 +1837,6 @@ class YouTubePrefs
                                 <b>(PRO)</b> <b class="chktitle">Facebook Open Graph Markup:</b>  <span class="pronon">(NEW: PRO Users)</span> Update YouTube embeds on your pages with Open Graph markup to enhance Facebook sharing and discovery of the pages. Your shared pages, for example, will also display embedded video thumbnails on Facebook Timelines.
                             </label>
                         </p>
-
                         <?php
                     }
                     else
@@ -1795,8 +1845,8 @@ class YouTubePrefs
                         <p>
                             <input disabled type="checkbox" class="checkbox">
                             <label>
-                                <b class="chktitle">HTML5 First:</b>  <span class="pronon">(PRO Users)</span> 
-                                Use YouTube's HTML5 player instead of the Flash player when available. 
+                                <b class="chktitle">Special Loading Effects:</b>  <span class="pronon">(PRO Users)</span> 
+                                Add eye-catching special effects that will make your YouTube embeds bounce, flip, pulse, or slide as they load on the screen.  Check this box to select your desired effect. <a target="_blank" href="<?php echo self::$epbase ?>/add-special-effects-to-youtube-embeds-in-wordpress.aspx">Read more here &raquo;</a>
                             </label>
                         </p>
                         <p>
@@ -1822,6 +1872,7 @@ class YouTubePrefs
                     <p class="submit">
                         <br>
                         <input type="submit" onclick="return savevalidate();" name="Submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
+                        <em>If you're using a caching plugin and you do not see your changes after saving, you might want to reset your cache.</em>
                     </p>
 
                     <hr>
@@ -1891,8 +1942,8 @@ class YouTubePrefs
                                 Automatic tagging for video SEO (will even work for your old embeds)
                             </li>
                             <li>
-                                <img src="<?php echo plugins_url('images/html5.png', __FILE__) ?>">
-                                HTML5-first to speedup page loads (will even work for your old embeds)
+                                <img src="<?php echo plugins_url('images/iconfx.png', __FILE__) ?>">
+                                Add eye-catching special effects as your videos load
                             </li>
                             <li>
                                 <img src="<?php echo plugins_url('images/deletechecker.png', __FILE__) ?>">
@@ -2051,6 +2102,18 @@ class YouTubePrefs
                         }
                     }
 
+
+
+                    if (jQuery("#<?php echo self::$opt_dynload; ?>").is(":checked"))
+                    {
+                        if (!(/^[A-Za-z-]+$/.test(jQuery.trim(jQuery("#<?php echo self::$opt_dyntype; ?>").val()))))
+                        {
+                            alertmessage += "Please select an animation, or uncheck the option.";
+                            jQuery("#boxdyn select").css("background-color", "#ffcccc").css("border", "2px solid #000000");
+                            valid = false;
+                        }
+                    }
+
         //                    if (jQuery("#<?php echo self::$opt_dohl; ?>").is(":checked"))
         //                    {
         //                        if (!(/^[A-Za-z][A-Za-z]$/.test(jQuery.trim(jQuery("#<?php echo self::$opt_hl; ?>").val()))))
@@ -2084,6 +2147,20 @@ class YouTubePrefs
                         }
 
                     });
+
+                    jQuery('#<?php echo self::$opt_dynload; ?>').change(function()
+                    {
+                        if (jQuery(this).is(":checked"))
+                        {
+                            jQuery("#boxdyn").show(500);
+                        }
+                        else
+                        {
+                            jQuery("#boxdyn").hide(500);
+                        }
+
+                    });
+
 
 
         //                    jQuery('#<?php echo self::$opt_dohl; ?>').change(function()
@@ -2201,12 +2278,12 @@ class YouTubePrefs
         {
             wp_enqueue_script('__ytprefs__', plugins_url('scripts/ytprefs.min.js', __FILE__));
 
-            /* ooodyn
-              if (!is_admin() && (self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0) && self::$alloptions[self::$opt_dynload] == 1)
-              {
-              wp_enqueue_script('__dynload__', plugins_url('scripts/jquery.lazyloadxt.extra.js', __FILE__), array('jquery'), false, false, true);
-              }
-             */
+
+            if (!is_admin() && (self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0) && self::$alloptions[self::$opt_dynload] == 1)
+            {
+                wp_enqueue_style('__dyntype__', plugins_url('scripts/embdyn.min.css', __FILE__));
+                wp_enqueue_script('__dynload__', plugins_url('scripts/embdyn.min.js', __FILE__), array('jquery'), false, false, true);
+            }
         }
 
         public static function get_blogwidth()
