@@ -4,7 +4,7 @@ Plugin Name: YouTube Embed
 Tags: lazy load, lazy, load, effects, special effects, get_locale, translator, locale, country code, country, TinyMCE, localization, internationalization, language, multi-language, translate, captions, subtitles, hl, audio, initialize, mute, sound, track, volume, at a glance, channel, annotations, music, music video, songs, song, lyrics, responsive, short code, shortcode, youtube shortcode, health, diagnostic, youtube status, seo, video seo, rich snippets, reddit, google+, google plus, comments, search, widget, sidebar, responsive, fluid, iphone, mobile, android, tablet, ipad, youtube playlist, playlists, playlist, wmode, hd, autohd, auto hd, video analytics, analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin, https, ssl, secure, no-cookie, cookie, html5, youtube html5, multilingual, multi-lingual, l10n, i18n
 Requires at least: 2.9
 Tested up to: 4.1
-Stable tag: 9.3
+Stable tag: 9.4
 License: GPLv3 or later
 
 YouTube embed plugin. Responsive sizing and many other conveniences. Upgrade for performance, analytics, SEO tags and more!
@@ -21,8 +21,8 @@ YouTube embed plugin. Responsive sizing and many other conveniences. Upgrade for
 * Visual YouTube video searching and viewing
 * Easy "Insert" button for both the Visual and Text mode of the editor
 * Review the latest web discussions about videos you want to embed before embedding
-* Shortcode support for embedding multiple videos on one line
-* Playlist support
+* Shortcode support for [embedding multiple videos on one line >>](https://www.youtube.com/watch?v=KU6lzcNR1FI)
+* [Playlist embedding support >>](https://www.youtube.com/watch?v=_9D4yMyd40g)
 * Volume level initialization ( [helpful for autoplay >>](http://www.embedplus.com/mute-volume-youtube-wordpress.aspx) )
 
 You can even extend the plugin with PRO features like:
@@ -135,6 +135,9 @@ You can also start and end each individual video at particular times. Like the a
 6. YouTube Embed Screenshot 6: Localization/internationalization so you can set the player's interface language
 
 == Changelog ==
+
+= YouTube Embed 9.4 =
+Adds Autofit Widget option for Free and PRO users. Also adds slide from left animation to [Pro effects >>](http://www.embedplus.com/add-special-effects-to-youtube-embeds-in-wordpress.aspx)
 
 = YouTube Embed 9.3 =
 Improved volume functionality and interface updates (Free and PRO).  [Special effects added to PRO version >>](http://www.embedplus.com/add-special-effects-to-youtube-embeds-in-wordpress.aspx)
@@ -309,3 +312,5 @@ First release uploaded to the plugin repository.
 == Other Notes ==
 
 This YouTube plugin can include premium features like automatic schema tagging for video SEO, mobile compatibility checking, and deleted video alerts when you [upgrade to PRO.](https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx).
+
+We also have a YouTube channel with some helper videos.  [Check them out here >>](https://www.youtube.com/user/EmbedPlus)

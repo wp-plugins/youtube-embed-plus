@@ -3,7 +3,7 @@
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
-  Version: 9.3
+  Version: 9.4
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
@@ -32,7 +32,7 @@
 class YouTubePrefs
 {
 
-    public static $version = '9.3';
+    public static $version = '9.4';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -64,6 +64,7 @@ class YouTubePrefs
     public static $opt_pro = 'pro';
     public static $opt_oldspacing = 'oldspacing';
     public static $opt_responsive = 'responsive';
+    public static $opt_widgetfit = 'widgetfit';
     public static $opt_defaultdims = 'defaultdims';
     public static $opt_defaultwidth = 'width';
     public static $opt_defaultheight = 'height';
@@ -597,7 +598,11 @@ class YouTubePrefs
 
     public static function jsvars()
     {
-        $responsiveselector = '["iframe.__youtube_prefs_widget__"]';
+        $responsiveselector = '[]';
+        if (self::$alloptions[self::$opt_widgetfit] == 1)
+        {
+            $responsiveselector = '["iframe.__youtube_prefs_widget__"]';
+        }        
         if (self::$alloptions[self::$opt_responsive] == 1)
         {
             $responsiveselector = '["iframe[src*=\'youtube.com\']","iframe[src*=\'youtube-nocookie.com\']","iframe[data-ep-src*=\'youtube.com\']","iframe[data-ep-src*=\'youtube-nocookie.com\']"]';
@@ -640,6 +645,7 @@ class YouTubePrefs
         $_controls = 2;
         $_oldspacing = 1;
         $_responsive = 0;
+        $_widgetfit = 1;
         $_schemaorg = 0;
         $_dynload = 0;
         $_dyntype = '';
@@ -683,6 +689,7 @@ class YouTubePrefs
             $_autohide = self::tryget($arroptions, self::$opt_autohide, 2);
             $_oldspacing = self::tryget($arroptions, self::$opt_oldspacing, 1);
             $_responsive = self::tryget($arroptions, self::$opt_responsive, 0);
+            $_widgetfit = self::tryget($arroptions, self::$opt_widgetfit, 1);
             $_schemaorg = self::tryget($arroptions, self::$opt_schemaorg, 0);
             $_dynload = self::tryget($arroptions, self::$opt_dynload, 0);
             $_dyntype = self::tryget($arroptions, self::$opt_dyntype, '');
@@ -724,6 +731,7 @@ class YouTubePrefs
             self::$opt_controls => $_controls,
             self::$opt_oldspacing => $_oldspacing,
             self::$opt_responsive => $_responsive,
+            self::$opt_widgetfit => $_widgetfit,
             self::$opt_schemaorg => $_schemaorg,
             self::$opt_dynload => $_dynload,
             self::$opt_dyntype => $_dyntype,
@@ -1356,14 +1364,14 @@ class YouTubePrefs
         $new_pointer_content .= '<p>'; // . __(''); // ooopointer
         if (!(self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0))
         {
-            $new_pointer_content .= __('Improved mute/volume setting behavior (Free and <a href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer" target="_blank">Pro</a>).  Special effects options added to  <a target="_blank" href="' . self::$epbase . '/add-special-effects-to-youtube-embeds-in-wordpress.aspx">Pro version &raquo;</a>');
+            $new_pointer_content .= __('Adds <em>Autofit Widget</em> option for Free and PRO users. Also adds <em>slide from left</em> animation to <a target="_blank" href="' . self::$epbase . '/add-special-effects-to-youtube-embeds-in-wordpress.aspx?ref=frompointer">Pro effects &raquo;</a>');
             //$new_pointer_content .= __('With this version, the plugin can now automatically detect your site\\\'s default language and set the interface of the embedded YouTube player to match it (for FREE and <a href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer" target="_blank">PRO versions &raquo;)</a>.');
 //<a href=\"" . admin_url('admin.php?page=youtube-my-preferences') . "#jumpdefaults\">See the settings page for more details &raquo;</a>"            
 //$new_pointer_content .= __('This YouTube plugin update makes HTTPS embedding available for both FREE and <a class="orange" href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer" target="_blank">PRO &raquo;</a> users. Please view this settings page to see the option. It will even automatically go and secure the non-HTTPS embeds you made in the past.');
         }
         else
         {
-            $new_pointer_content .= __('HTTPS/SSL detection is now fully automatic. The manual checkbox is no longer needed (for FREE and <a href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer" target="_blank">PRO versions &raquo;</a>).');
+            $new_pointer_content .= __('Adds <em>Autofit Widget</em> option for Free and PRO users. Also adds <em>slide from left</em> animation to Pro effects.');
             //$new_pointer_content .= __('With this version, the plugin can now automatically detect your site\\\'s default language and set the interface of the embedded YouTube player to match (for FREE and <a href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer" target="_blank">PRO versions &raquo;)</a>.');
             //$new_pointer_content .= __('');
         }
@@ -1436,6 +1444,7 @@ class YouTubePrefs
             //$new_options[self::$opt_ssl] = self::postchecked(self::$opt_ssl) ? 1 : 0;
             $new_options[self::$opt_oldspacing] = self::postchecked(self::$opt_oldspacing) ? 1 : 0;
             $new_options[self::$opt_responsive] = self::postchecked(self::$opt_responsive) ? 1 : 0;
+            $new_options[self::$opt_widgetfit] = self::postchecked(self::$opt_widgetfit) ? 1 : 0;
             $new_options[self::$opt_schemaorg] = self::postchecked(self::$opt_schemaorg) ? 1 : 0;
             $new_options[self::$opt_dynload] = self::postchecked(self::$opt_dynload) ? 1 : 0;
             $new_options[self::$opt_defaultdims] = self::postchecked(self::$opt_defaultdims) ? 1 : 0;
@@ -1542,7 +1551,7 @@ class YouTubePrefs
             .grey{color: #888888;}
             #goprobox {border-radius: 15px; padding: 10px 15px 15px 15px; margin-top: 15px; border: 3px solid #CCE5EC; position: relative;}
             #salenote {position: absolute; right: 10px; top: 10px; width: 75px; height: 30px;}
-            #nonprosupport {border-radius: 15px; padding: 5px 10px 10px 10px;  border: 3px solid #ff6655;}
+            #nonprosupport {border-radius: 15px; padding: 10px 15px 20px 15px;  border: 3px solid #ff6655;}
             .pronon {font-weight: bold; color: #f85d00;}
             ul.reglist li {margin: 0px 0px 0px 30px; list-style: disc outside none;}
             .procol {width: 475px; float: left;}
@@ -1732,6 +1741,10 @@ class YouTubePrefs
                         <label for="<?php echo self::$opt_responsive; ?>"><?php _e('<b class="chktitle">Responsive Video Sizing:</b> Make your videos responsive so that they dynamically fit in all screen sizes (smart phone, PC and tablet). NOTE: While this is checked, any custom hardcoded widths and heights you may have set will dynamically change too. <b>Do not check this if your theme already handles responsive video sizing.</b>') ?></label>
                     </p>
                     <p>
+                        <input name="<?php echo self::$opt_widgetfit; ?>" id="<?php echo self::$opt_widgetfit; ?>" <?php checked($all[self::$opt_widgetfit], 1); ?> type="checkbox" class="checkbox">
+                        <label for="<?php echo self::$opt_widgetfit; ?>"><?php _e('<b class="chktitle">Autofit Widget Videos: <sup class="orange">NEW</sup></b> Make each video that you embed in a widget area automatically fit the width of its container.</b>') ?></label>
+                    </p>
+                    <p>
                         <input name="<?php echo self::$opt_defaultdims; ?>" id="<?php echo self::$opt_defaultdims; ?>" <?php checked($all[self::$opt_defaultdims], 1); ?> type="checkbox" class="checkbox">                        
                         <span id="boxdefaultdims">
                             Width: <input type="text" name="<?php echo self::$opt_defaultwidth; ?>" id="<?php echo self::$opt_defaultwidth; ?>" value="<?php echo trim($all[self::$opt_defaultwidth]); ?>" class="textinput" style="width: 50px;"> &nbsp;
@@ -1752,7 +1765,7 @@ class YouTubePrefs
                     </p>
                     <p>
                         <input name="<?php echo self::$opt_playsinline; ?>" id="<?php echo self::$opt_playsinline; ?>" <?php checked($all[self::$opt_playsinline], 1); ?> type="checkbox" class="checkbox">
-                        <label for="<?php echo self::$opt_playsinline; ?>"><?php _e('<b class="chktitle">iOS Playback: <sup class="orange">NEW</sup></b> Check this to allow your embeds to play inline within your page when viewed on iOS (iPhone and iPad) browsers. Uncheck it to have iOS launch your embeds in fullscreen instead.') ?></label>
+                        <label for="<?php echo self::$opt_playsinline; ?>"><?php _e('<b class="chktitle">iOS Playback:</b> Check this to allow your embeds to play inline within your page when viewed on iOS (iPhone and iPad) browsers. Uncheck it to have iOS launch your embeds in fullscreen instead.') ?></label>
                     </p>
                     <p>
                         <input name="<?php echo self::$opt_oldspacing; ?>" id="<?php echo self::$opt_oldspacing; ?>" <?php checked($all[self::$opt_oldspacing], 1); ?> type="checkbox" class="checkbox">
@@ -1783,7 +1796,7 @@ class YouTubePrefs
         <!--                        <span id="boxdohl">
                             Language: <input type="text" name="<?php echo self::$opt_hl; ?>" id="<?php echo self::$opt_hl; ?>" value="<?php echo trim($all[self::$opt_hl]); ?>" class="textinput" style="width: 50px;" maxlength="2">
                         </span>-->
-                        <label for="<?php echo self::$opt_dohl; ?>"><b class="chktitle">Player Localization / Internationalization: <sup class="orange">NEW</sup></b>
+                        <label for="<?php echo self::$opt_dohl; ?>"><b class="chktitle">Player Localization / Internationalization: </b>
                             Automatically detect your site's default language (using get_locale) and set your YouTube embeds interface language so that it matches. Specifically, this will set the player's tooltips and caption track if your language is natively supported by YouTube. We suggest checking this if English is not your site's default language.  <a href="<?php echo self::$epbase ?>/youtube-iso-639-1-language-codes.aspx" target="_blank">See here for more details &raquo;</a></label>
                     </p>                    
                     <p>
@@ -1809,6 +1822,7 @@ class YouTubePrefs
                                     <option value="">Select type</option>
                                     <option value="rotateIn" <?php echo 'rotateIn' === $cleandyn ? 'selected' : '' ?> >rotate in</option>
                                     <option value="slideInRight" <?php echo 'slideInRight' === $cleandyn ? 'selected' : '' ?> >slide from right</option>
+                                    <option value="slideInLeft" <?php echo 'slideInLeft' === $cleandyn ? 'selected' : '' ?> >slide from left</option>
                                     <option value="bounceIn" <?php echo 'bounceIn' === $cleandyn ? 'selected' : '' ?> >bounce in</option>
                                     <option value="flipInX" <?php echo 'flipInX' === $cleandyn ? 'selected' : '' ?> >flip up/down</option>
                                     <option value="flipInY" <?php echo 'flipInY' === $cleandyn ? 'selected' : '' ?> >flip left/right</option>
@@ -1823,10 +1837,9 @@ class YouTubePrefs
                         </p>
 
                         <p>
-                            <img class="ssschema" src="<?php echo plugins_url('images/ssschemaorg.jpg', __FILE__) ?>" />
                             <input name="<?php echo self::$opt_schemaorg; ?>" id="<?php echo self::$opt_schemaorg; ?>" <?php checked($all[self::$opt_schemaorg], 1); ?> type="checkbox" class="checkbox">
                             <label for="<?php echo self::$opt_schemaorg; ?>">
-                                <b>(PRO)</b> <b class="chktitle">Video SEO Tags:</b> Update your YouTube embeds with Google, Bing, and Yahoo friendly SEO markup. This markup promotes the chances of your pages showing up with actual video thumbnails within search results (see example on the right).
+                                <b>(PRO)</b> <b class="chktitle">Video SEO Tags:</b> Update your YouTube embeds with Google, Bing, and Yahoo friendly video SEO markup.
                             </label>
                         </p>
                         <p>
@@ -1850,10 +1863,9 @@ class YouTubePrefs
                             </label>
                         </p>
                         <p>
-                            <img class="ssschema" src="<?php echo plugins_url('images/ssschemaorg.jpg', __FILE__) ?>" />
                             <input disabled type="checkbox" class="checkbox">
                             <label>
-                                <b class="chktitle">Video SEO Tags:</b>  <span class="pronon">(PRO Users)</span> Update your YouTube embeds with Google, Bing, and Yahoo friendly SEO markup. This markup promotes the chances of your pages showing up with actual video thumbnails within search results (see example on the right).
+                                <b class="chktitle">Video SEO Tags:</b>  <span class="pronon">(PRO Users)</span> Update your YouTube embeds with Google, Bing, and Yahoo friendly video SEO markup.
                             </label>
                         </p>
                         <p>
@@ -2030,7 +2042,7 @@ class YouTubePrefs
             </div>
             <div class="jumper" id="jumpsupport"></div>
             <div id="nonprosupport">
-                <h3 class="bold">Support tips for non-PRO users</h3>
+                <h3 class="bold">Support tips for all users (Free and PRO)</h3>
                 We've found that a common support request has been from users that are pasting video links on single lines, as required, but are not seeing the video embed show up. One of these suggestions is usually the fix:
                 <ul class="reglist">
                     <li>Make sure the URL is really on its own line by itself. Or, if you need multiple videos on the same line, make sure each URL is wrapped properly with the shortcode (Example:  <code>[embedyt]http://www.youtube.com/watch?v=ABCDEFGHIJK&width=400&height=250[/embedyt]</code>)</li>
@@ -2042,8 +2054,8 @@ class YouTubePrefs
                     </li>
                     <li>Finally, there's a slight chance your custom theme is the issue, if you have one. To know for sure, we suggest temporarily switching to one of the default WordPress themes (e.g., "Twenty Thirteen") just to see if your video does appear. If it suddenly works, then your custom theme is the issue. You can switch back when done testing.</li>
                     <li>If none of the above work, you can contact us here if you still have issues: ext@embedplus.com. We'll try to respond within a week. PRO users should use the priority form below for faster replies.</li>                        
-                </ul>                
-                </p>
+                </ul>
+                We also have a YouTube channel with some helper videos.  <a href="https://www.youtube.com/user/EmbedPlus" target="_blank">Check them out here &raquo;</a>
             </div>
             <br>
             <h3 class="sect">
