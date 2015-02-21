@@ -7,23 +7,24 @@ Tested up to: 4.1
 Stable tag: 9.4
 License: GPLv3 or later
 
-YouTube embed plugin. Responsive sizing and many other conveniences. Upgrade for performance, analytics, SEO tags and more!
+YouTube embed plugin. Embed the YouTube player and playlist in posts, pages, and widgets. Add analytics, SEO, and much more!
 
 == Description ==
 
-**700,000+ downloads! Here are some recently added features:**
+**800,000+ downloads! Here are some recently added features (even more below):**
 
+* Easy "Insert" button for both the Visual and Text mode of the editor
+* [Embed an entire channel as a playlist >>](https://www.youtube.com/watch?v=_9D4yMyd40g)
+* Volume level initialization ( [helpful for autoplay >>](http://www.embedplus.com/mute-volume-youtube-wordpress.aspx) )
+* iOS playback preferences
 * [Automatic localization/internationalization](http://www.embedplus.com/youtube-iso-639-1-language-codes.aspx) so you can set the player's interface language from English to another
 * Instant HTTPS support. It can even convert past non-HTTPS videos to HTTPS.  Did you know that Google uses [HTTPS/SSL support as a ranking signal for SERP?](http://embedplus.com/convert-old-youtube-embeds-to-https-ssl.aspx)
-* iOS playback preferences
-* [Embed an entire channel as a playlist >>](https://www.youtube.com/watch?v=_9D4yMyd40g)
-* "At a Glance" direct access to your YouTube posts/pages
 * Visual YouTube video searching and viewing
-* Easy "Insert" button for both the Visual and Text mode of the editor
+* "At a Glance" direct access to your YouTube posts/pages
 * Review the latest web discussions about videos you want to embed before embedding
 * Shortcode support for [embedding multiple videos on one line >>](https://www.youtube.com/watch?v=KU6lzcNR1FI)
-* [Playlist embedding support >>](https://www.youtube.com/watch?v=J50PlRZHH9I)
-* Volume level initialization ( [helpful for autoplay >>](http://www.embedplus.com/mute-volume-youtube-wordpress.aspx) )
+* [General playlist embedding support >>](https://www.youtube.com/watch?v=J50PlRZHH9I)
+* [Default HTML5 YouTube player support>>](http://www.embedplus.com/make-sure-youtube-defaults-to-html5-on-wordpress.aspx)
 
 You can even extend the plugin with PRO features like:
 
