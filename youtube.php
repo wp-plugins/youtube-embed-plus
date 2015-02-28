@@ -1375,7 +1375,7 @@ class YouTubePrefs
         }
         else
         {
-            $new_pointer_content .= __('This version incorporates a little known security measure that Google recommends for protecting your embeds from malicious attacks. Available for all Free and <a href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer" target="_blank">PRO users &raquo;</a>.');
+            $new_pointer_content .= __('This version incorporates a little known security measure that Google recommends for protecting your embeds from malicious attacks. Available for all Free and PRO users.');
             //$new_pointer_content .= __('With this version, the plugin can now automatically detect your site\\\'s default language and set the interface of the embedded YouTube player to match (for FREE and <a href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer" target="_blank">PRO versions &raquo;)</a>.');
             //$new_pointer_content .= __('');
         }
