@@ -4,7 +4,7 @@ Plugin Name: YouTube Embed
 Tags: lazy load, lazy, load, effects, special effects, get_locale, translator, locale, country code, country, TinyMCE, localization, internationalization, language, multi-language, translate, captions, subtitles, hl, audio, initialize, mute, sound, track, volume, at a glance, channel, annotations, music, music video, songs, song, lyrics, responsive, short code, shortcode, youtube shortcode, health, diagnostic, youtube status, seo, video seo, rich snippets, reddit, google+, google plus, comments, search, widget, sidebar, responsive, fluid, iphone, mobile, android, tablet, ipad, youtube playlist, playlists, playlist, wmode, hd, autohd, auto hd, video analytics, analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin, https, ssl, secure, no-cookie, cookie, html5, youtube html5, multilingual, multi-lingual, l10n, i18n
 Requires at least: 2.9
 Tested up to: 4.1
-Stable tag: 9.4
+Stable tag: 9.5
 License: GPLv3 or later
 
 YouTube embed plugin. Embed the YouTube player and playlist in posts, pages, and widgets. Add analytics, SEO, and much more!
@@ -13,15 +13,14 @@ YouTube embed plugin. Embed the YouTube player and playlist in posts, pages, and
 
 **800,000+ downloads! Here are some recently added features (even more below):**
 
+* Site origin information with each embed code as an extra security measure.
 * Easy "Insert" button for both the Visual and Text mode of the editor
 * [Embed an entire channel as a playlist >>](https://www.youtube.com/watch?v=_9D4yMyd40g)
 * Volume level initialization ( [helpful for autoplay >>](http://www.embedplus.com/mute-volume-youtube-wordpress.aspx) )
 * iOS playback preferences
 * [Automatic localization/internationalization](http://www.embedplus.com/youtube-iso-639-1-language-codes.aspx) so you can set the player's interface language from English to another
 * Instant HTTPS support. It can even convert past non-HTTPS videos to HTTPS.  Did you know that Google uses [HTTPS/SSL support as a ranking signal for SERP?](http://embedplus.com/convert-old-youtube-embeds-to-https-ssl.aspx)
-* Visual YouTube video searching and viewing
 * "At a Glance" direct access to your YouTube posts/pages
-* Review the latest web discussions about videos you want to embed before embedding
 * Shortcode support for [embedding multiple videos on one line >>](https://www.youtube.com/watch?v=KU6lzcNR1FI)
 * [General playlist embedding support >>](https://www.youtube.com/watch?v=J50PlRZHH9I)
 * [Default HTML5 YouTube player support>>](http://www.embedplus.com/make-sure-youtube-defaults-to-html5-on-wordpress.aspx)
@@ -136,6 +135,9 @@ You can also start and end each individual video at particular times. Like the a
 6. YouTube Embed Screenshot 6: Localization/internationalization so you can set the player's interface language
 
 == Changelog ==
+
+= YouTube Embed 9.5 =
+ Site origin information with each embed code as an extra security measure. 
 
 = YouTube Embed 9.4 =
 Adds Autofit Widget option for Free and PRO users. Also adds slide from left animation to [Pro effects >>](http://www.embedplus.com/add-special-effects-to-youtube-embeds-in-wordpress.aspx)
