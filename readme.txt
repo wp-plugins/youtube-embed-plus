@@ -11,7 +11,7 @@ YouTube embed plugin. Embed the YouTube player and playlist in posts, pages, and
 
 == Description ==
 
-**800,000+ downloads! Here are some recently added features (even more below):**
+**Here are a few recently added features (even more features below):**
 
 * Site origin information with each embed code as an extra security measure.
 * Easy "Insert" button for both the Visual and Text mode of the editor
