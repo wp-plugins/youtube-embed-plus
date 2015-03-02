@@ -1369,13 +1369,13 @@ class YouTubePrefs
         if (!(self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0))
         {
             //$new_pointer_content .= __('Adds <em>Autofit Widget</em> option for Free and PRO users. Also adds <em>slide from left</em> animation to <a target="_blank" href="' . self::$epbase . '/add-special-effects-to-youtube-embeds-in-wordpress.aspx?ref=frompointer">Pro effects &raquo;</a>');
-            $new_pointer_content .= __('This version incorporates a little known security measure that Google recommends for protecting your embeds from malicious attacks. Available for all Free and <a href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer" target="_blank">PRO users &raquo;</a>.');
+            $new_pointer_content .= __('Google offers an extra YouTube embedding security option beyond HTTPS that is based on site origin. They highly recommended it in their documentation and this plugin (version 9.5) incorporates it for all Free and <a href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer" target="_blank">PRO users &raquo;</a>.');
 //<a href=\"" . admin_url('admin.php?page=youtube-my-preferences') . "#jumpdefaults\">See the settings page for more details &raquo;</a>"            
 //$new_pointer_content .= __('This YouTube plugin update makes HTTPS embedding available for both FREE and <a class="orange" href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer" target="_blank">PRO &raquo;</a> users. Please view this settings page to see the option. It will even automatically go and secure the non-HTTPS embeds you made in the past.');
         }
         else
         {
-            $new_pointer_content .= __('This version incorporates a little known security measure that Google recommends for protecting your embeds from malicious attacks. Available for all Free and PRO users.');
+            $new_pointer_content .= __('Google offers an extra YouTube embedding security option beyond HTTPS that is based on site origin. They highly recommended it in their documentation and this plugin (version 9.5) incorporates it for all Free and PRO users.');
             //$new_pointer_content .= __('With this version, the plugin can now automatically detect your site\\\'s default language and set the interface of the embedded YouTube player to match (for FREE and <a href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer" target="_blank">PRO versions &raquo;)</a>.');
             //$new_pointer_content .= __('');
         }

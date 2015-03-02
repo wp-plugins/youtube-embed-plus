@@ -1,7 +1,7 @@
 === YouTube ===
 Contributors: embedplus
 Plugin Name: YouTube Embed
-Tags: lazy load, lazy, load, effects, special effects, get_locale, translator, locale, country code, country, TinyMCE, localization, internationalization, language, multi-language, translate, captions, subtitles, hl, audio, initialize, mute, sound, track, volume, at a glance, channel, annotations, music, music video, songs, song, lyrics, responsive, short code, shortcode, youtube shortcode, health, diagnostic, youtube status, seo, video seo, rich snippets, reddit, google+, google plus, comments, search, widget, sidebar, responsive, fluid, iphone, mobile, android, tablet, ipad, youtube playlist, playlists, playlist, wmode, hd, autohd, auto hd, video analytics, analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin, https, ssl, secure, no-cookie, cookie, html5, youtube html5, multilingual, multi-lingual, l10n, i18n
+Tags: origin, lazy load, lazy, load, effects, special effects, get_locale, translator, locale, country code, country, TinyMCE, localization, internationalization, language, multi-language, translate, captions, subtitles, hl, audio, initialize, mute, sound, track, volume, at a glance, channel, annotations, music, music video, songs, song, lyrics, responsive, short code, shortcode, youtube shortcode, health, diagnostic, youtube status, seo, video seo, rich snippets, reddit, google+, google plus, comments, search, widget, sidebar, responsive, fluid, iphone, mobile, android, tablet, ipad, youtube playlist, playlists, playlist, wmode, hd, autohd, auto hd, video analytics, analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin, https, ssl, secure, no-cookie, cookie, html5, youtube html5, multilingual, multi-lingual, l10n, i18n
 Requires at least: 2.9
 Tested up to: 4.1
 Stable tag: 9.5
@@ -13,7 +13,7 @@ YouTube embed plugin. Embed the YouTube player and playlist in posts, pages, and
 
 **Here are a few recently added features (even more features below):**
 
-* Site origin information with each embed code as an extra security measure.
+* Google's extra security option for YouTube embeds. As described in their documentation, it enforces your site's origin with each YouTube embed to prevent third-party Javascript injection.
 * Easy "Insert" button for both the Visual and Text mode of the editor
 * [Embed an entire channel as a playlist >>](https://www.youtube.com/watch?v=_9D4yMyd40g)
 * Volume level initialization ( [helpful for autoplay >>](http://www.embedplus.com/mute-volume-youtube-wordpress.aspx) )
@@ -137,7 +137,7 @@ You can also start and end each individual video at particular times. Like the a
 == Changelog ==
 
 = YouTube Embed 9.5 =
- Site origin information with each embed code as an extra security measure. 
+ Google's extra security option for YouTube embeds. As described in their documentation, it enforces your site's origin with each YouTube embed to prevent third-party Javascript injection.
 
 = YouTube Embed 9.4 =
 Adds Autofit Widget option for Free and PRO users. Also adds slide from left animation to [Pro effects >>](http://www.embedplus.com/add-special-effects-to-youtube-embeds-in-wordpress.aspx)
