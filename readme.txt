@@ -13,7 +13,7 @@ YouTube embed plugin. Embed the YouTube player and playlist in posts, pages, and
 
 **Here are a few recently added features (even more features below):**
 
-* Google's extra security option for YouTube embeds. As described in their documentation, it enforces your site's origin with each YouTube embed to prevent third-party Javascript injection.
+* Site origin information with each embed code as an extra security measure. In YouTube's/Google's own words, checking this option "protects against malicious third-party JavaScript being injected into your page and hijacking control of your YouTube player." We especially recommend checking it as it adds higher security than the built-in YouTube embedding method that comes with the current version of WordPress (i.e. oembed).
 * Easy "Insert" button for both the Visual and Text mode of the editor
 * [Embed an entire channel as a playlist >>](https://www.youtube.com/watch?v=_9D4yMyd40g)
 * Volume level initialization ( [helpful for autoplay >>](http://www.embedplus.com/mute-volume-youtube-wordpress.aspx) )
@@ -137,10 +137,10 @@ You can also start and end each individual video at particular times. Like the a
 == Changelog ==
 
 = YouTube Embed 9.5 =
- Google's extra security option for YouTube embeds. As described in their documentation, it enforces your site's origin with each YouTube embed to prevent third-party Javascript injection.
+Site origin information with each embed code as an extra security measure. In YouTube's/Google's own words, checking this option "protects against malicious third-party JavaScript being injected into your page and hijacking control of your YouTube player." We especially recommend checking it as it adds higher security than the built-in YouTube embedding method that comes with the current version of WordPress (i.e. oembed).
 
 = YouTube Embed 9.4 =
-Adds Autofit Widget option for Free and PRO users. Also adds slide from left animation to [Pro effects >>](http://www.embedplus.com/add-special-effects-to-youtube-embeds-in-wordpress.aspx)
+Adds Autofit Widget option for Free and PRO users. Also adds slide from left animation to [PRO effects >>](http://www.embedplus.com/add-special-effects-to-youtube-embeds-in-wordpress.aspx)
 
 = YouTube Embed 9.3 =
 Improved volume functionality and interface updates (Free and PRO).  [Special effects added to PRO version >>](http://www.embedplus.com/add-special-effects-to-youtube-embeds-in-wordpress.aspx)

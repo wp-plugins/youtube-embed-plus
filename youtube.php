@@ -1369,13 +1369,13 @@ class YouTubePrefs
         if (!(self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0))
         {
             //$new_pointer_content .= __('Adds <em>Autofit Widget</em> option for Free and PRO users. Also adds <em>slide from left</em> animation to <a target="_blank" href="' . self::$epbase . '/add-special-effects-to-youtube-embeds-in-wordpress.aspx?ref=frompointer">Pro effects &raquo;</a>');
-            $new_pointer_content .= __('Google offers an extra YouTube embedding security option beyond HTTPS that is based on site origin. They highly recommended it in their documentation and this plugin (version 9.5) incorporates it for all Free and <a href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer" target="_blank">PRO users &raquo;</a>.');
+            $new_pointer_content .= __('The Free and PRO versions can now automatically apply YouTube&#39;s site origin parameter to provide higher security than the built-in YouTube embedding that comes with WordPress (i.e. oembed). As described in the Google documentation, it enforces your site&#39;s origin with each YouTube embed to prevent third-party Javascript injection.  Animations have also been extended for <a href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer" target="_blank">PRO users &raquo;</a>.');
 //<a href=\"" . admin_url('admin.php?page=youtube-my-preferences') . "#jumpdefaults\">See the settings page for more details &raquo;</a>"            
 //$new_pointer_content .= __('This YouTube plugin update makes HTTPS embedding available for both FREE and <a class="orange" href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer" target="_blank">PRO &raquo;</a> users. Please view this settings page to see the option. It will even automatically go and secure the non-HTTPS embeds you made in the past.');
         }
         else
         {
-            $new_pointer_content .= __('Google offers an extra YouTube embedding security option beyond HTTPS that is based on site origin. They highly recommended it in their documentation and this plugin (version 9.5) incorporates it for all Free and PRO users.');
+            $new_pointer_content .= __('The Free and PRO versions can now automatically apply YouTube&#39;s site origin parameter to provide higher security than the built-in YouTube embedding that comes with WordPress (i.e. oembed). As described in the Google documentation, it enforces your site&#39;s origin with each YouTube embed to prevent third-party Javascript injection.  Animations have also been extended for PRO users.');
             //$new_pointer_content .= __('With this version, the plugin can now automatically detect your site\\\'s default language and set the interface of the embedded YouTube player to match (for FREE and <a href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer" target="_blank">PRO versions &raquo;)</a>.');
             //$new_pointer_content .= __('');
         }
@@ -1611,7 +1611,7 @@ class YouTubePrefs
             .upgchecks { padding: 20px; border-radius: 15px; border: 1px dotted #777777; background-color: #fcfcfc; }
             .clearboth {clear: both;}
         </style>
-
+you can't change from pointer text w/o having a new version
         <div class="ytindent">
             <br>
             <div id="jumphowto"></div>
@@ -1761,7 +1761,7 @@ class YouTubePrefs
                     <p>
                         <input name="<?php echo self::$opt_origin; ?>" id="<?php echo self::$opt_origin; ?>" <?php checked($all[self::$opt_origin], 1); ?> type="checkbox" class="checkbox">
                         <label for="<?php echo self::$opt_origin; ?>"><b class="chktitle">Extra Player Security: <sup class="orange">NEW</sup></b>
-                            Adds site origin information with each embed code as an extra security measure.  In YouTube's/Google's own words, checking this option "protects against malicious third-party JavaScript being injected into your page and hijacking control of your YouTube player."  We especially recommend checking it if you have an HTTPS site.
+                            Add site origin information with each embed code as an extra security measure. In YouTube's/Google's own words, checking this option "protects against malicious third-party JavaScript being injected into your page and hijacking control of your YouTube player." We especially recommend checking it as it adds higher security than the built-in YouTube embedding method that comes with the current version of WordPress (i.e. oembed).
                         </label>
                     </p>
                     <p>
@@ -1847,6 +1847,10 @@ class YouTubePrefs
                                         <option value="flipInY" <?php echo 'flipInY' === $cleandyn ? 'selected' : '' ?> >flip left/right</option>
                                         <option value="pulse" <?php echo 'pulse' === $cleandyn ? 'selected' : '' ?> >pulse</option>
                                         <option value="tada" <?php echo 'tada' === $cleandyn ? 'selected' : '' ?> >jiggle</option>
+                                        <option value="fadeInDown" <?php echo 'fadeInDown' === $cleandyn ? 'selected' : '' ?> >fade in downward</option>
+                                        <option value="fadeInUp" <?php echo 'fadeInUp' === $cleandyn ? 'selected' : '' ?> >fade in upward</option>
+                                        <option value="zoomInDown" <?php echo 'zoomInDown' === $cleandyn ? 'selected' : '' ?> >zoom in downward</option>
+                                        <option value="zoomInUp" <?php echo 'zoomInUp' === $cleandyn ? 'selected' : '' ?> >zoom in upward</option>
                                     </select>
                                 </span>
                                 <label for="<?php echo self::$opt_dynload; ?>">
