@@ -1611,7 +1611,6 @@ class YouTubePrefs
             .upgchecks { padding: 20px; border-radius: 15px; border: 1px dotted #777777; background-color: #fcfcfc; }
             .clearboth {clear: both;}
         </style>
-you can't change from pointer text w/o having a new version
         <div class="ytindent">
             <br>
             <div id="jumphowto"></div>
