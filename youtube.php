@@ -3,14 +3,14 @@
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
-  Version: 9.5
+  Version: 9.7
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
 
 /*
   YouTube
-  Copyright (C) 2014 EmbedPlus.com
+  Copyright (C) 2015 EmbedPlus.com
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -32,12 +32,13 @@
 class YouTubePrefs
 {
 
-    public static $version = '9.5';
+    public static $version = '9.7';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
     public static $defaultheight = null;
     public static $defaultwidth = null;
+    public static $oembeddata = null;
     public static $opt_center = 'centervid';
     public static $opt_glance = 'glance';
     public static $opt_autoplay = 'autoplay';
@@ -61,9 +62,11 @@ class YouTubePrefs
     public static $opt_ssl = 'ssl';
     public static $opt_ogvideo = 'ogvideo';
     public static $opt_nocookie = 'nocookie';
+    public static $opt_acctitle = 'acctitle';
     public static $opt_pro = 'pro';
     public static $opt_oldspacing = 'oldspacing';
     public static $opt_responsive = 'responsive';
+    public static $opt_origin = 'origin';
     public static $opt_widgetfit = 'widgetfit';
     public static $opt_defaultdims = 'defaultdims';
     public static $opt_defaultwidth = 'width';
@@ -71,7 +74,7 @@ class YouTubePrefs
     public static $opt_defaultvol = 'defaultvol';
     public static $opt_vol = 'vol';
     public static $opt_schemaorg = 'schemaorg';
-    public static $opt_origin = 'origin';
+    public static $opt_ftpostimg = 'ftpostimg';
     public static $opt_dynload = 'dynload';
     public static $opt_dyntype = 'dyntype';
     public static $opt_alloptions = 'youtubeprefs_alloptions';
@@ -642,12 +645,14 @@ class YouTubePrefs
         $_pro = '';
         $_ssl = 0;
         $_nocookie = 0;
+        $_acctitle = 0;
         $_ogvideo = 0;
         $_controls = 2;
         $_oldspacing = 1;
         $_responsive = 0;
         $_widgetfit = 1;
         $_schemaorg = 0;
+        $_ftpostimg = 0;
         $_dynload = 0;
         $_dyntype = '';
         $_wmode = 'opaque';
@@ -687,6 +692,7 @@ class YouTubePrefs
             $_pro = self::tryget($arroptions, self::$opt_pro, '');
             $_ssl = self::tryget($arroptions, self::$opt_ssl, 0);
             $_nocookie = self::tryget($arroptions, self::$opt_nocookie, 0);
+            $_acctitle = self::tryget($arroptions, self::$opt_acctitle, 0);
             $_ogvideo = self::tryget($arroptions, self::$opt_ogvideo, 0);
             $_controls = self::tryget($arroptions, self::$opt_controls, 2);
             $_autohide = self::tryget($arroptions, self::$opt_autohide, 2);
@@ -694,6 +700,7 @@ class YouTubePrefs
             $_responsive = self::tryget($arroptions, self::$opt_responsive, 0);
             $_widgetfit = self::tryget($arroptions, self::$opt_widgetfit, 1);
             $_schemaorg = self::tryget($arroptions, self::$opt_schemaorg, 0);
+            $_ftpostimg = self::tryget($arroptions, self::$opt_ftpostimg, 0);
             $_dynload = self::tryget($arroptions, self::$opt_dynload, 0);
             $_dyntype = self::tryget($arroptions, self::$opt_dyntype, '');
             $_defaultdims = self::tryget($arroptions, self::$opt_defaultdims, 0);
@@ -731,12 +738,14 @@ class YouTubePrefs
             self::$opt_pro => $_pro,
             self::$opt_ssl => $_ssl,
             self::$opt_nocookie => $_nocookie,
+            self::$opt_acctitle => $_acctitle,
             self::$opt_ogvideo => $_ogvideo,
             self::$opt_controls => $_controls,
             self::$opt_oldspacing => $_oldspacing,
             self::$opt_responsive => $_responsive,
             self::$opt_widgetfit => $_widgetfit,
             self::$opt_schemaorg => $_schemaorg,
+            self::$opt_ftpostimg => $_ftpostimg,
             self::$opt_dynload => $_dynload,
             self::$opt_dyntype => $_dyntype,
             self::$opt_defaultdims => $_defaultdims,
@@ -773,6 +782,13 @@ class YouTubePrefs
             add_filter('the_content', 'YouTubePrefs::apply_prefs_content', 1);
             add_filter('widget_text', 'YouTubePrefs::apply_prefs_widget', 1);
             add_shortcode('embedyt', array('YouTubePrefs', 'apply_prefs_shortcode'));
+        }
+        else
+        {
+            if (self::$alloptions[self::$opt_ftpostimg] == 1 && self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0)
+            {
+                add_action('save_post', array('YouTubePrefs', 'doftpostimg'), 110, 3);
+            }
         }
     }
 
@@ -833,6 +849,7 @@ class YouTubePrefs
         $voloutput = '';
         $dynsrc = '';
         $dyntype = '';
+        $acctitle = '';
 
         $finalparams = $linkparams + self::$alloptions;
 
@@ -842,6 +859,7 @@ class YouTubePrefs
         {
             $youtubebaseurl = 'youtube-nocookie';
         }
+
 
 //        if (self::$alloptions[self::$opt_ssl] == 1)
 //        {
@@ -910,10 +928,36 @@ class YouTubePrefs
             $centercode = ' style="display: block; margin: 0px auto;" ';
         }
 
+        if (self::$alloptions[self::$opt_acctitle] == 1)
+        {
+            try
+            {
+                //attr escape
+                if (self::$oembeddata)
+                {
+                    $acctitle = self::$oembeddata->title;
+                }
+                else
+                {
+                    $odata = self::get_oembed('http://youtube.com/watch?v=' . $linkparams['v'], 1920, 1280);
+                    $acctitle = $odata->title;
+                }
+
+                if ($acctitle)
+                {
+                    $acctitle = ' title="' . esc_attr($acctitle) . '" ';
+                }
+            }
+            catch (Exception $e)
+            {
+                
+            }
+        }
+
         $code1 = '<iframe ' . $dyntype . $centercode . ' id="_ytid_' . rand(10000, 99999) . '" width="' . self::$defaultwidth . '" height="' . self::$defaultheight .
                 '" ' . $dynsrc . 'src="//www.' . $youtubebaseurl . '.com/embed/' . (isset($linkparams['v']) ? $linkparams['v'] : '') . '?';
         $code2 = '" frameborder="0" type="text/html" class="__youtube_prefs__' . ($iscontent ? '' : ' __youtube_prefs_widget__') .
-                '"' . $voloutput . ' allowfullscreen webkitallowfullscreen mozallowfullscreen ></iframe>' . $schemaorgoutput;
+                '"' . $voloutput . $acctitle . ' allowfullscreen webkitallowfullscreen mozallowfullscreen ></iframe>' . $schemaorgoutput;
 
         $origin = '';
 
@@ -950,6 +994,7 @@ class YouTubePrefs
         // reset static vals for next embed
         self::$defaultheight = null;
         self::$defaultwidth = null;
+        self::$oembeddata = null;
 
         return $code;
     }
@@ -1091,20 +1136,28 @@ class YouTubePrefs
         }
     }
 
+    public static function get_oembed($url, $height, $width)
+    {
+        require_once( ABSPATH . WPINC . '/class-oembed.php' );
+        $oembed = _wp_oembed_get_object();
+        $args = array();
+        $args['width'] = $width;
+        $args['height'] = $height;
+        $args['discover'] = false;
+        self::$oembeddata = $oembed->fetch('https://www.youtube.com/oembed', $url, $args);
+        return self::$oembeddata;
+    }
+
     public static function get_aspect_height($url, $urlkvp, $finalparams)
     {
 
         // attempt to get aspect ratio correct height from oEmbed
         $aspectheight = round((self::$defaultwidth * 9) / 16, 0);
+
+
         if ($url)
         {
-            require_once( ABSPATH . WPINC . '/class-oembed.php' );
-            $oembed = _wp_oembed_get_object();
-            $args = array();
-            $args['width'] = self::$defaultwidth;
-            $args['height'] = self::$defaultwidth; //square to get biggest height from width // self::$optembedheight;
-            $args['discover'] = false;
-            $odata = $oembed->fetch('https://www.youtube.com/oembed', $url, $args);
+            $odata = self::get_oembed($url, self::$defaultwidth, self::$defaultwidth);
 
             if ($odata)
             {
@@ -1118,6 +1171,146 @@ class YouTubePrefs
             $aspectheight += 28;
         }
         return $aspectheight;
+    }
+
+    public static function doftpostimg($postid, $post, $update)
+    {
+        if (current_user_can('edit_posts') && current_user_can('edit_pages'))
+        {
+            if ((defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) || !in_array($post->post_status, array('publish', 'pending', 'draft', 'future', 'private')))
+            {
+                return;
+            }
+            try
+            {
+                self::doftpostimgfor($post);
+            }
+            catch (Exception $ex)
+            {
+                // display error message
+            }
+        }
+    }
+
+    public static function doftpostimgfor($post)
+    {
+        $search_content = isset($post->post_content) ? $post->post_content : '';
+        $search_content = substr($search_content, 0, 1500);
+
+        $search_content = apply_filters('youtube_embedplus_video_content', $search_content);
+
+        $vid_match = null;
+        if ($search_content && $post->ID && !has_post_thumbnail($post->ID) && preg_match(self::$justurlregex, $search_content, $vid_match)
+        )
+        {
+
+            $first_vid_link = trim(str_replace(self::$badentities, self::$goodliterals, $vid_match[0]));
+
+            $first_vid_link = preg_replace('/\s/', '', $first_vid_link);
+            $linkparamstemp = explode('?', $first_vid_link);
+
+            $linkparams = array();
+            if (count($linkparamstemp) > 1)
+            {
+                $linkparams = self::keyvalue($linkparamstemp[1], true);
+            }
+            if (strpos($linkparamstemp[0], 'youtu.be') !== false && !isset($linkparams['v']))
+            {
+                $vtemp = explode('/', $linkparamstemp[0]);
+                $linkparams['v'] = array_pop($vtemp);
+            }
+
+
+
+            $just_id = $linkparams['v'];
+            $ftimgurl = null;
+            if ($just_id)
+            {
+                require_once( ABSPATH . WPINC . '/class-oembed.php' );
+                $oembed = _wp_oembed_get_object();
+                $args = array();
+                $args['width'] = 1920;
+                $args['height'] = 1080;
+                $args['discover'] = false;
+                $odata = $oembed->fetch('https://www.youtube.com/oembed', 'http://youtube.com/watch?v=' . $just_id, $args);
+
+                if ($odata)
+                {
+                    $ftimgurl = $odata->thumbnail_url;
+                }
+            }
+
+            $ftimgid = $ftimgurl && !is_wp_error($ftimgurl) ? self::media_sideload($ftimgurl, $post->ID, sanitize_title(preg_replace("/[^a-zA-Z0-9\s]/", "-", $post->title))) : 0;
+
+            if (!$ftimgid)
+            {
+                return;
+            }
+
+            set_post_thumbnail($post->ID, $ftimgid);
+        }
+    }
+
+    public static function media_sideload($url, $post_id, $filename = null)
+    {
+        if (!$url || !$post_id)
+        {
+            return new WP_Error('missing', __('Please provide a valid URL and post ID', ''));
+        }
+
+        $post_title = get_the_title($post_id);
+
+        require_once(ABSPATH . 'wp-admin/includes/file.php');
+        $tmp = download_url($url);
+
+        if (is_wp_error($tmp))
+        {
+            @unlink($file_array['tmp_name']);
+            $file_array['tmp_name'] = '';
+            return $tmp;
+        }
+
+        preg_match('/[^\?]+\.(jpg|JPG|jpe|JPE|jpeg|JPEG|gif|GIF|png|PNG)/', $url, $matches);
+        $url_filename = basename($matches[0]);
+        $url_type = wp_check_filetype($url_filename);
+
+        if (!empty($filename))
+        {
+            $filename = sanitize_file_name($filename);
+            $tmppath = pathinfo($tmp);
+            $new = $tmppath['dirname'] . '/' . $filename . '.' . $tmppath['extension'];
+            rename($tmp, $new);
+            $tmp = $new;
+        }
+
+        $file_array['tmp_name'] = $tmp;
+        if (!empty($filename))
+        {
+            $file_array['name'] = $filename . '.' . $url_type['ext'];
+        }
+        else
+        {
+            $file_array['name'] = $url_filename;
+        }
+
+        $post_data = array(
+            'post_title' => $post_title,
+            'post_parent' => $post_id,
+        );
+
+        require_once( ABSPATH . 'wp-admin/includes/file.php' );
+        require_once( ABSPATH . 'wp-admin/includes/media.php' );
+        require_once( ABSPATH . 'wp-admin/includes/image.php' );
+
+        $att_id = media_handle_sideload($file_array, $post_id, null, $post_data);
+
+        if (is_wp_error($att_id))
+        {
+            @unlink($file_array['tmp_name']);
+            return $att_id;
+        }
+
+        return $att_id;
     }
 
     public static function do_ogvideo()
@@ -1368,16 +1561,11 @@ class YouTubePrefs
         $new_pointer_content .= '<p>'; // . __(''); // ooopointer
         if (!(self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0))
         {
-            //$new_pointer_content .= __('Adds <em>Autofit Widget</em> option for Free and PRO users. Also adds <em>slide from left</em> animation to <a target="_blank" href="' . self::$epbase . '/add-special-effects-to-youtube-embeds-in-wordpress.aspx?ref=frompointer">Pro effects &raquo;</a>');
-            $new_pointer_content .= __('The Free and PRO versions can now automatically apply YouTube&#39;s site origin parameter to provide higher security than the built-in YouTube embedding that comes with WordPress (i.e. oembed). As described in the Google documentation, it enforces your site&#39;s origin with each YouTube embed to prevent third-party Javascript injection.  Animations have also been extended for <a href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer" target="_blank">PRO users &raquo;</a>.');
-//<a href=\"" . admin_url('admin.php?page=youtube-my-preferences') . "#jumpdefaults\">See the settings page for more details &raquo;</a>"            
-//$new_pointer_content .= __('This YouTube plugin update makes HTTPS embedding available for both FREE and <a class="orange" href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer" target="_blank">PRO &raquo;</a> users. Please view this settings page to see the option. It will even automatically go and secure the non-HTTPS embeds you made in the past.');
+            $new_pointer_content .= __('New accessibility option added to FREE and PRO.  Automatic video thumbnails as featured images is now an option for <a href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer" target="_blank">PRO users &raquo;</a>.');
         }
         else
         {
-            $new_pointer_content .= __('The Free and PRO versions can now automatically apply YouTube&#39;s site origin parameter to provide higher security than the built-in YouTube embedding that comes with WordPress (i.e. oembed). As described in the Google documentation, it enforces your site&#39;s origin with each YouTube embed to prevent third-party Javascript injection.  Animations have also been extended for PRO users.');
-            //$new_pointer_content .= __('With this version, the plugin can now automatically detect your site\\\'s default language and set the interface of the embedded YouTube player to match (for FREE and <a href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer" target="_blank">PRO versions &raquo;)</a>.');
-            //$new_pointer_content .= __('');
+            $new_pointer_content .= __('New accessibility option added to FREE and PRO. Automatic video thumbnails as featured images is now an option for PRO users.');
         }
         $new_pointer_content .= '</p>';
 
@@ -1445,12 +1633,14 @@ class YouTubePrefs
             $new_options[self::$opt_wmode] = self::postchecked(self::$opt_wmode) ? 'opaque' : 'transparent';
             $new_options[self::$opt_vq] = self::postchecked(self::$opt_vq) ? 'hd720' : '';
             $new_options[self::$opt_nocookie] = self::postchecked(self::$opt_nocookie) ? 1 : 0;
+            $new_options[self::$opt_acctitle] = self::postchecked(self::$opt_acctitle) ? 1 : 0;
             $new_options[self::$opt_ogvideo] = self::postchecked(self::$opt_ogvideo) ? 1 : 0;
             //$new_options[self::$opt_ssl] = self::postchecked(self::$opt_ssl) ? 1 : 0;
             $new_options[self::$opt_oldspacing] = self::postchecked(self::$opt_oldspacing) ? 1 : 0;
             $new_options[self::$opt_responsive] = self::postchecked(self::$opt_responsive) ? 1 : 0;
             $new_options[self::$opt_widgetfit] = self::postchecked(self::$opt_widgetfit) ? 1 : 0;
             $new_options[self::$opt_schemaorg] = self::postchecked(self::$opt_schemaorg) ? 1 : 0;
+            $new_options[self::$opt_ftpostimg] = self::postchecked(self::$opt_ftpostimg) ? 1 : 0;
             $new_options[self::$opt_dynload] = self::postchecked(self::$opt_dynload) ? 1 : 0;
             $new_options[self::$opt_defaultdims] = self::postchecked(self::$opt_defaultdims) ? 1 : 0;
             $new_options[self::$opt_defaultvol] = self::postchecked(self::$opt_defaultvol) ? 1 : 0;
@@ -1520,6 +1710,7 @@ class YouTubePrefs
             // Save the posted value in the database
 
             update_option(self::$opt_alloptions, $all);
+
             // Put a settings updated message on the screen
             ?>
             <div class="updated"><p><strong><?php _e('Settings saved.'); ?></strong></p></div>
@@ -1721,6 +1912,10 @@ class YouTubePrefs
                         <label for="<?php echo self::$opt_showinfo; ?>"><?php _e('<b class="chktitle">Show Title:</b> Show the video title and other info.') ?></label>
                     </p>
                     <p>
+                        <input name="<?php echo self::$opt_acctitle; ?>" id="<?php echo self::$opt_acctitle; ?>" <?php checked($all[self::$opt_acctitle], 1); ?> type="checkbox" class="checkbox">
+                        <label for="<?php echo self::$opt_acctitle; ?>"><b class="chktitle">Accessible Title Attributes: <sup class="orange">NEW</sup></b> Improve accessibility by using title attributes for screen reader support. It should help your site pass functional accessibility evaluation (FAE). </label>
+                    </p>
+                    <p>
                         <input name="<?php echo self::$opt_theme; ?>" id="<?php echo self::$opt_theme; ?>" <?php checked($all[self::$opt_theme], 'dark'); ?> type="checkbox" class="checkbox">
                         <label for="<?php echo self::$opt_theme; ?>"><?php _e('<b class="chktitle">Dark Theme:</b> Use the dark theme (uncheck to use light theme).') ?></label>
                     </p>
@@ -1824,7 +2019,7 @@ class YouTubePrefs
                         </label>
                     </p>
 
-                    <p class="smallnote orange">Below are PRO features for enhanced SEO and performance (works for even past embed links). <a href="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx" target="_blank">Activate them &raquo;</a></p>
+                    <p class="smallnote orange">Below are PRO features for enhanced SEO and performance (works for even past embed links). <a href="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx" target="_blank">Activate them and several other features &raquo;</a></p>
                     <div class="upgchecks">
                         <?php
                         if ($all[self::$opt_pro] && strlen(trim($all[self::$opt_pro])) > 0)
@@ -1857,6 +2052,13 @@ class YouTubePrefs
                                     Add eye-catching special effects that will make your YouTube embeds bounce, flip, pulse, or slide as they load on the screen.  Check this box to select your desired effect. <a target="_blank" href="<?php echo self::$epbase ?>/add-special-effects-to-youtube-embeds-in-wordpress.aspx">Read more here &raquo;</a>
                                 </label>
                             </p>
+                            <p>
+                                <input name="<?php echo self::$opt_ftpostimg; ?>" id="<?php echo self::$opt_ftpostimg; ?>" <?php checked($all[self::$opt_ftpostimg], 1); ?> type="checkbox" class="checkbox">
+                                <label for="<?php echo self::$opt_ftpostimg; ?>">
+                                    <b>(PRO)</b> <b class="chktitle">Automatic Video Thumbnails: <sup class="orange">NEW</sup></b> 
+                                    Automatically grab the thumbnail image of the first video embedded in each post or page, and use it as the featured image. All you have to do is click Update on a post or page and the plugin does the rest!
+                                </label>
+                            </p>
 
                             <p>
                                 <input name="<?php echo self::$opt_schemaorg; ?>" id="<?php echo self::$opt_schemaorg; ?>" <?php checked($all[self::$opt_schemaorg], 1); ?> type="checkbox" class="checkbox">
@@ -1887,6 +2089,13 @@ class YouTubePrefs
                             <p>
                                 <input disabled type="checkbox" class="checkbox">
                                 <label>
+                                    <b class="chktitle">Automatic Video Thumbnails: <sup class="orange">NEW</sup></b>  <span class="pronon">(PRO Users)</span> 
+                                    Automatically grab the thumbnail image of the first video embedded in each post or page, and use it as the featured image. All you have to do is click Update on a post or page and the plugin does the rest!
+                                </label>
+                            </p>
+                            <p>
+                                <input disabled type="checkbox" class="checkbox">
+                                <label>
                                     <b class="chktitle">Video SEO Tags:</b>  <span class="pronon">(PRO Users)</span> Update your YouTube embeds with Google, Bing, and Yahoo friendly video SEO markup.
                                 </label>
                             </p>
@@ -1902,7 +2111,7 @@ class YouTubePrefs
                             <?php
                         }
                         ?>
-                            <div class="clearboth"></div>
+                        <div class="clearboth"></div>
                     </div>
                     <p class="submit">
                         <br>
@@ -1993,6 +2202,10 @@ class YouTubePrefs
                                 <img src="<?php echo plugins_url('images/mobilecompat.png', __FILE__) ?>">
                                 Check if your embeds have restrictions that can block mobile viewing <sup class="orange bold">NEW</sup>
                             </li>       
+                            <li>
+                                <img src="<?php echo plugins_url('images/videothumbs.png', __FILE__) ?>">
+                                Automatic video thumbnail images (just click 'Update')  <sup class="orange bold">NEW</sup>
+                            </li>       
 
                         </ul>
                     </div>
@@ -2024,10 +2237,10 @@ class YouTubePrefs
                                 <img src="<?php echo plugins_url('images/infinity.png', __FILE__) ?>">
                                 Unlimited PRO upgrades and downloads
                             </li>
-                            <!--                            <li>
-                                                            <img src="<?php echo plugins_url('images/questionsale.png', __FILE__) ?>">
-                                                            What else? You tell us!                                
-                                                        </li>                           -->
+                            <li>
+                                <img src="<?php echo plugins_url('images/questionsale.png', __FILE__) ?>">
+                                What else? You tell us!                                
+                            </li>                           
                         </ul>
                     </div>
                     <div style="clear: both;"></div>

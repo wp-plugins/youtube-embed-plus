@@ -1,18 +1,19 @@
 === YouTube ===
 Contributors: embedplus
 Plugin Name: YouTube Embed
-Tags: origin, lazy load, lazy, load, effects, special effects, get_locale, translator, locale, country code, country, TinyMCE, localization, internationalization, language, multi-language, translate, captions, subtitles, hl, audio, initialize, mute, sound, track, volume, at a glance, channel, annotations, music, music video, songs, song, lyrics, responsive, short code, shortcode, youtube shortcode, health, diagnostic, youtube status, seo, video seo, rich snippets, reddit, google+, google plus, comments, search, widget, sidebar, responsive, fluid, iphone, mobile, android, tablet, ipad, youtube playlist, playlists, playlist, wmode, hd, autohd, auto hd, video analytics, analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin, https, ssl, secure, no-cookie, cookie, html5, youtube html5, multilingual, multi-lingual, l10n, i18n
-Requires at least: 2.9
+Tags: featured image, css, cross site scripting, accessibility, same origin, screen reader, security, thumbnail, thumbnails, video thumbnails, wordpress security, xss, youtube thumbnails, thumbnail image, origin, lazy load, lazy, load, effects, special effects, get_locale, translator, locale, country code, country, TinyMCE, localization, internationalization, language, multi-language, translate, captions, subtitles, hl, audio, initialize, mute, sound, track, volume, at a glance, channel, annotations, music, music video, songs, song, lyrics, responsive, short code, shortcode, youtube shortcode, diagnostic, youtube status, seo, video seo, rich snippets, reddit, google+, google plus, comments, search, widget, sidebar, responsive, fluid, iphone, mobile, android, tablet, ipad, youtube playlist, playlists, playlist, wmode, hd, autohd, auto hd, video analytics, analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin, https, ssl, secure, no-cookie, cookie, html5, youtube html5, multilingual, multi-lingual, l10n, i18n
+Requires at least: 3.1
 Tested up to: 4.1
-Stable tag: 9.5
+Stable tag: 9.7
 License: GPLv3 or later
 
-YouTube embed plugin. Embed the YouTube player and playlist in posts, pages, and widgets. Add analytics, SEO, and much more!
+YouTube embed plugin. Embed the YouTube player and playlist in posts/pages and widgets. Add video thumbnails, analytics, SEO, security, and more.
 
 == Description ==
 
 **Here are a few recently added features (even more features below):**
 
+* Improved accessibility by using title attributes for screen reader support. It should help your site pass functional accessibility evaluations (FAE).
 * Site origin information with each embed code as an extra security measure. In YouTube's/Google's own words, checking this option "protects against malicious third-party JavaScript being injected into your page and hijacking control of your YouTube player." We especially recommend checking it as it adds higher security than the built-in YouTube embedding method that comes with the current version of WordPress (i.e. oembed).
 * Easy "Insert" button for both the Visual and Text mode of the editor
 * [Embed an entire channel as a playlist >>](https://www.youtube.com/watch?v=_9D4yMyd40g)
@@ -27,6 +28,7 @@ YouTube embed plugin. Embed the YouTube player and playlist in posts, pages, and
 
 You can even extend the plugin with PRO features like:
 
+* Automatic video thumbnail images: each post or page that contains at least one video will have the thumbnail of its first video serve as its featured image.
 * [Eye-catching special effects for YouTube embeds >>](http://www.embedplus.com/add-special-effects-to-youtube-embeds-in-wordpress.aspx) (uses lazy loading)
 * Automatic tagging for video SEO
 * Automatic Open Graph tagging for Facebook
@@ -135,6 +137,9 @@ You can also start and end each individual video at particular times. Like the a
 6. YouTube Embed Screenshot 6: Localization/internationalization so you can set the player's interface language
 
 == Changelog ==
+
+= YouTube Embed 9.7 =
+Adds improved accessibility for screen readers and video thumbnail as featured image support.  
 
 = YouTube Embed 9.5 =
 Site origin information with each embed code as an extra security measure. In YouTube's/Google's own words, checking this option "protects against malicious third-party JavaScript being injected into your page and hijacking control of your YouTube player." We especially recommend checking it as it adds higher security than the built-in YouTube embedding method that comes with the current version of WordPress (i.e. oembed).
@@ -314,6 +319,6 @@ First release uploaded to the plugin repository.
 
 == Other Notes ==
 
-This YouTube plugin can include premium features like automatic schema tagging for video SEO, mobile compatibility checking, and deleted video alerts when you [upgrade to PRO.](https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx).
+This YouTube plugin can include premium features like animation effects using lazy loading, automatic video thumbnail support, automatic schema tagging for video SEO, mobile compatibility checking, and deleted video alerts when you [upgrade to PRO](https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx).
 
 We also have a YouTube channel with some helper videos.  [Check them out here >>](https://www.youtube.com/user/EmbedPlus)
