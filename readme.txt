@@ -1,10 +1,10 @@
 === YouTube ===
 Contributors: embedplus
 Plugin Name: YouTube Embed
-Tags: featured image, css, cross site scripting, accessibility, same origin, screen reader, security, thumbnail, thumbnails, video thumbnails, wordpress security, xss, youtube thumbnails, thumbnail image, origin, lazy load, lazy, load, effects, special effects, get_locale, translator, locale, country code, country, TinyMCE, localization, internationalization, language, multi-language, translate, captions, subtitles, hl, audio, initialize, mute, sound, track, volume, at a glance, channel, annotations, music, music video, songs, song, lyrics, responsive, short code, shortcode, youtube shortcode, diagnostic, youtube status, seo, video seo, rich snippets, reddit, google+, google plus, comments, search, widget, sidebar, responsive, fluid, iphone, mobile, android, tablet, ipad, youtube playlist, playlists, playlist, wmode, hd, autohd, auto hd, video analytics, analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin, https, ssl, secure, no-cookie, cookie, html5, youtube html5, multilingual, multi-lingual, l10n, i18n
+Tags: youtube snippets, deleted youtube videos, youtube takedowns, blocked youtube videos, youtube impressions, youtube alerts, featured image, css, cross site scripting, accessibility, same origin, screen reader, security, thumbnail, thumbnails, video thumbnails, wordpress security, xss, youtube thumbnails, thumbnail image, origin, lazy load, lazy, load, effects, special effects, get_locale, translator, locale, country code, country, TinyMCE, localization, internationalization, language, multi-language, translate, captions, subtitles, hl, audio, initialize, mute, sound, track, volume, at a glance, channel, annotations, music, music video, songs, song, lyrics, responsive, short code, shortcode, youtube shortcode, diagnostic, youtube status, seo, video seo, rich snippets, reddit, google+, google plus, comments, search, widget, sidebar, responsive, fluid, iphone, mobile, android, tablet, ipad, youtube playlist, playlists, playlist, wmode, hd, autohd, auto hd, video analytics, analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin, https, ssl, secure, no-cookie, cookie, html5, youtube html5, multilingual, multi-lingual, l10n, i18n
 Requires at least: 3.1
 Tested up to: 4.1
-Stable tag: 9.7
+Stable tag: 9.8
 License: GPLv3 or later
 
 YouTube embed plugin. Embed the YouTube player and playlist in posts/pages and widgets. Add video thumbnails, analytics, SEO, security, and more.
@@ -28,7 +28,7 @@ YouTube embed plugin. Embed the YouTube player and playlist in posts/pages and w
 
 You can even extend the plugin with PRO features like:
 
-* Automatic video thumbnail images: each post or page that contains at least one video will have the thumbnail of its first video serve as its featured image.
+* [Automatic video thumbnail images](http://embedplus.com/add-youtube-video-thumbnails-featured-image-wordpress.aspx): each post or page that contains at least one video will have the thumbnail of its first video serve as its featured image.
 * [Eye-catching special effects for YouTube embeds >>](http://www.embedplus.com/add-special-effects-to-youtube-embeds-in-wordpress.aspx) (uses lazy loading)
 * Automatic tagging for video SEO
 * Automatic Open Graph tagging for Facebook
@@ -137,6 +137,9 @@ You can also start and end each individual video at particular times. Like the a
 6. YouTube Embed Screenshot 6: Localization/internationalization so you can set the player's interface language
 
 == Changelog ==
+
+= YouTube Embed 9.8 =
+Upgraded code to use YouTube API v3.
 
 = YouTube Embed 9.7 =
 Adds improved accessibility for screen readers and video thumbnail as featured image support.  

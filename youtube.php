@@ -3,7 +3,7 @@
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
-  Version: 9.7
+  Version: 9.8
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
@@ -32,7 +32,7 @@
 class YouTubePrefs
 {
 
-    public static $version = '9.7';
+    public static $version = '9.8';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -73,6 +73,7 @@ class YouTubePrefs
     public static $opt_defaultheight = 'height';
     public static $opt_defaultvol = 'defaultvol';
     public static $opt_vol = 'vol';
+    public static $opt_apikey = 'apikey';
     public static $opt_schemaorg = 'schemaorg';
     public static $opt_ftpostimg = 'ftpostimg';
     public static $opt_dynload = 'dynload';
@@ -374,46 +375,42 @@ class YouTubePrefs
 
                     $vidid = $linkparams['v'];
 
-                    try
+                    if ($vidid != null)
                     {
-                        $ytapilink = 'http://gdata.youtube.com/feeds/api/videos/' . $vidid . '?v=2&alt=json&fields=id,published,title,content,media:group(media:description,yt:duration)';
-                        $apidata = wp_remote_get($ytapilink);
-                        if (!is_wp_error($apidata))
+                        try
                         {
-                            $raw = wp_remote_retrieve_body($apidata);
-                            if (!empty($raw))
+                            $odata = self::get_oembed('http://youtube.com/watch?v=' . $vidid, 1920, 1280);
+                            $postlink = get_permalink($postid);
+                            if ($odata != null && !is_wp_error($odata))
                             {
-                                $postlink = get_permalink($postid);
-                                $json = json_decode($raw, true);
-                                if (is_array($json))
-                                {
-                                    $_name = esc_attr(sanitize_text_field($json['entry']['title']['$t']));
-                                    $_description = esc_attr(sanitize_text_field($json['entry']['media$group']['media$description']['$t']));
-                                    $_thumbnailUrl = esc_url("//i.ytimg.com/vi/" . $vidid . "/0.jpg");
-                                    $_duration = self::formatDuration(self::secondsToDuration(intval($json['entry']['media$group']['yt$duration']['seconds'])));
-                                    $_uploadDate = sanitize_text_field($json['entry']['published']['$t']);
+                                $_name = esc_attr(sanitize_text_field($odata->title));
+                                $_description = esc_attr(sanitize_text_field($odata->author_name));
+                                $_thumbnailUrl = esc_url("//i.ytimg.com/vi/" . $vidid . "/0.jpg");
 
-                                    $thehtml .= '<a target="_blank" href="' . $postlink . '" class="accthumb"><img src="' . $_thumbnailUrl . '" /></a>';
-                                    $thehtml .= '<div class="accinfo">';
-                                    $thehtml .= '<a target="_blank" href="' . $postlink . '" class="accvidtitle">' . $_name . '</a>';
-                                    $thehtml .= '<div class="accdesc">' . (strlen($_description) > 400 ? substr($_description, 0, 400) . "..." : $_description) . '</div>';
-                                    $thehtml .= '</div>';
-                                    $thehtml .= '<div class="clearboth pad20"></div>';
-                                }
-                                else
-                                {
-                                    $thehtml .= '<p class="center bold orange">This <a target="_blank" href="' . $postlink . '">post/page</a> contains a video that has been removed from YouTube.';
+                                $thehtml .= '<a target="_blank" href="' . $postlink . '" class="accthumb"><img src="' . $_thumbnailUrl . '" /></a>';
+                                $thehtml .= '<div class="accinfo">';
+                                $thehtml .= '<a target="_blank" href="' . $postlink . '" class="accvidtitle">' . $_name . '</a>';
+                                $thehtml .= '<div class="accdesc">' . (strlen($_description) > 400 ? substr($_description, 0, 400) . "..." : $_description) . '</div>';
+                                $thehtml .= '</div>';
+                                $thehtml .= '<div class="clearboth pad20"></div>';
+                            }
+                            else
+                            {
+                                $thehtml .= '<p class="center bold orange">This <a target="_blank" href="' . $postlink . '">post/page</a> contains a video that has been removed from YouTube.';
 
-                                    if (!(self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0))
-                                    {
-                                        $thehtml .='<br><a target="_blank" href="https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx">Activate delete video tracking to catch these cases &raquo;</a>';
-                                    }
-                                    $thehtml .= '</strong>';
+                                if (!(self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0))
+                                {
+                                    $thehtml .='<br><a target="_blank" href="https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx">Activate delete video tracking to catch these cases &raquo;</a>';
                                 }
+                                $thehtml .= '</strong>';
                             }
                         }
+                        catch (Exception $ex)
+                        {
+                            
+                        }
                     }
-                    catch (Exception $ex)
+                    else if (false) // if playlist
                     {
                         
                     }
@@ -663,6 +660,7 @@ class YouTubePrefs
         $_origin = 0;
         $_defaultvol = 0;
         $_vol = '';
+        $_apikey = '';
         $_hl = '';
         $_dohl = 0;
 
@@ -708,6 +706,7 @@ class YouTubePrefs
             $_defaultheight = self::tryget($arroptions, self::$opt_defaultheight, '');
             $_defaultvol = self::tryget($arroptions, self::$opt_defaultvol, 0);
             $_vol = self::tryget($arroptions, self::$opt_vol, '');
+            $_apikey = self::tryget($arroptions, self::$opt_apikey, '');
         }
         else
         {
@@ -752,7 +751,8 @@ class YouTubePrefs
             self::$opt_defaultwidth => $_defaultwidth,
             self::$opt_defaultheight => $_defaultheight,
             self::$opt_defaultvol => $_defaultvol,
-            self::$opt_vol => $_vol
+            self::$opt_vol => $_vol,
+            self::$opt_apikey => $_apikey
         );
 
         update_option(self::$opt_alloptions, $all);
@@ -1020,7 +1020,9 @@ class YouTubePrefs
         $schemaorgcode = '';
         try
         {
-            $ytapilink = 'http://gdata.youtube.com/feeds/api/videos/' . $vidid . '?v=2&alt=json&fields=id,published,title,content,media:group(media:description,yt:duration)';
+            $ytapilink = 'https://www.googleapis.com/youtube/v3/videos?id=' . $vidid . '&part=contentDetails,snippet&key=' . self::$alloptions[self::$opt_apikey];
+
+
             $apidata = wp_remote_get($ytapilink);
             if (!is_wp_error($apidata))
             {
@@ -1030,11 +1032,11 @@ class YouTubePrefs
                     $json = json_decode($raw, true);
                     if (is_array($json))
                     {
-                        $_name = esc_attr(sanitize_text_field(str_replace("@", "&#64;", $json['entry']['title']['$t'])));
-                        $_description = esc_attr(sanitize_text_field(str_replace("@", "&#64;", $json['entry']['media$group']['media$description']['$t'])));
+                        $_name = esc_attr(sanitize_text_field(str_replace("@", "&#64;", $json['items'][0]['snippet']['title'])));
+                        $_description = esc_attr(sanitize_text_field(str_replace("@", "&#64;", $json['items'][0]['snippet']['description'])));
                         $_thumbnailUrl = esc_url("http://i.ytimg.com/vi/" . $vidid . "/0.jpg");
-                        $_duration = self::formatDuration(self::secondsToDuration(intval($json['entry']['media$group']['yt$duration']['seconds'])));
-                        $_uploadDate = sanitize_text_field($json['entry']['published']['$t']);
+                        $_duration = $json['items'][0]['contentDetails']['duration']; // "T0H9M35S" "PT9M35S"
+                        $_uploadDate = sanitize_text_field($json['items'][0]['snippet']['publishedAt']); // "2014-10-03T15:30:12.000Z"
 
                         $schemaorgcode = '<span itemprop="video" itemscope itemtype="http://schema.org/VideoObject">';
                         $schemaorgcode .= '<meta itemprop="embedURL" content="http://www.youtube.com/embed/' . $vidid . '">';
@@ -1558,14 +1560,21 @@ class YouTubePrefs
 
         $new_pointer_content = '<h3>' . __('New Update') . '</h3>'; // ooopointer
 
-        $new_pointer_content .= '<p>'; // . __(''); // ooopointer
+        $new_pointer_content .= '<p>'; // ooopointer
         if (!(self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0))
         {
-            $new_pointer_content .= __('New accessibility option added to FREE and PRO.  Automatic video thumbnails as featured images is now an option for <a href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer" target="_blank">PRO users &raquo;</a>.');
+            $new_pointer_content .= __('We upgraded the plugin to use the newest version of YouTube&apos;s API, v3.  Used in FREE and  <a href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer" target="_blank">PRO features &raquo;</a>.');
         }
         else
         {
-            $new_pointer_content .= __('New accessibility option added to FREE and PRO. Automatic video thumbnails as featured images is now an option for PRO users.');
+            if (self::$alloptions[self::$opt_schemaorg] == 1)
+            {
+                $new_pointer_content .= 'Important for Pro users: YouTube now requires an API key for SEO tags. Please <a href="' . admin_url('admin.php?page=youtube-my-preferences') . '#ftpostimg">read more here &raquo;</a>';
+            }
+            else
+            {
+                $new_pointer_content .= __('We upgraded the plugin to use the newest version of YouTube&apos;s API, v3.  Used in FREE and PRO features.');
+            }
         }
         $new_pointer_content .= '</p>';
 
@@ -1680,6 +1689,17 @@ class YouTubePrefs
             $new_options[self::$opt_vol] = $_vol;
 
 
+            $_apikey = '';
+            try
+            {
+                $_apikey = trim(str_replace(array(' ', "'", '"'), array('', '', ''), strip_tags($_POST[self::$opt_apikey])));
+            }
+            catch (Exception $ex)
+            {
+                $_apikey = '';
+            }
+            $new_options[self::$opt_apikey] = $_apikey;
+
             $_hl = '';
             try
             {
@@ -1782,7 +1802,7 @@ class YouTubePrefs
                       text-decoration: none; background-color: #ffffff;}
             .jumper {height: 25px;}
             .ssschema {float: right; width: 350px; height: auto; margin-right: 10px;}
-            .ssfb {float: right; height: auto; margin-right: 10px;}
+            .ssfb {float: right; height: auto; margin-right: 10px; margin-left: 15px;}
             .totop {position: absolute; right: 20px; top: 5px; color: #444444; font-size: 10px;}
             input[type=checkbox] {border: 1px solid #000000;}
             .chktitle {display: inline-block; padding: 1px 3px 1px 3px; border-radius: 3px; background-color: #ffffff; border: 1px solid #dddddd;}
@@ -1797,6 +1817,11 @@ class YouTubePrefs
             .vol-range {background-color: #dddddd; border-radius: 3px; cursor: pointer;}
             input#vol {vertical-align: middle;}
             .vol-seeslider {display: none;}
+
+            #boxschemaorg {font-weight: bold; padding: 7px 0;  <?php echo $all[self::$opt_schemaorg] ? 'display: block;' : 'display: none;' ?>}
+            .apikey-msg {display: inline-block; width: 45%; vertical-align: top;}
+            .apikey-video{margin-left: 3%; display: inline-block; width: 50%; position: relative; padding-top: 29%}
+            .apikey-video iframe{display: block; width: 100%; height: 100%; position: absolute; top: 0; left: 0;}
             #boxnocookie {display: inline-block; border-radius: 3px; padding: 2px 4px 2px 4px; color: red; background-color: yellow; font-weight: bold; <?php echo $all[self::$opt_nocookie] ? '' : 'display: none;' ?>}
             .strike {text-decoration: line-through;}
             .upgchecks { padding: 20px; border-radius: 15px; border: 1px dotted #777777; background-color: #fcfcfc; }
@@ -1913,7 +1938,7 @@ class YouTubePrefs
                     </p>
                     <p>
                         <input name="<?php echo self::$opt_acctitle; ?>" id="<?php echo self::$opt_acctitle; ?>" <?php checked($all[self::$opt_acctitle], 1); ?> type="checkbox" class="checkbox">
-                        <label for="<?php echo self::$opt_acctitle; ?>"><b class="chktitle">Accessible Title Attributes: <sup class="orange">NEW</sup></b> Improve accessibility by using title attributes for screen reader support. It should help your site pass functional accessibility evaluation (FAE). </label>
+                        <label for="<?php echo self::$opt_acctitle; ?>"><b class="chktitle">Accessible Title Attributes: <sup class="orange">NEW</sup></b> Improve accessibility by using title attributes for screen reader support. It should help your site pass functional accessibility evaluations (FAE). </label>
                     </p>
                     <p>
                         <input name="<?php echo self::$opt_theme; ?>" id="<?php echo self::$opt_theme; ?>" <?php checked($all[self::$opt_theme], 'dark'); ?> type="checkbox" class="checkbox">
@@ -2019,12 +2044,13 @@ class YouTubePrefs
                         </label>
                     </p>
 
-                    <p class="smallnote orange">Below are PRO features for enhanced SEO and performance (works for even past embed links). <a href="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx" target="_blank">Activate them and several other features &raquo;</a></p>
+
                     <div class="upgchecks">
                         <?php
                         if ($all[self::$opt_pro] && strlen(trim($all[self::$opt_pro])) > 0)
                         {
                             ?>
+                            <p class="smallnote orange">Below are PRO features for enhanced SEO and performance (works for even past embed links). </p>
 
                             <p>
                                 <input name="<?php echo self::$opt_dynload; ?>" id="<?php echo self::$opt_dynload; ?>" <?php checked($all[self::$opt_dynload], 1); ?> type="checkbox" class="checkbox">                        
@@ -2053,18 +2079,33 @@ class YouTubePrefs
                                 </label>
                             </p>
                             <p>
+                                <img class="ssfb" src="<?php echo plugins_url('images/youtube_thumbnail_sample.jpg', __FILE__) ?>" />
                                 <input name="<?php echo self::$opt_ftpostimg; ?>" id="<?php echo self::$opt_ftpostimg; ?>" <?php checked($all[self::$opt_ftpostimg], 1); ?> type="checkbox" class="checkbox">
                                 <label for="<?php echo self::$opt_ftpostimg; ?>">
                                     <b>(PRO)</b> <b class="chktitle">Automatic Video Thumbnails: <sup class="orange">NEW</sup></b> 
                                     Automatically grab the thumbnail image of the first video embedded in each post or page, and use it as the featured image. All you have to do is click Update on a post or page and the plugin does the rest!
+                                    (Example shown on the right) <a target="_blank" href="<?php echo self::$epbase ?>/add-youtube-video-thumbnails-featured-image-wordpress.aspx">Read more here &raquo;</a>
                                 </label>
                             </p>
-
+                            <div class="clearboth"></div>
                             <p>
                                 <input name="<?php echo self::$opt_schemaorg; ?>" id="<?php echo self::$opt_schemaorg; ?>" <?php checked($all[self::$opt_schemaorg], 1); ?> type="checkbox" class="checkbox">
                                 <label for="<?php echo self::$opt_schemaorg; ?>">
                                     <b>(PRO)</b> <b class="chktitle">Video SEO Tags:</b> Update your YouTube embeds with Google, Bing, and Yahoo friendly video SEO markup.
                                 </label>
+                                <span id="boxschemaorg">
+                                    <span class="apikey-msg">
+                                        The video SEO tags include data like the title, description, and thumbnail information of each video you embed.  This plugin automatically extracts this data directly from YouTube using the version 3 API,
+                                        which will soon replace the version 2 API. This particular API version requires that you obtain an API key so that YouTube can authenticate the requests.  Don't worry, it's an easy process.  
+                                        Just <a href="https://developers.google.com/youtube/registering_an_application" target="_blank">click this link &raquo;</a> and follow the video to the right to get your API key. Then paste it in the box below, and click the "Save Changes" button:
+                                        <br>
+                                        <span style="vertical-align: middle; display: inline-block;">
+                                            YouTube API Key: <input type="text" name="<?php echo self::$opt_apikey; ?>" id="<?php echo self::$opt_apikey; ?>" value="<?php echo trim($all[self::$opt_apikey]); ?>" class="textinput" style="width: 200px;">
+                                        </span>
+                                    </span>
+                                    <span class="apikey-video">
+                                        <iframe width="384" height="216" src="https://www.youtube.com/embed/2vmBACVETf4?rel=0" frameborder="0" allowfullscreen></iframe>
+                                    </span>
                             </p>
                             <p>
                                 <br>
@@ -2079,6 +2120,7 @@ class YouTubePrefs
                         else
                         {
                             ?>
+                            <p class="smallnote orange">Below are PRO features for enhanced SEO and performance (works for even past embed links). <a href="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx" target="_blank">Activate them and several other features &raquo;</a></p>
                             <p>
                                 <input disabled type="checkbox" class="checkbox">
                                 <label>
@@ -2087,12 +2129,16 @@ class YouTubePrefs
                                 </label>
                             </p>
                             <p>
+                                <img class="ssfb" src="<?php echo plugins_url('images/youtube_thumbnail_sample.jpg', __FILE__) ?>" />
                                 <input disabled type="checkbox" class="checkbox">
                                 <label>
                                     <b class="chktitle">Automatic Video Thumbnails: <sup class="orange">NEW</sup></b>  <span class="pronon">(PRO Users)</span> 
-                                    Automatically grab the thumbnail image of the first video embedded in each post or page, and use it as the featured image. All you have to do is click Update on a post or page and the plugin does the rest!
+                                    Automatically grab the thumbnail image of the first video embedded in each post or page, and use it as the featured image. 
+                                    All you have to do is click Update on a post or page and the plugin does the rest! 
+                                    (Example shown on the right) <a target="_blank" href="<?php echo self::$epbase ?>/add-youtube-video-thumbnails-featured-image-wordpress.aspx">Read more here &raquo;</a>
                                 </label>
                             </p>
+                            <div class="clearboth"></div>
                             <p>
                                 <input disabled type="checkbox" class="checkbox">
                                 <label>
@@ -2296,7 +2342,7 @@ class YouTubePrefs
                     Deactivating the No Cookies option has also been proven to solve player errors.
                 </p>
                 <p>
-                    We also have a YouTube channel with some helper videos.  <a href="https://www.youtube.com/subscription_center?add_user=EmbedPlus" target="_blank">Subscribe for tips and updates here &raquo;</a>
+                    We also have a YouTube channel. We use it to provide users with some helper videos and a way to keep updated on new features as they are introduced. <a href="https://www.youtube.com/subscription_center?add_user=EmbedPlus" target="_blank">Subscribe for tips and updates here &raquo;</a>
                 </p>
             </div>
             <br>
@@ -2352,6 +2398,17 @@ class YouTubePrefs
                         {
                             alertmessage += "Please enter a number between 0 and 100 for the default volume, or uncheck the option.";
                             jQuery("#boxdefaultvol input").css("background-color", "#ffcccc").css("border", "2px solid #000000");
+                            valid = false;
+                        }
+                    }
+
+
+                    if (jQuery("#<?php echo self::$opt_schemaorg; ?>").is(":checked"))
+                    {
+                        if (!(jQuery.trim(jQuery("#<?php echo self::$opt_apikey; ?>").val()).length > 0))
+                        {
+                            alertmessage += "Please enter a valid YouTube API key, or uncheck the 'Video SEO Tags' option.";
+                            jQuery("#boxschemaorg input").css("background-color", "#ffcccc").css("border", "2px solid #000000");
                             valid = false;
                         }
                     }
@@ -2427,6 +2484,18 @@ class YouTubePrefs
                             jQuery("#boxnocookie").hide(500);
                         }
 
+                    });
+
+                    jQuery('#<?php echo self::$opt_schemaorg; ?>').change(function()
+                    {
+                        if (jQuery(this).is(":checked"))
+                        {
+                            jQuery("#boxschemaorg").show(500);
+                        }
+                        else
+                        {
+                            jQuery("#boxschemaorg").hide(500);
+                        }
                     });
 
 
