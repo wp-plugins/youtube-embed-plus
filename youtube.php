@@ -2106,6 +2106,7 @@ class YouTubePrefs
                                     <span class="apikey-video">
                                         <iframe width="384" height="216" src="https://www.youtube.com/embed/2vmBACVETf4?rel=0" frameborder="0" allowfullscreen></iframe>
                                     </span>
+                                </span>
                             </p>
                             <p>
                                 <br>
