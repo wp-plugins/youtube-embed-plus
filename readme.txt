@@ -7,7 +7,7 @@ Tested up to: 4.1
 Stable tag: 9.8
 License: GPLv3 or later
 
-YouTube embed plugin. Embed the YouTube player and playlist in posts/pages and widgets. Add video thumbnails, analytics, SEO, security, and more.
+YouTube embed plugin. Embed responsive YouTube video players and playlists in posts/pages and widgets. Add video thumbnails, analytics, SEO, and more
 
 == Description ==
 
