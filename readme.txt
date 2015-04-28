@@ -3,7 +3,7 @@ Contributors: embedplus
 Plugin Name: YouTube Embed
 Tags: youtube snippets, deleted youtube videos, youtube takedowns, blocked youtube videos, youtube impressions, youtube alerts, featured image, css, cross site scripting, accessibility, same origin, screen reader, security, thumbnail, thumbnails, video thumbnails, wordpress security, xss, youtube thumbnails, thumbnail image, origin, lazy load, lazy, load, effects, special effects, get_locale, translator, locale, country code, country, TinyMCE, localization, internationalization, language, multi-language, translate, captions, subtitles, hl, audio, initialize, mute, sound, track, volume, at a glance, channel, annotations, music, music video, songs, song, lyrics, responsive, short code, shortcode, youtube shortcode, diagnostic, youtube status, seo, video seo, rich snippets, reddit, google+, google plus, comments, search, widget, sidebar, responsive, fluid, iphone, mobile, android, tablet, ipad, youtube playlist, playlists, playlist, wmode, hd, autohd, auto hd, video analytics, analytics, google, google analytics, view count, vlog, vlogging, web videos, youtube analytics, youtube, youtube plugin, youtube shortcode, embed youtube, plugin, video, video shortcode, embed videos, youtube player, shortcode, simple, simple youtube, smart youtube playback, youtube embed, wordpress youtube embed, embedding youtube, youtube embedding, video plugin, https, ssl, secure, no-cookie, cookie, html5, youtube html5, multilingual, multi-lingual, l10n, i18n
 Requires at least: 3.1
-Tested up to: 4.1
+Tested up to: 4.2
 Stable tag: 9.8
 License: GPLv3 or later
 
