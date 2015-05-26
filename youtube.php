@@ -3,7 +3,7 @@
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
-  Version: 9.8
+  Version: 10.0
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
@@ -32,7 +32,7 @@
 class YouTubePrefs
 {
 
-    public static $version = '9.8';
+    public static $version = '10.0';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -76,6 +76,9 @@ class YouTubePrefs
     public static $opt_apikey = 'apikey';
     public static $opt_schemaorg = 'schemaorg';
     public static $opt_ftpostimg = 'ftpostimg';
+    public static $opt_spdc = 'spdc';
+    public static $spdcprefix = 'ytpref';
+    public static $spdcall = 'youtubeprefs_spdcall';
     public static $opt_dynload = 'dynload';
     public static $opt_dyntype = 'dyntype';
     public static $opt_alloptions = 'youtubeprefs_alloptions';
@@ -650,6 +653,7 @@ class YouTubePrefs
         $_widgetfit = 1;
         $_schemaorg = 0;
         $_ftpostimg = 0;
+        $_spdc = 0;
         $_dynload = 0;
         $_dyntype = '';
         $_wmode = 'opaque';
@@ -699,6 +703,7 @@ class YouTubePrefs
             $_widgetfit = self::tryget($arroptions, self::$opt_widgetfit, 1);
             $_schemaorg = self::tryget($arroptions, self::$opt_schemaorg, 0);
             $_ftpostimg = self::tryget($arroptions, self::$opt_ftpostimg, 0);
+            $_spdc = self::tryget($arroptions, self::$opt_spdc, 0);
             $_dynload = self::tryget($arroptions, self::$opt_dynload, 0);
             $_dyntype = self::tryget($arroptions, self::$opt_dyntype, '');
             $_defaultdims = self::tryget($arroptions, self::$opt_defaultdims, 0);
@@ -745,6 +750,7 @@ class YouTubePrefs
             self::$opt_widgetfit => $_widgetfit,
             self::$opt_schemaorg => $_schemaorg,
             self::$opt_ftpostimg => $_ftpostimg,
+            self::$opt_spdc => $_spdc,
             self::$opt_dynload => $_dynload,
             self::$opt_dyntype => $_dyntype,
             self::$opt_defaultdims => $_defaultdims,
@@ -827,6 +833,8 @@ class YouTubePrefs
 
     public static function get_html($m, $iscontent)
     {
+        //$time_start = microtime(true);
+
         $link = trim(str_replace(self::$badentities, self::$goodliterals, $m[0]));
 
         $link = preg_replace('/\s/', '', $link);
@@ -852,6 +860,28 @@ class YouTubePrefs
         $acctitle = '';
 
         $finalparams = $linkparams + self::$alloptions;
+
+        $spdckey = '';
+        if (self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0 && self::$alloptions[self::$opt_spdc] == 1)
+        {
+            try
+            {
+                $kparams = $finalparams;
+                ksort($kparams);
+                $jparams = json_encode($kparams);
+                $spdckey = self::$spdcprefix . '_' . md5($jparams);
+                $spdcval = get_transient($spdckey);
+                if (!empty($spdcval))
+                {
+                    //self::debuglog((microtime(true) - $time_start) . "\t" . $spdckey . "\t" . $spdcval . "\r\n");
+                    return $spdcval;
+                }
+            }
+            catch (Exception $ex)
+            {
+                
+            }
+        }
 
         self::init_dimensions($link, $linkparams, $finalparams);
 
@@ -996,7 +1026,33 @@ class YouTubePrefs
         self::$defaultwidth = null;
         self::$oembeddata = null;
 
+        if (self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0 && self::$alloptions[self::$opt_spdc] == 1)
+        {
+            set_transient($spdckey, $code, 86400);
+            $allk = get_option(self::$spdcall, array());
+            $allk[] = $spdckey;
+            update_option(self::$spdcall, $allk);
+
+            //self::debuglog((microtime(true) - $time_start) . "\t" . $spdckey . "\t" . $code . "\r\n");
+        }
         return $code;
+    }
+
+    public static function debuglog($str)
+    {
+        $handle = fopen(__DIR__ . "\\debug.txt", "a+");
+        fwrite($handle, $str);
+        fclose($handle);
+    }
+
+    public static function spdcpurge()
+    {
+        $allk = get_option(self::$spdcall);
+        foreach ($allk as $t)
+        {
+            $success = delete_transient($t);
+        }
+        update_option(self::$spdcall, array());
     }
 
     public static function keyvalue($qry, $includev)
@@ -1453,6 +1509,30 @@ class YouTubePrefs
         die();
     }
 
+    public static function my_embedplus_clearspdc()
+    {
+        $result = array();
+        if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')
+        {
+            try
+            {
+                self::spdcpurge();
+                $result['type'] = 'success';
+            }
+            catch (Exception $ex)
+            {
+                $result['type'] = 'error';
+            }
+            echo json_encode($result);
+        }
+        else
+        {
+            $result['type'] = 'error';
+            header("Location: " . $_SERVER["HTTP_REFERER"]);
+        }
+        die();
+    }
+
     public static function custom_admin_pointers_check()
     {
         //return false; // ooopointer shut all off;
@@ -1563,18 +1643,12 @@ class YouTubePrefs
         $new_pointer_content .= '<p>'; // ooopointer
         if (!(self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0))
         {
-            $new_pointer_content .= __('We upgraded the plugin to use the newest version of YouTube&apos;s API, v3.  Used in FREE and  <a href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer" target="_blank">PRO features &raquo;</a>.');
+            
+            $new_pointer_content .= __('This update includes improved tips (Free and Pro) and adds <a href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer" target="_blank">caching to the Pro version for faster page loading &raquo;</a>.');
         }
         else
         {
-            if (self::$alloptions[self::$opt_schemaorg] == 1)
-            {
-                $new_pointer_content .= 'Important for Pro users: YouTube now requires an API key for SEO tags. Please <a href="' . admin_url('admin.php?page=youtube-my-preferences') . '#ftpostimg">read more here &raquo;</a>';
-            }
-            else
-            {
-                $new_pointer_content .= __('We upgraded the plugin to use the newest version of YouTube&apos;s API, v3.  Used in FREE and PRO features.');
-            }
+            $new_pointer_content .= __('This update includes improved tips (Free and Pro) and adds caching to the Pro version for faster page loading.');
         }
         $new_pointer_content .= '</p>';
 
@@ -1650,6 +1724,7 @@ class YouTubePrefs
             $new_options[self::$opt_widgetfit] = self::postchecked(self::$opt_widgetfit) ? 1 : 0;
             $new_options[self::$opt_schemaorg] = self::postchecked(self::$opt_schemaorg) ? 1 : 0;
             $new_options[self::$opt_ftpostimg] = self::postchecked(self::$opt_ftpostimg) ? 1 : 0;
+            $new_options[self::$opt_spdc] = self::postchecked(self::$opt_spdc) ? 1 : 0;
             $new_options[self::$opt_dynload] = self::postchecked(self::$opt_dynload) ? 1 : 0;
             $new_options[self::$opt_defaultdims] = self::postchecked(self::$opt_defaultdims) ? 1 : 0;
             $new_options[self::$opt_defaultvol] = self::postchecked(self::$opt_defaultvol) ? 1 : 0;
@@ -1727,11 +1802,20 @@ class YouTubePrefs
 
             $all = $new_options + $all;
 
-            // Save the posted value in the database
-
             update_option(self::$opt_alloptions, $all);
 
-            // Put a settings updated message on the screen
+            try
+            {
+                self::spdcpurge();
+                if ($all[self::$opt_spdc] == 1)
+                {
+                    wp_remote_get(site_url());
+                }
+            }
+            catch (Exception $ex)
+            {
+                
+            }
             ?>
             <div class="updated"><p><strong><?php _e('Settings saved.'); ?></strong></p></div>
             <?php
@@ -1802,7 +1886,7 @@ class YouTubePrefs
                       text-decoration: none; background-color: #ffffff;}
             .jumper {height: 25px;}
             .ssschema {float: right; width: 350px; height: auto; margin-right: 10px;}
-            .ssfb {float: right; height: auto; margin-right: 10px; margin-left: 15px;}
+            .ssfb {float: right; height: auto; margin-right: 10px; margin-left: 15px; margin-bottom: 10px;}
             .totop {position: absolute; right: 20px; top: 5px; color: #444444; font-size: 10px;}
             input[type=checkbox] {border: 1px solid #000000;}
             .chktitle {display: inline-block; padding: 1px 3px 1px 3px; border-radius: 3px; background-color: #ffffff; border: 1px solid #dddddd;}
@@ -1811,7 +1895,7 @@ class YouTubePrefs
             .pad10 {padding: 10px;}
             #boxdohl {font-weight: bold; padding: 0px 10px;  <?php echo $all[self::$opt_dohl] ? '' : 'display: none;' ?>}
             #boxdyn {font-weight: bold; padding: 0px 10px;  <?php echo $all[self::$opt_dynload] ? '' : 'display: none;' ?>}
-
+            #boxspdc {font-weight: bold; padding: 0px 10px;  <?php echo $all[self::$opt_spdc] ? '' : 'display: none;' ?>}
             #boxdefaultvol {font-weight: bold; padding: 0px 10px;  <?php echo $all[self::$opt_defaultvol] ? '' : 'display: none;' ?>}
             .vol-output {display: none; width: 30px; color: #008800;}
             .vol-range {background-color: #dddddd; border-radius: 3px; cursor: pointer;}
@@ -1826,6 +1910,8 @@ class YouTubePrefs
             .strike {text-decoration: line-through;}
             .upgchecks { padding: 20px; border-radius: 15px; border: 1px dotted #777777; background-color: #fcfcfc; }
             .clearboth {clear: both;}
+            div.hr {clear: both; border-bottom: 1px dotted #A8BDD8; margin: 20px 0 20px 0;}
+            .wp-pointer-buttons a.close {margin-top: 0 !important;}
         </style>
         <div class="ytindent">
             <br>
@@ -1900,7 +1986,7 @@ class YouTubePrefs
                 </p>
                 <p class="submit">
                     <input type="submit" onclick="return savevalidate();" name="Submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
-                    <em>If you're using a caching plugin and you do not see your changes after saving, you might want to reset your cache.</em>
+                    <em>If you're using a separate caching plugin and you do not see your changes after saving, you might want to reset your cache.</em>
                 </p>
 
                 <div class="ytindent chx">
@@ -2053,6 +2139,41 @@ class YouTubePrefs
                             <p class="smallnote orange">Below are PRO features for enhanced SEO and performance (works for even past embed links). </p>
 
                             <p>
+                                <input name="<?php echo self::$opt_spdc; ?>" id="<?php echo self::$opt_spdc; ?>" <?php checked($all[self::$opt_spdc], 1); ?> type="checkbox" class="checkbox">
+                                <label for="<?php echo self::$opt_spdc; ?>">
+                                    <b>(PRO)</b> <b class="chktitle">Faster Page Loads (Caching): <sup class="orange">NEW</sup></b> 
+                                    Use embed caching to speed up your page loads. By default, WordPress needs to request information from YouTube.com's servers for every video you embed, every time a page is loaded. These data requests can add time to your total page load time. Turn on this feature to cache that data (instead of having to request for the same information every time you load a page). This should then make your pages that have videos load faster.  It's been noted that even small speed ups in page load can help increase visitor engagement, retention, and conversions.
+                                </label>
+                            <div id="boxspdc">
+                                <input type="button" class="button button-primary" value="Click to clear YouTube cache"/>
+                                <span style="display: none;" id="clearspdcloading" class="orange bold">Clearing...</span>
+                                <span  class="orange bold" style="display: none;" id="clearspdcsuccess">Finished clearing YouTube cache.</span>
+                                <span class="orange bold" style="display: none;" id="clearspdcfailed">Sorry, there seemed to be a problem clearing the cache.</span>
+                            </div>
+                            </p>
+                            <div class="hr"></div>
+                            <p>
+                                <input name="<?php echo self::$opt_schemaorg; ?>" id="<?php echo self::$opt_schemaorg; ?>" <?php checked($all[self::$opt_schemaorg], 1); ?> type="checkbox" class="checkbox">
+                                <label for="<?php echo self::$opt_schemaorg; ?>">
+                                    <b>(PRO)</b> <b class="chktitle">Video SEO Tags:</b> Update your YouTube embeds with Google, Bing, and Yahoo friendly video SEO markup.
+                                </label>
+                                <span id="boxschemaorg">
+                                    <span class="apikey-msg">
+                                        The video SEO tags include data like the title, description, and thumbnail information of each video you embed.  This plugin automatically extracts this data directly from YouTube using the version 3 API,
+                                        which will soon replace the version 2 API. This particular API version requires that you obtain an API key so that YouTube can authenticate the requests.  Don't worry, it's an easy process.  
+                                        Just <a href="https://developers.google.com/youtube/registering_an_application" target="_blank">click this link &raquo;</a> and follow the video to the right to get your API key. Then paste it in the box below, and click the "Save Changes" button:
+                                        <br>
+                                        <span style="vertical-align: middle; display: inline-block;">
+                                            YouTube API Key: <input type="text" name="<?php echo self::$opt_apikey; ?>" id="<?php echo self::$opt_apikey; ?>" value="<?php echo trim($all[self::$opt_apikey]); ?>" class="textinput" style="width: 200px;">
+                                        </span>
+                                    </span>
+                                    <span class="apikey-video">
+                                        <iframe width="384" height="216" src="https://www.youtube.com/embed/2vmBACVETf4?rel=0" frameborder="0" allowfullscreen></iframe>
+                                    </span>
+                                </span>
+                            </p>
+                            <div class="hr"></div>
+                            <p>
                                 <input name="<?php echo self::$opt_dynload; ?>" id="<?php echo self::$opt_dynload; ?>" <?php checked($all[self::$opt_dynload], 1); ?> type="checkbox" class="checkbox">                        
                                 <span id="boxdyn">
                                     Animation:
@@ -2078,50 +2199,47 @@ class YouTubePrefs
                                     Add eye-catching special effects that will make your YouTube embeds bounce, flip, pulse, or slide as they load on the screen.  Check this box to select your desired effect. <a target="_blank" href="<?php echo self::$epbase ?>/add-special-effects-to-youtube-embeds-in-wordpress.aspx">Read more here &raquo;</a>
                                 </label>
                             </p>
+                            <div class="hr"></div>
                             <p>
-                                <img class="ssfb" src="<?php echo plugins_url('images/youtube_thumbnail_sample.jpg', __FILE__) ?>" />
-                                <input name="<?php echo self::$opt_ftpostimg; ?>" id="<?php echo self::$opt_ftpostimg; ?>" <?php checked($all[self::$opt_ftpostimg], 1); ?> type="checkbox" class="checkbox">
-                                <label for="<?php echo self::$opt_ftpostimg; ?>">
-                                    <b>(PRO)</b> <b class="chktitle">Automatic Video Thumbnails: <sup class="orange">NEW</sup></b> 
-                                    Automatically grab the thumbnail image of the first video embedded in each post or page, and use it as the featured image. All you have to do is click Update on a post or page and the plugin does the rest!
-                                    (Example shown on the right) <a target="_blank" href="<?php echo self::$epbase ?>/add-youtube-video-thumbnails-featured-image-wordpress.aspx">Read more here &raquo;</a>
-                                </label>
-                            </p>
-                            <div class="clearboth"></div>
-                            <p>
-                                <input name="<?php echo self::$opt_schemaorg; ?>" id="<?php echo self::$opt_schemaorg; ?>" <?php checked($all[self::$opt_schemaorg], 1); ?> type="checkbox" class="checkbox">
-                                <label for="<?php echo self::$opt_schemaorg; ?>">
-                                    <b>(PRO)</b> <b class="chktitle">Video SEO Tags:</b> Update your YouTube embeds with Google, Bing, and Yahoo friendly video SEO markup.
-                                </label>
-                                <span id="boxschemaorg">
-                                    <span class="apikey-msg">
-                                        The video SEO tags include data like the title, description, and thumbnail information of each video you embed.  This plugin automatically extracts this data directly from YouTube using the version 3 API,
-                                        which will soon replace the version 2 API. This particular API version requires that you obtain an API key so that YouTube can authenticate the requests.  Don't worry, it's an easy process.  
-                                        Just <a href="https://developers.google.com/youtube/registering_an_application" target="_blank">click this link &raquo;</a> and follow the video to the right to get your API key. Then paste it in the box below, and click the "Save Changes" button:
-                                        <br>
-                                        <span style="vertical-align: middle; display: inline-block;">
-                                            YouTube API Key: <input type="text" name="<?php echo self::$opt_apikey; ?>" id="<?php echo self::$opt_apikey; ?>" value="<?php echo trim($all[self::$opt_apikey]); ?>" class="textinput" style="width: 200px;">
-                                        </span>
-                                    </span>
-                                    <span class="apikey-video">
-                                        <iframe width="384" height="216" src="https://www.youtube.com/embed/2vmBACVETf4?rel=0" frameborder="0" allowfullscreen></iframe>
-                                    </span>
-                                </span>
-                            </p>
-                            <p>
-                                <br>
                                 <img class="ssfb" src="<?php echo plugins_url('images/ssfb.jpg', __FILE__) ?>" />
                                 <input name="<?php echo self::$opt_ogvideo; ?>" id="<?php echo self::$opt_ogvideo; ?>" <?php checked($all[self::$opt_ogvideo], 1); ?> type="checkbox" class="checkbox">
                                 <label for="<?php echo self::$opt_ogvideo; ?>">
                                     <b>(PRO)</b> <b class="chktitle">Facebook Open Graph Markup:</b>  <span class="pronon">(NEW: PRO Users)</span> Update YouTube embeds on your pages with Open Graph markup to enhance Facebook sharing and discovery of the pages. Your shared pages, for example, will also display embedded video thumbnails on Facebook Timelines.
                                 </label>
                             </p>
+                            <div class="hr"></div>
+                            <p>
+                                <img class="ssfb" src="<?php echo plugins_url('images/youtube_thumbnail_sample.jpg', __FILE__) ?>" />
+                                <input name="<?php echo self::$opt_ftpostimg; ?>" id="<?php echo self::$opt_ftpostimg; ?>" <?php checked($all[self::$opt_ftpostimg], 1); ?> type="checkbox" class="checkbox">
+                                <label for="<?php echo self::$opt_ftpostimg; ?>">
+                                    <b>(PRO)</b> <b class="chktitle">Automatic Video Thumbnails: <sup class="orange">NEW</sup></b> 
+                                    Automatically grab the thumbnail image of the first video embedded in each post or page, and use it as the featured image.  If your theme can display featured images of posts on your blog home, you’ll see the thumbnails there as shown in the picture on the right.  All you have to do is click Update on a post or page and the plugin does the rest!
+                                    (Example shown on the right) <a target="_blank" href="<?php echo self::$epbase ?>/add-youtube-video-thumbnails-featured-image-wordpress.aspx">Watch example here &raquo;</a>
+                                </label>
+                            </p>
+
                             <?php
                         }
                         else
                         {
                             ?>
-                            <p class="smallnote orange">Below are PRO features for enhanced SEO and performance (works for even past embed links). <a href="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx" target="_blank">Activate them and several other features &raquo;</a></p>
+                            <p class="smallnote orange">Below are PRO features for enhanced SEO and performance (works for even past embed links). </p>
+                            <p>
+                                <input disabled type="checkbox" class="checkbox">
+                                <label>
+                                    <b class="chktitle">Faster Page Loads (Caching): <sup class="orange">NEW</sup></b>  <span class="pronon">(PRO Users)</span> 
+                                    Use embed caching to speed up your page loads. By default, WordPress needs to request information from YouTube.com's servers for every video you embed, every time a page is loaded. These data requests can add time to your total page load time. Turn on this feature to cache that data (instead of having to request for the same information every time you load a page). This should then make your pages that have videos load faster.  It's been noted that even small speed ups in page load can help increase visitor engagement, retention, and conversions.
+                                </label>
+                            </p>
+                            <div class="hr"></div>
+
+                            <p>
+                                <input disabled type="checkbox" class="checkbox">
+                                <label>
+                                    <b class="chktitle">Video SEO Tags:</b>  <span class="pronon">(PRO Users)</span> Update your YouTube embeds with Google, Bing, and Yahoo friendly video SEO markup.
+                                </label>
+                            </p>
+                            <div class="hr"></div>
                             <p>
                                 <input disabled type="checkbox" class="checkbox">
                                 <label>
@@ -2129,6 +2247,15 @@ class YouTubePrefs
                                     Add eye-catching special effects that will make your YouTube embeds bounce, flip, pulse, or slide as they load on the screen.  Check this box to select your desired effect. <a target="_blank" href="<?php echo self::$epbase ?>/add-special-effects-to-youtube-embeds-in-wordpress.aspx">Read more here &raquo;</a>
                                 </label>
                             </p>
+                            <div class="hr"></div>
+                            <p>
+                                <img class="ssfb" src="<?php echo plugins_url('images/ssfb.jpg', __FILE__) ?>" />
+                                <input disabled type="checkbox" class="checkbox">
+                                <label>
+                                    <b class="chktitle">Facebook Open Graph Markup:</b> <span class="pronon">(NEW: PRO Users)</span>  Update YouTube embeds on your pages with Open Graph markup to enhance Facebook sharing and discovery of the pages. Your shared pages, for example, will also display embedded video thumbnails on Facebook Timelines.
+                                </label>
+                            </p>
+                            <div class="hr"></div>
                             <p>
                                 <img class="ssfb" src="<?php echo plugins_url('images/youtube_thumbnail_sample.jpg', __FILE__) ?>" />
                                 <input disabled type="checkbox" class="checkbox">
@@ -2139,22 +2266,10 @@ class YouTubePrefs
                                     (Example shown on the right) <a target="_blank" href="<?php echo self::$epbase ?>/add-youtube-video-thumbnails-featured-image-wordpress.aspx">Read more here &raquo;</a>
                                 </label>
                             </p>
-                            <div class="clearboth"></div>
+                            <div class="hr"></div>
                             <p>
-                                <input disabled type="checkbox" class="checkbox">
-                                <label>
-                                    <b class="chktitle">Video SEO Tags:</b>  <span class="pronon">(PRO Users)</span> Update your YouTube embeds with Google, Bing, and Yahoo friendly video SEO markup.
-                                </label>
+                                <a href="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx" target="_blank">Activate the above and several other features &raquo;</a>
                             </p>
-                            <p>
-                                <br>
-                                <img class="ssfb" src="<?php echo plugins_url('images/ssfb.jpg', __FILE__) ?>" />
-                                <input disabled type="checkbox" class="checkbox">
-                                <label>
-                                    <b class="chktitle">Facebook Open Graph Markup:</b> <span class="pronon">(NEW: PRO Users)</span>  Update YouTube embeds on your pages with Open Graph markup to enhance Facebook sharing and discovery of the pages. Your shared pages, for example, will also display embedded video thumbnails on Facebook Timelines.
-                                </label>
-                            </p>
-
                             <?php
                         }
                         ?>
@@ -2163,7 +2278,7 @@ class YouTubePrefs
                     <p class="submit">
                         <br>
                         <input type="submit" onclick="return savevalidate();" name="Submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
-                        <em>If you're using a caching plugin and you do not see your changes after saving, you might want to reset your cache.</em>
+                        <em>If you're using a separate caching plugin and you do not see your changes after saving, you might want to reset your cache.</em>
                     </p>
 
                     <hr>
@@ -2226,6 +2341,10 @@ class YouTubePrefs
                     <div class="procol">
                         <ul class="gopro">
                             <li>
+                                <img src="<?php echo plugins_url('images/iconcache.png', __FILE__) ?>">
+                                Faster Page Loads (Caching)
+                            </li>
+                            <li>
                                 <img src="<?php echo plugins_url('images/iconwizard.png', __FILE__) ?>">
                                 Full Visual Embedding Wizard (Easily customize embeds without memorizing codes)
                             </li>
@@ -2249,15 +2368,15 @@ class YouTubePrefs
                                 <img src="<?php echo plugins_url('images/mobilecompat.png', __FILE__) ?>">
                                 Check if your embeds have restrictions that can block mobile viewing <sup class="orange bold">NEW</sup>
                             </li>       
-                            <li>
-                                <img src="<?php echo plugins_url('images/videothumbs.png', __FILE__) ?>">
-                                Automatic video thumbnail images (just click 'Update')  <sup class="orange bold">NEW</sup>
-                            </li>       
 
                         </ul>
                     </div>
                     <div class="procol" style="max-width: 465px;">
                         <ul class="gopro">
+                            <li>
+                                <img src="<?php echo plugins_url('images/videothumbs.png', __FILE__) ?>">
+                                Automatic video thumbnail images (just click 'Update')  <sup class="orange bold">NEW</sup>
+                            </li>       
                             <li>
                                 <img src="<?php echo plugins_url('images/prioritysupport.png', __FILE__) ?>">
                                 Priority support (Puts your request in front)
@@ -2284,10 +2403,10 @@ class YouTubePrefs
                                 <img src="<?php echo plugins_url('images/infinity.png', __FILE__) ?>">
                                 Unlimited PRO upgrades and downloads
                             </li>
-                            <li>
-                                <img src="<?php echo plugins_url('images/questionsale.png', __FILE__) ?>">
-                                What else? You tell us!                                
-                            </li>                           
+                            <!--                            <li>
+                                                            <img src="<?php echo plugins_url('images/questionsale.png', __FILE__) ?>">
+                                                            What else? You tell us!                                
+                                                        </li>                           -->
                         </ul>
                     </div>
                     <div style="clear: both;"></div>
@@ -2336,7 +2455,8 @@ class YouTubePrefs
                         <code>[embedyt]http://www.youtube.com/watch?v=ABCDEF&width=400&height=250[/embedyt] [embedyt]http://www.youtube.com/watch?v=GHIJK&width=400&height=250[/embedyt]</code>
                         <br> TIP: As shown above, decrease the size of each video so that they fit together on the same line (See the "How To Override Defaults" section for height and width instructions)
                     </li>
-                    <li>Finally, there's a slight chance your custom theme is the issue, if you have one. To know for sure, we suggest temporarily switching to one of the default WordPress themes (e.g., "Twenty Thirteen") just to see if your video does appear. If it suddenly works, then your custom theme is the issue. You can switch back when done testing.</li>
+                    <li>Finally, there's a slight chance your custom theme is the issue, if you have one. To know for sure, we suggest temporarily switching to one of the default WordPress themes (e.g., "Twenty Fourteen") just to see if your video does appear. If it suddenly works, then your custom theme is the issue. You can switch back when done testing.</li>
+                    <li>If your videos always appear full size, try turning off "Responsive video sizing."</li>
                     <li>If none of the above work, you can contact us here if you still have issues: ext@embedplus.com. We'll try to respond within a week. PRO users should use the priority form below for faster replies.</li>                        
                 </ul>
                 <p>
@@ -2426,6 +2546,9 @@ class YouTubePrefs
                         }
                     }
 
+
+
+
                     //                    if (jQuery("#<?php echo self::$opt_dohl; ?>").is(":checked"))
                     //                    {
                     //                        if (!(/^[A-Za-z][A-Za-z]$/.test(jQuery.trim(jQuery("#<?php echo self::$opt_hl; ?>").val()))))
@@ -2472,6 +2595,19 @@ class YouTubePrefs
                         }
 
                     });
+
+                    jQuery('#<?php echo self::$opt_spdc; ?>').change(function()
+                    {
+                        if (jQuery(this).is(":checked"))
+                        {
+                            jQuery("#boxspdc").show(500);
+                        }
+                        else
+                        {
+                            jQuery("#boxspdc").hide(500);
+                        }
+                    });
+
 
 
                     jQuery('#<?php echo self::$opt_nocookie; ?>').change(function()
@@ -2545,6 +2681,44 @@ class YouTubePrefs
                     {
                         $("input#vol").width(40);
                     }
+
+
+                    jQuery('#boxspdc input').click(function() {
+                        jQuery('#clearspdcloading').show();
+                        jQuery('#clearspdcfailed').hide();
+                        jQuery('#clearspdcsuccess').hide();
+
+                        $clearbutton = jQuery(this);
+                        $clearbutton.attr('disabled', 'disabled');
+
+                        jQuery.ajax({
+                            type: "post",
+                            dataType: "json",
+                            timeout: 30000,
+                            url: wpajaxurl,
+                            data: {action: 'my_embedplus_clearspdc'},
+                            success: function(response) {
+                                if (response.type == "success") {
+                                    jQuery("#clearspdcsuccess").show();
+                                }
+                                else {
+                                    jQuery("#clearspdcfailed").show();
+                                }
+                            },
+                            error: function(xhr, ajaxOptions, thrownError) {
+                                jQuery("#clearspdcfailed").show();
+                            },
+                            complete: function() {
+                                jQuery('#clearspdcloading').hide();
+                                $clearbutton.removeAttr('disabled');
+                            }
+
+                        });
+
+                    });
+
+
+
 
                     jQuery("#showcase-validate").click(function() {
                         window.open("<?php echo self::$epbase . "/showcase-validate.aspx?prokey=" . self::$alloptions[self::$opt_pro] ?>" + "&domain=" + mydomain);
@@ -2732,6 +2906,7 @@ class YouTubePrefs
 
     add_action('wp_enqueue_scripts', array('YouTubePrefs', 'ytprefsscript'), 100);
     add_action("wp_ajax_my_embedplus_pro_record", array('YouTubePrefs', 'my_embedplus_pro_record'));
+    add_action("wp_ajax_my_embedplus_clearspdc", array('YouTubePrefs', 'my_embedplus_clearspdc'));
     add_action("wp_ajax_my_embedplus_glance_vids", array('YouTubePrefs', 'my_embedplus_glance_vids'));
     add_action("wp_ajax_my_embedplus_glance_count", array('YouTubePrefs', 'my_embedplus_glance_count'));
     add_action("wp_ajax_my_embedplus_dismiss_double_plugin_warning", array('YouTubePrefs', 'my_embedplus_dismiss_double_plugin_warning'));
