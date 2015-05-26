@@ -7,7 +7,7 @@ Tested up to: 4.2
 Stable tag: 10.0
 License: GPLv3 or later
 
-YouTube embed plugin. Embed responsive YouTube video players & playlists in posts & widgets. Add video thumbnails, analytics, SEO, caching, and more!
+YouTube embed plugin. Embed responsive YouTube video players & playlists in posts & widgets. Add video thumbnails, analytics, SEO, caching...
 
 == Description ==
 
