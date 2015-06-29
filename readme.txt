@@ -4,7 +4,7 @@ Plugin Name: YouTube Embed
 Tags: accessibility, analytics, api, blocked youtube videos, cache, caching, channel, deleted youtube videos, effects, embed youtube, embedding youtube, featured image, get_locale, i18n, internationalization, l10n, language, lazy, lazy load, load, locale, localization, mobile, mute, no-cookie, oembed, page load, page speed, playlist, playlists, plugin, Reddit, responsive, rich snippets, origin, screen reader, secure, security, seo, short code, shortcode, sidebar, special effects, ssl, subtitles, thumbnail, thumbnail image, thumbnails, TinyMCE, translate, translator, video, video analytics, video plugin, video seo, video shortcode, video thumbnails, view count, volume,  widget, wordpress security, wordpress youtube embed, xss, youtube, youtube api, youtube analytics, youtube embed, youtube impressions, youtube player, youtube playlist, youtube plugin, youtube shortcode, youtube snippets, youtube takedowns, youtube thumbnails, youtube plugin migration
 Requires at least: 3.1
 Tested up to: 4.2
-Stable tag: 10.1
+Stable tag: 10.2
 License: GPLv3 or later
 
 YouTube embed plugin. Embed responsive YouTube video players & playlists in posts & widgets. Add video thumbnails, analytics, SEO, caching...
@@ -17,6 +17,7 @@ YouTube embed plugin. Embed responsive YouTube video players & playlists in post
 * Site origin information with each embed code as an extra security measure. In YouTube's/Google's own words, checking this option "protects against malicious third-party JavaScript being injected into your page and hijacking control of your YouTube player." We especially recommend checking it as it adds higher security than the built-in YouTube embedding method that comes with the current version of WordPress (i.e. oembed).
 * Easy "Insert" button for both the Visual and Text mode of the editor
 * [Embed an entire channel as a playlist >>](https://www.youtube.com/watch?v=_9D4yMyd40g)
+* Start video settings for playlist embeds. You can now choose to start a playlist with a specific video or have the plugin automatically start with the most recently added video.
 * Volume level initialization ( [helpful for autoplay >>](http://www.embedplus.com/mute-volume-youtube-wordpress.aspx) )
 * iOS playback preferences
 * [Automatic localization/internationalization](http://www.embedplus.com/youtube-iso-639-1-language-codes.aspx) so you can set the player's interface language from English to another
@@ -139,6 +140,9 @@ You can also start and end each individual video at particular times. Like the a
 6. YouTube Embed Screenshot 6: Localization/internationalization so you can set the player's interface language
 
 == Changelog ==
+
+= YouTube Embed 10.2 =
+Adds start video settings for playlist embeds. You can now choose to start a playlist with a specific video or have the plugin automatically start with the most recently added video.
 
 = YouTube Embed 10.1 =
 Adds the ability to automatically migrate from another plugin's shortcode. Caching feature now allows lifetime settings. Improved compatibility with other plugins using the YouTube API.

@@ -3,7 +3,7 @@
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
-  Version: 10.1
+  Version: 10.2
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
@@ -32,7 +32,7 @@
 class YouTubePrefs
 {
 
-    public static $version = '10.1';
+    public static $version = '10.2';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -62,6 +62,7 @@ class YouTubePrefs
     public static $opt_ssl = 'ssl';
     public static $opt_ogvideo = 'ogvideo';
     public static $opt_nocookie = 'nocookie';
+    public static $opt_playlistorder = 'playlistorder';
     public static $opt_acctitle = 'acctitle';
     public static $opt_pro = 'pro';
     public static $opt_oldspacing = 'oldspacing';
@@ -94,9 +95,7 @@ class YouTubePrefs
     public static $badentities = array('&#215;', '×', '&#8211;', '–', '&amp;');
     public static $goodliterals = array('x', 'x', '--', '--', '&');
 
-    /*
-      listType
-     */
+   
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -150,6 +149,7 @@ class YouTubePrefs
             self::$opt_listType,
             self::$opt_wmode,
             self::$opt_vq,
+            'index',
             'list',
             'start',
             'end'
@@ -647,6 +647,7 @@ class YouTubePrefs
         $_pro = '';
         $_ssl = 0;
         $_nocookie = 0;
+        $_playlistorder = 0;
         $_acctitle = 0;
         $_ogvideo = 0;
         $_migrate = 0;
@@ -699,6 +700,7 @@ class YouTubePrefs
             $_pro = self::tryget($arroptions, self::$opt_pro, '');
             $_ssl = self::tryget($arroptions, self::$opt_ssl, 0);
             $_nocookie = self::tryget($arroptions, self::$opt_nocookie, 0);
+            $_playlistorder = self::tryget($arroptions, self::$opt_playlistorder, 0);
             $_acctitle = self::tryget($arroptions, self::$opt_acctitle, 0);
             $_ogvideo = self::tryget($arroptions, self::$opt_ogvideo, 0);
             $_migrate = self::tryget($arroptions, self::$opt_migrate, 0);
@@ -750,6 +752,7 @@ class YouTubePrefs
             self::$opt_pro => $_pro,
             self::$opt_ssl => $_ssl,
             self::$opt_nocookie => $_nocookie,
+            self::$opt_playlistorder => $_playlistorder,
             self::$opt_acctitle => $_acctitle,
             self::$opt_ogvideo => $_ogvideo,
             self::$opt_migrate => $_migrate,
@@ -806,7 +809,6 @@ class YouTubePrefs
                     add_shortcode('youtube', array('YouTubePrefs', 'apply_prefs_shortcode_youtube'));
                     add_shortcode('youtube_video', array('YouTubePrefs', 'apply_prefs_shortcode_youtube'));
                 }
-                
             }
         }
         else
@@ -828,7 +830,7 @@ class YouTubePrefs
         }
         return '';
     }
-    
+
     public static function apply_prefs_shortcode_youtube($atts, $content = null)
     {
         $content = 'http://www.youtube.com/watch?v=' . trim($content);
@@ -839,7 +841,6 @@ class YouTubePrefs
         }
         return '';
     }
-
 
     public static function apply_prefs_content($content)
     {
@@ -1016,8 +1017,23 @@ class YouTubePrefs
             }
         }
 
+        // playlist cleanup
+        $videoidoutput = isset($linkparams['v']) ? $linkparams['v'] : '';
+       
+        if ((self::$alloptions[self::$opt_playlistorder] == 1 || isset($finalparams['plindex'])) && isset($finalparams['list']))
+        {
+            try
+            {
+                $videoidoutput = '';
+                $finalparams['index'] = intval($finalparams['plindex']);
+            }
+            catch (Exception $ex)
+            {
+            }
+        }
+
         $code1 = '<iframe ' . $dyntype . $centercode . ' id="_ytid_' . rand(10000, 99999) . '" width="' . self::$defaultwidth . '" height="' . self::$defaultheight .
-                '" ' . $dynsrc . 'src="//www.' . $youtubebaseurl . '.com/embed/' . (isset($linkparams['v']) ? $linkparams['v'] : '') . '?';
+                '" ' . $dynsrc . 'src="//www.' . $youtubebaseurl . '.com/embed/' . $videoidoutput . '?';
         $code2 = '" frameborder="0" type="text/html" class="__youtube_prefs__' . ($iscontent ? '' : ' __youtube_prefs_widget__') .
                 '"' . $voloutput . $acctitle . ' allowfullscreen webkitallowfullscreen mozallowfullscreen ></iframe>' . $schemaorgoutput;
 
@@ -1676,12 +1692,11 @@ class YouTubePrefs
         $new_pointer_content .= '<p>'; // ooopointer
         if (!(self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0))
         {
-
-            $new_pointer_content .= __('(1) Adds the ability to automatically migrate from another plugin shortcode, for FREE and  <a href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer" target="_blank">PRO</a> versions. (2) Adds a new caching parameter and caching tips for <a href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer" target="_blank">PRO users &raquo;</a>.');
+            $new_pointer_content .= __('This update adds start video settings for playlists: global settings for FREE users, global and wizard settings for <a href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer" target="_blank">PRO users &#9654;</a>');
         }
         else
         {
-            $new_pointer_content .= __('(1) Adds the ability to automatically migrate from another plugin shortcode, for FREE and PRO versions. (2) Adds a new caching parameter and caching tips for PRO users.');
+            $new_pointer_content .= __('This update adds start video settings for playlists: global settings for FREE users, global and wizard settings for PRO users.');
         }
         $new_pointer_content .= '</p>';
 
@@ -1749,6 +1764,7 @@ class YouTubePrefs
             $new_options[self::$opt_wmode] = self::postchecked(self::$opt_wmode) ? 'opaque' : 'transparent';
             $new_options[self::$opt_vq] = self::postchecked(self::$opt_vq) ? 'hd720' : '';
             $new_options[self::$opt_nocookie] = self::postchecked(self::$opt_nocookie) ? 1 : 0;
+            $new_options[self::$opt_playlistorder] = self::postchecked(self::$opt_playlistorder) ? 1 : 0;
             $new_options[self::$opt_acctitle] = self::postchecked(self::$opt_acctitle) ? 1 : 0;
             $new_options[self::$opt_ogvideo] = self::postchecked(self::$opt_ogvideo) ? 1 : 0;
             $new_options[self::$opt_migrate] = self::postchecked(self::$opt_migrate) ? 1 : 0;
@@ -1986,7 +2002,7 @@ class YouTubePrefs
                     <i>Method 2 - </i> If you want to do some formatting (e.g. add HTML to center a video) or have two or more videos next to each other on the same line, wrap each link with the <code>[embedyt]...[/embedyt]</code> shortcode. <b>Tip for embedding videos on the same line:</b> As shown in the example image below, decrease the size of each video so that they fit together on the same line (See the "How To Override Defaults" section for height and width instructions).
                 </p>
                 <p>
-                    <b>For playlists:</b> Go to the page for the playlist that lists all of its videos (<a target="_blank" href="http://www.youtube.com/playlist?list=PL70DEC2B0568B5469">Example &raquo;</a>). Click on the video that you want the playlist to start with. Copy and paste that browser URL into your blog on its own line. If you want to have two or more playlists next to each other on the same line, wrap each link with the <code>[embedyt]...[/embedyt]</code> shortcode.
+                    <b>For playlists:</b> Go to the page for the playlist that lists all of its videos (<a target="_blank" href="http://www.youtube.com/playlist?list=PL70DEC2B0568B5469">Example &raquo;</a>). Click on the video that you want the playlist to start with. Copy and paste that browser URL into your blog on its own line. If you want the first video to always be the latest video in your playlist, check the option "Playlist Ordering" in the settings down below (you will also see this option available if you use the Pro Wizard). If you want to have two or more playlists next to each other on the same line, wrap each link with the <code>[embedyt]...[/embedyt]</code> shortcode.
                 </p>                
                 <p>
                     <b>For channel playlists:</b> At your editor, click on the <img style="vertical-align: text-bottom;" src="<?php echo plugins_url('images/wizbuttonbig.png', __FILE__) ?>"> wizard button and choose the option <i>Search for a video or channel to insert in my editor.</i> Then, click on the <i>channel playlist</i> option there (instead of <i>single video</i>). Search for the channel username and follow the rest of the directions there.
@@ -2179,19 +2195,26 @@ class YouTubePrefs
                             As of January 2015, YouTube began serving the HTML5 player by default; therefore, this plugin no longer needs a special HTML5 setting.  This option is simply kept here as a notice.
                         </label>
                     </p>
+                    
+                    <p>
+                        <input name="<?php echo self::$opt_playlistorder; ?>" id="<?php echo self::$opt_playlistorder; ?>" <?php checked($all[self::$opt_playlistorder], 1); ?> type="checkbox" class="checkbox">
+                        <label for="<?php echo self::$opt_playlistorder; ?>">
+                            <b class="chktitle">Playlist Ordering: <sup class="orange bold">NEW</sup></b> Check this option if you want your playlists to begin with the latest added video by default. (Unchecking this will force playlists to always start with your selected specific video).
+                        </label>
+                    </p>
 
                     <p>
                         <input name="<?php echo self::$opt_migrate; ?>" id="<?php echo self::$opt_migrate; ?>" <?php checked($all[self::$opt_migrate], 1); ?> type="checkbox" class="checkbox">
                         <label for="<?php echo self::$opt_migrate; ?>">
                             <b class="chktitle">Migrate Shortcodes: <sup class="orange bold">NEW</sup></b> Inherit other shortcodes.
                         </label>
-                        <div id="boxmigratelist">
-                            <ul>
-                                <li><input name="<?php echo self::$opt_migrate_youtube; ?>" id="<?php echo self::$opt_migrate_youtube; ?>" <?php checked($all[self::$opt_migrate_youtube], 1); ?> type="checkbox" class="checkbox"><label for="<?php echo self::$opt_migrate_youtube; ?>">"Youtube Embed" : <code>youtube</code> and <code>youtube_video</code> shortcodes</label></li>
-                                <li class="smallnote orange" style="list-style: none;">This feature is beta. More shortcodes coming.</li>
-                            </ul>
-                            
-                        </div>
+                    <div id="boxmigratelist">
+                        <ul>
+                            <li><input name="<?php echo self::$opt_migrate_youtube; ?>" id="<?php echo self::$opt_migrate_youtube; ?>" <?php checked($all[self::$opt_migrate_youtube], 1); ?> type="checkbox" class="checkbox"><label for="<?php echo self::$opt_migrate_youtube; ?>">"Youtube Embed" : <code>youtube</code> and <code>youtube_video</code> shortcodes</label></li>
+                            <li class="smallnote orange" style="list-style: none;">This feature is beta. More shortcodes coming.</li>
+                        </ul>
+
+                    </div>
                     </p>
 
                     <div class="upgchecks">
@@ -2268,8 +2291,8 @@ class YouTubePrefs
                                     </select>
                                 </span>
                                 <label for="<?php echo self::$opt_dynload; ?>">
-                                    <b>(PRO)</b>  <b class="chktitle">Special Loading Effects:</b>
-                                    Add eye-catching special effects that will make your YouTube embeds bounce, flip, pulse, or slide as they load on the screen.  Check this box to select your desired effect. <a target="_blank" href="<?php echo self::$epbase ?>/add-special-effects-to-youtube-embeds-in-wordpress.aspx">Read more here &raquo;</a>
+                                    <b>(PRO)</b>  <b class="chktitle">Special Lazy-Loading Effects:</b>
+                                    Add eye-catching special effects that will make your YouTube embeds bounce, flip, pulse, or slide as they lazy load on the screen.  Check this box to select your desired effect. <a target="_blank" href="<?php echo self::$epbase ?>/add-special-effects-to-youtube-embeds-in-wordpress.aspx">Read more here &raquo;</a>
                                 </label>
                             </p>
                             <div class="hr"></div>
