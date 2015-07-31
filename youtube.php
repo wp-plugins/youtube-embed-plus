@@ -2265,11 +2265,11 @@ class YouTubePrefs
             <div id="jumphowto"></div>
             <div class="ytnav">
                 <a href="#jumphowto">How To Embed</a>
-                <a href="#jumpwiz">Visual YouTube Wizard</a>
-                <a href="#jumpdefaults">Set Defaults</a>
+                <a href="#jumpwiz">Visual Wizard</a>
+                <a href="#jumpdefaults">Defaults</a>
                 <a href="#jumpgallery">Gallery Settings</a>
                 <a href="#jumpoverride">How To Override Defaults</a>
-                <a target="_blank" href="<?php echo self::$epbase . "/dashboard/pro-easy-video-analytics.aspx?ref=protab" ?>" style="border-color: #888888;">Why Upgrade?</a>
+                <a target="_blank" href="<?php echo self::$epbase . "/dashboard/pro-easy-video-analytics.aspx?ref=protab" ?>" style="border-color: #888888;">Upgrade?</a>
                 <a href="#jumpsupport">Support</a>
             </div>
 
@@ -2950,11 +2950,11 @@ class YouTubePrefs
             ?>
             <div class="ytnav">
                 <a href="#jumphowto">How To Embed</a>
-                <a href="#jumpwiz">Visual YouTube Wizard</a>
-                <a href="#jumpdefaults">Set Defaults</a>
+                <a href="#jumpwiz">Visual Wizard</a>
+                <a href="#jumpdefaults">Defaults</a>
                 <a href="#jumpgallery">Gallery Settings</a>
                 <a href="#jumpoverride">How To Override Defaults</a>
-                <a target="_blank" href="<?php echo self::$epbase . "/dashboard/pro-easy-video-analytics.aspx?ref=protab" ?>" style="border-color: #888888;">Why Upgrade?</a>
+                <a target="_blank" href="<?php echo self::$epbase . "/dashboard/pro-easy-video-analytics.aspx?ref=protab" ?>" style="border-color: #888888;">Upgrade?</a>
                 <a href="#jumpsupport">Support</a>
             </div>
 
