@@ -2,8 +2,8 @@
 /*
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
-  Description: YouTube embed plugin with basic features and convenient defaults. Upgrade now to add tracking, instant video SEO tags, and much more!
-  Version: 10.2
+  Description: YouTube embed plugin. Embed a responsive YouTube video, playlist gallery, or channel gallery. Add video thumbnails, analytics, SEO, caching...
+  Version: 10.3
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
@@ -32,7 +32,7 @@
 class YouTubePrefs
 {
 
-    public static $version = '10.2';
+    public static $version = '10.3';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -85,6 +85,10 @@ class YouTubePrefs
     public static $spdcall = 'youtubeprefs_spdcall';
     public static $opt_dynload = 'dynload';
     public static $opt_dyntype = 'dyntype';
+    public static $opt_gallery_pagesize = 'gallery_pagesize';
+    public static $opt_gallery_apikey = 'gallery_apikey';
+    public static $opt_gallery_columns = 'gallery_columns';
+    public static $opt_gallery_style = 'gallery_style';
     public static $opt_alloptions = 'youtubeprefs_alloptions';
     public static $alloptions = null;
     public static $yt_options = array();
@@ -94,8 +98,6 @@ class YouTubePrefs
     public static $scriptsprinted = 0;
     public static $badentities = array('&#215;', '×', '&#8211;', '–', '&amp;');
     public static $goodliterals = array('x', 'x', '--', '--', '&');
-
-   
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -167,7 +169,9 @@ class YouTubePrefs
         add_action('admin_menu', 'YouTubePrefs::ytprefs_plugin_menu');
         if (!is_admin())
         {
+
             add_action('wp_print_scripts', array('YouTubePrefs', 'jsvars'));
+            add_action('wp_enqueue_scripts', array('YouTubePrefs', 'jsinitvars'));
             add_action('wp_enqueue_scripts', array('YouTubePrefs', 'fitvids'));
             if (self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0 && self::$alloptions[self::$opt_ogvideo] == 1)
             {
@@ -604,6 +608,29 @@ class YouTubePrefs
 
     public static function jsvars()
     {
+        //https://support.cloudflare.com/hc/en-us/articles/200169436-How-can-I-have-Rocket-Loader-ignore-my-script-s-in-Automatic-Mode-
+        $responsiveselector = '[]';
+        if (self::$alloptions[self::$opt_widgetfit] == 1)
+        {
+            $responsiveselector = '["iframe.__youtube_prefs_widget__"]';
+        }
+        if (self::$alloptions[self::$opt_responsive] == 1)
+        {
+            $responsiveselector = '["iframe[src*=\'youtube.com\']","iframe[src*=\'youtube-nocookie.com\']","iframe[data-ep-src*=\'youtube.com\']","iframe[data-ep-src*=\'youtube-nocookie.com\']","iframe[data-ep-gallerysrc*=\'youtube.com\']"]';
+        }
+        ?>
+        <script data-cfasync="false">
+            var eppathtoscripts = "<?php echo plugins_url('scripts/', __FILE__); ?>";
+            var epresponsiveselector = <?php echo $responsiveselector; ?>;
+            var epdovol = true; //<?php echo (self::$alloptions[self::$opt_defaultvol] == 1 ? 'true' : 'false') ?>;
+        </script>
+        <?php
+    }
+
+    public static function jsinitvars()
+    {
+
+        //https://support.cloudflare.com/hc/en-us/articles/200169436-How-can-I-have-Rocket-Loader-ignore-my-script-s-in-Automatic-Mode-
         $responsiveselector = '[]';
         if (self::$alloptions[self::$opt_widgetfit] == 1)
         {
@@ -614,7 +641,7 @@ class YouTubePrefs
             $responsiveselector = '["iframe[src*=\'youtube.com\']","iframe[src*=\'youtube-nocookie.com\']","iframe[data-ep-src*=\'youtube.com\']","iframe[data-ep-src*=\'youtube-nocookie.com\']"]';
         }
         ?>
-        <script type="text/javascript">
+        <script data-cfasync="false">
             var eppathtoscripts = "<?php echo plugins_url('scripts/', __FILE__); ?>";
             var epresponsiveselector = <?php echo $responsiveselector; ?>;
             var epdovol = true; //<?php echo (self::$alloptions[self::$opt_defaultvol] == 1 ? 'true' : 'false') ?>;
@@ -673,6 +700,9 @@ class YouTubePrefs
         $_apikey = '';
         $_hl = '';
         $_dohl = 0;
+        $_gallery_columns = 3;
+        $_gallery_pagesize = 15;
+        $_gallery_style = 'grid';
 
         $arroptions = get_option(self::$opt_alloptions);
 
@@ -722,6 +752,9 @@ class YouTubePrefs
             $_defaultvol = self::tryget($arroptions, self::$opt_defaultvol, 0);
             $_vol = self::tryget($arroptions, self::$opt_vol, '');
             $_apikey = self::tryget($arroptions, self::$opt_apikey, '');
+            $_gallery_pagesize = self::tryget($arroptions, self::$opt_gallery_pagesize, 15);
+            $_gallery_columns = self::tryget($arroptions, self::$opt_gallery_columns, 3);
+            $_gallery_style = self::tryget($arroptions, self::$opt_gallery_style, 'grid');
         }
         else
         {
@@ -772,7 +805,10 @@ class YouTubePrefs
             self::$opt_defaultheight => $_defaultheight,
             self::$opt_defaultvol => $_defaultvol,
             self::$opt_vol => $_vol,
-            self::$opt_apikey => $_apikey
+            self::$opt_apikey => $_apikey,
+            self::$opt_gallery_columns => $_gallery_columns,
+            self::$opt_gallery_style => $_gallery_style,
+            self::$opt_gallery_pagesize => $_gallery_pagesize
         );
 
         update_option(self::$opt_alloptions, $all);
@@ -862,6 +898,182 @@ class YouTubePrefs
     public static function get_html_widget($m)
     {
         return self::get_html($m, false);
+    }
+
+    public static function get_gallery_page($playlistId, $pageToken, $pageSize, $columns, $style, $apiKey)
+    {
+        if (empty($apiKey))
+        {
+            return '<div>Please enter your YouTube API key to embed galleries.</div>';
+        }
+        if (self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0 && $style == 'listview')
+        {
+            //$columns = 1;
+        }
+
+        $apiEndpoint = 'https://www.googleapis.com/youtube/v3/playlistItems?part=snippet,status&playlistId=' . $playlistId
+                . '&maxResults=' . $pageSize
+                . '&key=' . $apiKey;
+        if ($pageToken != null)
+        {
+            $apiEndpoint .= '&pageToken=' . $pageToken;
+        }
+        $spdckey = '';
+        if (self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0 && self::$alloptions[self::$opt_spdc] == 1)
+        {
+            try
+            {
+                $spdckey = self::$spdcprefix . '_' . md5($apiEndpoint . $columns . $style);
+                $spdcval = get_transient($spdckey);
+                if (!empty($spdcval))
+                {
+                    //self::debuglog((microtime(true) - $time_start) . "\t" . $spdckey . "\t" . $spdcval . "\r\n");
+                    return $spdcval;
+                }
+            }
+            catch (Exception $ex)
+            {
+                
+            }
+        }
+
+        $code = '';
+
+        $apiResult = wp_remote_get($apiEndpoint);
+        $jsonResult = json_decode($apiResult['body']);
+
+        $resultsPerPage = $jsonResult->pageInfo->resultsPerPage;
+        $totalResults = $jsonResult->pageInfo->totalResults;
+
+        $nextPageToken = '';
+        $prevPageToken = '';
+        if (isset($jsonResult->nextPageToken))
+        {
+            $nextPageToken = $jsonResult->nextPageToken;
+        }
+
+        if (isset($jsonResult->prevPageToken))
+        {
+            $prevPageToken = $jsonResult->prevPageToken;
+        }
+
+        $cnt = 0;
+        foreach ($jsonResult->items as $item)
+        {
+
+            $thumb = new stdClass();
+
+            $thumb->id = isset($item->snippet->resourceId->videoId) ? $item->snippet->resourceId->videoId : null;
+            $thumb->id = $thumb->id ? $thumb->id : $item->id->videoId;
+            $thumb->title = $item->snippet->title;
+            $thumb->privacyStatus = isset($item->status->privacyStatus) ? $item->status->privacyStatus : null;
+
+            if ($thumb->privacyStatus == 'private')
+            {
+                $thumb->img = plugins_url('/images/private.png', __FILE__);
+                $thumb->quality = 'medium';
+            }
+            else
+            {
+                if (isset($item->snippet->thumbnails->high->url))
+                {
+                    $thumb->img = $item->snippet->thumbnails->high->url;
+                    $thumb->quality = 'high';
+                }
+                elseif (isset($item->snippet->thumbnails->default->url))
+                {
+                    $thumb->img = $item->snippet->thumbnails->default->url;
+                    $thumb->quality = 'default';
+                }
+                else
+                {
+                    $thumb->img = $item->snippet->thumbnails->medium->url;
+                    $thumb->quality = 'medium';
+                }
+            }
+
+            $code .= self::get_thumbnail_html($thumb, $style);
+            $cnt++;
+
+            if ($cnt % $columns === 0)
+            {
+                $code .= '<div class="epyt-gallery-rowbreak"></div>';
+            }
+        }
+
+        $pagination = '<div class="epyt-pagination">';
+        if (!empty($prevPageToken))
+        {
+            $pagination .= '<div class="epyt-pagebutton epyt-prev" data-playlistid="' . esc_attr($playlistId)
+                    . '" data-pagesize="' . intval($pageSize)
+                    . '" data-pagetoken="' . esc_attr($prevPageToken)
+                    . '" data-style="' . esc_attr($style)
+                    . '" data-columns="' . intval($columns)
+                    . '"><div>&laquo;</div> ' . _('Prev') . '</div>';
+        }
+
+        $totalPages = ceil($totalResults / $resultsPerPage);
+        $pagination .= '<div class="epyt-pagenumbers">';
+        $pagination .= '<div class="epyt-current">1</div><div class="epyt-pageseparator">' . _("of") . '</div><div class="epyt-totalpages">' . $totalPages . '</div>';
+        $pagination .= '</div>';
+
+        if (!empty($nextPageToken))
+        {
+            $pagination .= '<div class="epyt-pagebutton epyt-next" data-playlistid="' . esc_attr($playlistId)
+                    . '" data-pagesize="' . intval($pageSize)
+                    . '" data-pagetoken="' . esc_attr($nextPageToken)
+                    . '" data-style="' . esc_attr($style)
+                    . '" data-columns="' . intval($columns)
+                    . '">' . _('Next') . ' <div>&raquo;</div></div>';
+        }
+        $pagination .= '<div class="epyt-loader"><img src="' . plugins_url('images/gallery-page-loader.gif', __FILE__) . '"></div></div>';
+
+
+        $code = $pagination . $code . $pagination;
+
+        if (self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0 && self::$alloptions[self::$opt_spdc] == 1)
+        {
+            $daysecs = self::$alloptions[self::$opt_spdcexp] * 60 * 60;
+            set_transient($spdckey, $code, $daysecs);
+            $allk = get_option(self::$spdcall, array());
+            $allk[] = $spdckey;
+            update_option(self::$spdcall, $allk);
+
+            //self::debuglog((microtime(true) - $time_start) . "\t" . $spdckey . "\t" . $code . "\r\n");
+        }
+        return $code;
+    }
+
+    public static function get_thumbnail_html($thumb, $style)
+    {
+        $escId = esc_attr($thumb->id);
+        $code = '';
+        $styleclass = '';
+
+        if (self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0 && $style == 'listview')
+        {
+            $styleclass = 'epyt-listview';
+        }
+
+        $code .= '<div data-videoid="' . $escId . '" class="epyt-gallery-thumb ' . $styleclass . '">';
+        $code .= '<div class="epyt-gallery-img-box"><div class="epyt-gallery-img" style="background-image: url(' . esc_attr($thumb->img) . ')">' .
+                '<div class="epyt-gallery-playhover"><img class="epyt-play-img" src="' . plugins_url('images/playhover.png', __FILE__) . '" /><div class="epyt-gallery-playcrutch"></div></div>' .
+                '</div></div>';
+        $code .= '<div class="epyt-gallery-title">' . esc_html($thumb->title) . '</div>';
+        $code .= '</div>';
+
+
+        return $code;
+    }
+
+    public static function my_embedplus_gallery_page()
+    {
+        if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')
+        {
+            check_ajax_referer('embedplus-nonce', 'security');
+            echo self::get_gallery_page($_POST['playlistId'], $_POST['pageToken'], $_POST['pageSize'], $_POST['columns'], $_POST['style'], self::$alloptions[self::$opt_apikey]);
+            die();
+        }
     }
 
     public static function get_html($m, $iscontent)
@@ -1019,7 +1231,7 @@ class YouTubePrefs
 
         // playlist cleanup
         $videoidoutput = isset($linkparams['v']) ? $linkparams['v'] : '';
-       
+
         if ((self::$alloptions[self::$opt_playlistorder] == 1 || isset($finalparams['plindex'])) && isset($finalparams['list']))
         {
             try
@@ -1029,7 +1241,22 @@ class YouTubePrefs
             }
             catch (Exception $ex)
             {
+                
             }
+        }
+
+        $galleryWrapper1 = '';
+        $galleryWrapper2 = '';
+        $galleryCode = '';
+        if (
+                isset($finalparams['layout']) && strtolower($finalparams['layout']) == 'gallery' && isset($finalparams['list'])
+        )
+        {
+            $dynsrc = 'data-ep-gallery';
+            $galleryWrapper1 = '<div class="epyt-gallery" data-currpage="1">';
+            $galleryWrapper2 = '</div>';
+            $galleryCode = '<div class="epyt-gallery-list">' . self::get_gallery_page($finalparams['list'], null, $finalparams[self::$opt_gallery_pagesize], intval($finalparams[self::$opt_gallery_columns]), $finalparams[self::$opt_gallery_style], self::$alloptions[self::$opt_apikey]) . '</div>';
+            $videoidoutput = 'GALLERYVIDEOID';
         }
 
         $code1 = '<iframe ' . $dyntype . $centercode . ' id="_ytid_' . rand(10000, 99999) . '" width="' . self::$defaultwidth . '" height="' . self::$defaultheight .
@@ -1059,20 +1286,31 @@ class YouTubePrefs
             {
                 if (in_array($key, self::$yt_options))
                 {
-                    $finalsrc .= htmlspecialchars($key) . '=' . htmlspecialchars($value) . '&';
-                    if ($key == 'loop' && $value == 1 && !isset($finalparams['list']))
+                    if (!empty($galleryCode) && ($key == 'listType' || $key == 'list'))
                     {
-                        $finalsrc .= 'playlist=' . $finalparams['v'] . '&';
+                        
+                    }
+                    else
+                    {
+                        $finalsrc .= htmlspecialchars($key) . '=' . htmlspecialchars($value) . '&';
+                        if ($key == 'loop' && $value == 1 && !isset($finalparams['list']))
+                        {
+                            $finalsrc .= 'playlist=' . $finalparams['v'] . '&';
+                        }
                     }
                 }
             }
         }
 
-        $code = $code1 . $finalsrc . $code2; //. '<!--' . $m[0] . '-->';
+        $code = $galleryWrapper1 . $code1 . $finalsrc . $code2 . $galleryCode . $galleryWrapper2; //. '<!--' . $m[0] . '-->';
         // reset static vals for next embed
         self::$defaultheight = null;
         self::$defaultwidth = null;
         self::$oembeddata = null;
+
+
+
+
 
         if (self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0 && self::$alloptions[self::$opt_spdc] == 1)
         {
@@ -1692,11 +1930,11 @@ class YouTubePrefs
         $new_pointer_content .= '<p>'; // ooopointer
         if (!(self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0))
         {
-            $new_pointer_content .= __('This update adds start video settings for playlists: global settings for FREE users, global and wizard settings for <a href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer" target="_blank">PRO users &#9654;</a>');
+            $new_pointer_content .= __("This update adds playlist and channel gallery support for FREE and PRO users with some <a target=_blank href=" . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer' . ">additional PRO settings &raquo;</a>");
         }
         else
         {
-            $new_pointer_content .= __('This update adds start video settings for playlists: global settings for FREE users, global and wizard settings for PRO users.');
+            $new_pointer_content .= __("This update adds playlist and channel gallery support for FREE and PRO users with some additional PRO settings.");
         }
         $new_pointer_content .= '</p>';
 
@@ -1814,11 +2052,49 @@ class YouTubePrefs
             }
             $new_options[self::$opt_vol] = $_vol;
 
+            $_gallery_pagesize = 12;
+            try
+            {
+                $_gallery_pagesize = is_numeric(trim($_POST[self::$opt_gallery_pagesize])) ? intval(trim($_POST[self::$opt_gallery_pagesize])) : $_gallery_pagesize;
+            }
+            catch (Exception $ex)
+            {
+                
+            }
+            $new_options[self::$opt_gallery_pagesize] = $_gallery_pagesize;
+
+
+            $_gallery_columns = 3;
+            try
+            {
+                $_gallery_columns = is_numeric(trim($_POST[self::$opt_gallery_columns])) ? intval(trim($_POST[self::$opt_gallery_columns])) : $_gallery_columns;
+            }
+            catch (Exception $ex)
+            {
+                
+            }
+            $new_options[self::$opt_gallery_columns] = $_gallery_columns;
+
+            $_gallery_style = 'grid';
+            try
+            {
+                $_gallery_style = trim(str_replace(array(' ', "'", '"'), array('', '', ''), strip_tags($_POST[self::$opt_gallery_style])));
+            }
+            catch (Exception $ex)
+            {
+                $_gallery_style = 'grid';
+            }
+            $new_options[self::$opt_gallery_style] = $_gallery_style;
+
 
             $_apikey = '';
             try
             {
                 $_apikey = trim(str_replace(array(' ', "'", '"'), array('', '', ''), strip_tags($_POST[self::$opt_apikey])));
+                if (empty($_apikey))
+                {
+                    $_apikey = trim(str_replace(array(' ', "'", '"'), array('', '', ''), strip_tags($_POST[self::$opt_gallery_apikey])));
+                }
             }
             catch (Exception $ex)
             {
@@ -1900,8 +2176,8 @@ class YouTubePrefs
             .wrap {font-family: Arial; color: #000000;}
             #ytform p { line-height: 20px; margin-bottom: 11px; }
             #ytform ul li {margin-left: 30px; list-style: disc outside none;}
-            .ytindent {padding: 0px 0px 0px 20px; font-size: 11px;}
-            .ytindent ul, .ytindent p {font-size: 11px;}
+            .ytindent {padding: 0px 0px 0px 20px; font-size: 12px;}
+            .ytindent ul, .ytindent p {font-size: 12px;}
             .shadow {-webkit-box-shadow: 0px 0px 20px 0px #000000; box-shadow: 0px 0px 20px 0px #000000;}
             .gopro {margin: 0px;}
             .gopro img {vertical-align: middle;
@@ -1918,6 +2194,7 @@ class YouTubePrefs
             .pronon {font-weight: bold; color: #f85d00;}
             ul.reglist li {margin: 0px 0px 0px 30px; list-style: disc outside none;}
             .procol {width: 475px; float: left;}
+            .ytindent .procol ul {font-size: 11px;}
             .smallnote {font-style: italic; font-size: 10px;}
             .italic {font-style: italic;}
             .ytindent h3 {font-size: 15px; line-height: 22px; margin: 5px 0px 10px 0px;}
@@ -1933,7 +2210,7 @@ class YouTubePrefs
                                                   background: linear-gradient(to bottom,  #2ea2cc 0%,#007396 98%); /* W3C */
                                                   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2ea2cc', endColorstr='#007396',GradientType=0 ); /* IE6-9 */
             }
-            p.submit em {display: inline-block; padding-left: 20px; vertical-align: middle; width: 220px; margin-top: -6px;}
+            p.submit em {display: inline-block; padding-left: 20px; vertical-align: middle; width: 240px; margin-top: -6px;}
             #opt_pro {box-shadow: 0px 0px 5px 0px #1870D5; width: 320px;vertical-align: top;}
             #goprobox h3 {font-size: 13px;}
             .chx p {margin: 0px 0px 5px 0px;}
@@ -1944,6 +2221,8 @@ class YouTubePrefs
             h3.sect {border-radius: 10px; background-color: #D9E9F7; padding: 5px 5px 5px 10px; position: relative; font-weight: bold;}
             h3.sect a {text-decoration: none; color: #E20000;}
             h3.sect a.button-primary {color: #ffffff;} 
+            h4.sect {border-radius: 10px; background-color: #D9E9F7; padding: 5px 5px 5px 10px; position: relative; font-weight: bold;}
+
             .ytnav {margin-bottom: 15px;}
             .ytnav a {font-weight: bold; display: inline-block; padding: 5px 10px; margin: 0px 20px 0px 0px; border: 1px solid #cccccc; border-radius: 6px;
                       text-decoration: none; background-color: #ffffff;}
@@ -1952,7 +2231,7 @@ class YouTubePrefs
             .ssfb {float: right; height: auto; margin-right: 10px; margin-left: 15px; margin-bottom: 10px;}
             .totop {position: absolute; right: 20px; top: 5px; color: #444444; font-size: 10px;}
             input[type=checkbox] {border: 1px solid #000000;}
-            .chktitle {display: inline-block; padding: 1px 3px 1px 3px; border-radius: 3px; background-color: #ffffff; border: 1px solid #dddddd;}
+            .chktitle {display: inline-block; padding: 1px 5px 1px 5px; border-radius: 3px; background-color: #ffffff; border: 1px solid #dddddd;}
             b, strong {font-weight: bold;}
             input.checkbox[disabled] {border: 1px dashed #444444;}
             .pad10 {padding: 10px;}
@@ -1978,6 +2257,8 @@ class YouTubePrefs
             div.hr {clear: both; border-bottom: 1px dotted #A8BDD8; margin: 20px 0 20px 0;}
             .wp-pointer-buttons a.close {margin-top: 0 !important;}
             .pad20{padding: 20px 0 20px 0;}
+            .ssgallery {float: right; width: 130px; height: auto; margin-left: 15px; border: 3px solid #ffffff;}
+            .ssaltgallery {float: right; height: auto; margin-right: 10px; margin-left: 15px; margin-bottom: 10px; width: 210px;}
         </style>
         <div class="ytindent">
             <br>
@@ -1986,6 +2267,7 @@ class YouTubePrefs
                 <a href="#jumphowto">How To Embed</a>
                 <a href="#jumpwiz">Visual YouTube Wizard</a>
                 <a href="#jumpdefaults">Set Defaults</a>
+                <a href="#jumpgallery">Gallery Settings</a>
                 <a href="#jumpoverride">How To Override Defaults</a>
                 <a target="_blank" href="<?php echo self::$epbase . "/dashboard/pro-easy-video-analytics.aspx?ref=protab" ?>" style="border-color: #888888;">Why Upgrade?</a>
                 <a href="#jumpsupport">Support</a>
@@ -2102,7 +2384,7 @@ class YouTubePrefs
                     </p>
                     <p>
                         <input name="<?php echo self::$opt_vq; ?>" id="<?php echo self::$opt_vq; ?>" <?php checked($all[self::$opt_vq], 'hd720'); ?> type="checkbox" class="checkbox">
-                        <label for="<?php echo self::$opt_vq; ?>"><?php _e('<b class="chktitle">HD Quality:</b> Force HD quality when available. <b>NOTE: YouTube is deprecating this unofficially supported option.</b>') ?> </label>
+                        <label for="<?php echo self::$opt_vq; ?>"><?php _e('<b class="chktitle strike">HD Quality:</b> Force HD quality when available. <b>NOTE: YouTube has deprecated this unofficially supported option.</b>') ?> </label>
                     </p>
                     <p>
                         <input name="<?php echo self::$opt_wmode; ?>" id="<?php echo self::$opt_wmode; ?>" <?php checked($all[self::$opt_wmode], 'opaque'); ?> type="checkbox" class="checkbox">
@@ -2195,11 +2477,11 @@ class YouTubePrefs
                             As of January 2015, YouTube began serving the HTML5 player by default; therefore, this plugin no longer needs a special HTML5 setting.  This option is simply kept here as a notice.
                         </label>
                     </p>
-                    
+
                     <p>
                         <input name="<?php echo self::$opt_playlistorder; ?>" id="<?php echo self::$opt_playlistorder; ?>" <?php checked($all[self::$opt_playlistorder], 1); ?> type="checkbox" class="checkbox">
                         <label for="<?php echo self::$opt_playlistorder; ?>">
-                            <b class="chktitle">Playlist Ordering: <sup class="orange bold">NEW</sup></b> Check this option if you want your playlists to begin with the latest added video by default. (Unchecking this will force playlists to always start with your selected specific video).
+                            <b class="chktitle">Playlist Ordering: <sup class="orange bold">NEW</sup></b> Check this option if you want your playlists to begin with the latest added video by default. (Unchecking this will force playlists to always start with your selected specific video, even if you add videos to the playlist later).
                         </label>
                     </p>
 
@@ -2216,177 +2498,250 @@ class YouTubePrefs
 
                     </div>
                     </p>
+                </div>
+                <div class="jumper" id="jumpgallery"></div>
+                <h3 class="sect">Gallery Settings and Directions<sup class="orange bold">NEW</sup></h3>
+                <img class="ssgallery" src="<?php echo plugins_url('images/ssgallery.png', __FILE__) ?>">
+                <p>
+                    You can now make playlist embeds (and channel-playlist embeds) have a gallery layout. <strong>First, you must obtain your YouTube API key</strong>. 
+                    Don't worry, it's an easy process. Just <a href="https://www.youtube.com/watch?v=2vmBACVETf4" target="_blank">click this link &raquo;</a> and follow the video on that page to get your API key. Then paste it in the box below, and click the "Save Changes" button:
+                </p>
+                <p>
+                    Simply add the following parameter to the end of your playlist url:
+                </p>
+                <p><code>&layout=gallery</code></p>
+                <p>For example, below is a playlist that has been converted into a gallery. Notice the new layout parameter, with no spaces:</p>
+                <p>
+                    <code style="font-size: .9em;">http://www.youtube.com/embed?listType=playlist&width=474&height=266&list=UUAuUUnT6oDeKwE6v1NGQxug&plindex=0<b>&layout=gallery</b></code>
+                </p>
+                <p class="smallnote">
+                    PRO users can just use the playlist or channel wizard steps to fully to build codes like the above.
+                </p>
+                <p>
+                    Below are the settings for galleries:
+                </p>
+                <div class="ytindent chx">
+                    <p>
+                        <b class="chktitle">YouTube API Key:</b> 
+                        <input type="text" name="<?php echo self::$opt_gallery_apikey; ?>" id="<?php echo self::$opt_gallery_apikey; ?>" value="<?php echo trim($all[self::$opt_apikey]); ?>" class="textinput" style="width: 200px;">
+                        Required so your site can get the thumbnails, title text, and other content from YouTube’s servers that used to render galleries. <a href="https://www.youtube.com/watch?v=2vmBACVETf4" target="_blank">Click this link &raquo;</a> and follow the video to the right to get your API key.
+                    </p>
+                    <p>
+                        <label for="<?php echo self::$opt_gallery_pagesize; ?>"><b class="chktitle">Gallery Page Size:</b></label>
+                        <input name="<?php echo self::$opt_gallery_pagesize; ?>" id="<?php echo self::$opt_gallery_pagesize; ?>" type="number" class="textinput" style="width: 60px;" value="<?php echo trim($all[self::$opt_gallery_pagesize]); ?>">
+                        Enter how many thumbnails per page should be shown at once.
+                    </p>
+                    <p>
+                        <label for="<?php echo self::$opt_gallery_columns; ?>"><b class="chktitle">Number of Columns:</b></label>
+                        <input name="<?php echo self::$opt_gallery_columns; ?>" id="<?php echo self::$opt_gallery_columns; ?>" type="number" class="textinput" style="width: 60px;" value="<?php echo trim($all[self::$opt_gallery_columns]); ?>">                        
+                        Enter how many thumbnails can fit per row.
+                    </p>
+                </div>
 
-                    <div class="upgchecks">
-                        <?php
-                        if ($all[self::$opt_pro] && strlen(trim($all[self::$opt_pro])) > 0)
-                        {
-                            ?>
-                            <p class="smallnote orange">Below are PRO features for enhanced SEO and performance (works for even past embed links). </p>
+                <p class="submit">
+                    <br>
+                    <input type="submit" onclick="return savevalidate();" name="Submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
+                    <em>If you're using a separate caching plugin and you do not see your changes after saving, you might want to reset your cache.</em>
+                </p>
 
-                            <p>
-                                <input name="<?php echo self::$opt_spdc; ?>" id="<?php echo self::$opt_spdc; ?>" <?php checked($all[self::$opt_spdc], 1); ?> type="checkbox" class="checkbox">
-                                <label for="<?php echo self::$opt_spdc; ?>">
-                                    <b>(PRO)</b> <b class="chktitle">Faster Page Loads (Caching): <sup class="orange">NEW</sup></b> 
-                                    Use embed caching to speed up your page loads. By default, WordPress needs to request information from YouTube.com's servers for every video you embed, every time a page is loaded. These data requests can add time to your total page load time. Turn on this feature to cache that data (instead of having to request for the same information every time you load a page). This should then make your pages that have videos load faster.  It's been noted that even small speed ups in page load can help increase visitor engagement, retention, and conversions.
+
+                <div class="upgchecks">
+                    <h3 class="sect">PRO Features</h3>
+                    <?php
+                    if ($all[self::$opt_pro] && strlen(trim($all[self::$opt_pro])) > 0)
+                    {
+                        ?>
+                        <p class="smallnote orange">Below are PRO features for enhanced SEO and performance (works for even past embed links). Gallery options for PRO users will also be listed here.</p>
+
+                        <p>
+                            <input name="<?php echo self::$opt_spdc; ?>" id="<?php echo self::$opt_spdc; ?>" <?php checked($all[self::$opt_spdc], 1); ?> type="checkbox" class="checkbox">
+                            <label for="<?php echo self::$opt_spdc; ?>">
+                                <b>(PRO)</b> <b class="chktitle">Faster Page Loads (Caching): <sup class="orange">NEW</sup></b> 
+                                Use embed caching to speed up your page loads. By default, WordPress needs to request information from YouTube.com's servers for every video you embed, every time a page is loaded. These data requests can add time to your total page load time. Turn on this feature to cache that data (instead of having to request for the same information every time you load a page). This should then make your pages that have videos load faster.  It's been noted that even small speed ups in page load can help increase visitor engagement, retention, and conversions. Caching also makes galleries run faster.
+                            </label>
+                        <div class="indent-option">
+                            <div id="boxspdc">
+                                <label>
+                                    <b class="chktitle">Cache Liftime (hours): <sup class="orange">NEW</sup></b>
+                                    <input name="<?php echo self::$opt_spdcexp; ?>" id="<?php echo self::$opt_spdcexp; ?>" value="<?php echo trim($all[self::$opt_spdcexp]); ?>" type="number" min="1"/>
                                 </label>
-                            <div class="indent-option">
-                                <div id="boxspdc">
-                                    <label>
-                                        <b class="chktitle">Cache Liftime (hours): <sup class="orange">NEW</sup></b>
-                                        <input name="<?php echo self::$opt_spdcexp; ?>" id="<?php echo self::$opt_spdcexp; ?>" value="<?php echo trim($all[self::$opt_spdcexp]); ?>" type="number" min="1"/>
-                                    </label>
-                                    Tip: If your pages rarely change, you may wish to set this to a much higher value than 24 hours.
+                                Tip: If your pages rarely change, you may wish to set this to a much higher value than 24 hours.
 
-                                    <div class="pad20">
-                                        <input type="button" class="button button-primary" value="Click to clear YouTube cache"/>
-                                        <span style="display: none;" id="clearspdcloading" class="orange bold">Clearing...</span>
-                                        <span  class="orange bold" style="display: none;" id="clearspdcsuccess">Finished clearing YouTube cache.</span>
-                                        <span class="orange bold" style="display: none;" id="clearspdcfailed">Sorry, there seemed to be a problem clearing the cache.</span>
-                                    </div>
+                                <div class="pad20">
+                                    <input type="button" class="button button-primary" value="Click to clear YouTube cache"/>
+                                    <span style="display: none;" id="clearspdcloading" class="orange bold">Clearing...</span>
+                                    <span  class="orange bold" style="display: none;" id="clearspdcsuccess">Finished clearing YouTube cache.</span>
+                                    <span class="orange bold" style="display: none;" id="clearspdcfailed">Sorry, there seemed to be a problem clearing the cache.</span>
                                 </div>
                             </div>
-                            </p>
-                            <div class="hr"></div>
-                            <p>
-                                <input name="<?php echo self::$opt_schemaorg; ?>" id="<?php echo self::$opt_schemaorg; ?>" <?php checked($all[self::$opt_schemaorg], 1); ?> type="checkbox" class="checkbox">
-                                <label for="<?php echo self::$opt_schemaorg; ?>">
-                                    <b>(PRO)</b> <b class="chktitle">Video SEO Tags:</b> Update your YouTube embeds with Google, Bing, and Yahoo friendly video SEO markup.
-                                </label>
-                                <span id="boxschemaorg">
-                                    <span class="apikey-msg">
-                                        The video SEO tags include data like the title, description, and thumbnail information of each video you embed.  This plugin automatically extracts this data directly from YouTube using the version 3 API,
-                                        which will soon replace the version 2 API. This particular API version requires that you obtain an API key so that YouTube can authenticate the requests.  Don't worry, it's an easy process.  
-                                        Just <a href="https://developers.google.com/youtube/registering_an_application" target="_blank">click this link &raquo;</a> and follow the video to the right to get your API key. Then paste it in the box below, and click the "Save Changes" button:
-                                        <br>
-                                        <span style="vertical-align: middle; display: inline-block;">
-                                            YouTube API Key: <input type="text" name="<?php echo self::$opt_apikey; ?>" id="<?php echo self::$opt_apikey; ?>" value="<?php echo trim($all[self::$opt_apikey]); ?>" class="textinput" style="width: 200px;">
-                                        </span>
-                                    </span>
-                                    <span class="apikey-video">
-                                        <iframe width="384" height="216" src="https://www.youtube.com/embed/2vmBACVETf4?rel=0" frameborder="0" allowfullscreen></iframe>
+                        </div>
+                        </p>
+                        <div class="hr"></div>
+                        <p>
+                            <img class="ssaltgallery" src="<?php echo plugins_url('images/ssaltgallery.jpg', __FILE__) ?>" />
+                            <?php $cleanstyle = trim($all[self::$opt_gallery_style]); ?>
+                            <select name="<?php echo self::$opt_gallery_style; ?>" id="<?php echo self::$opt_gallery_style; ?>" >
+                                <option value="">Gallery Style</option>
+                                <option value="grid" <?php echo 'grid' === $cleanstyle ? 'selected' : '' ?> >Default (grid)</option>
+                                <option value="listview" <?php echo 'listview' === $cleanstyle ? 'selected' : '' ?> >List view</option>
+                            </select>
+                            <label for="<?php echo self::$opt_gallery_style; ?>">
+                                <b>(PRO)</b>  <b class="chktitle">Alternate Gallery Styling: <sup class="orange">NEW</sup></b></b>
+                                Switch from the grid style of the FREE version to another gallery style.  Right now, we provide a vertical (single column) list style as an alternative, with more designs coming. This current alternative was inspired by the standard YouTube playlist player’s “table of contents,” except our gallery’s video list is always visible and shown under the playing video. <a target="_blank" href="<?php echo self::$epbase ?>/responsive-youtube-playlist-channel-gallery-for-wordpress.aspx">Read more here &raquo;</a>
+                            </label>
+                        </p>
+                        <div class="hr"></div>
+                        <p>
+                            <input name="<?php echo self::$opt_schemaorg; ?>" id="<?php echo self::$opt_schemaorg; ?>" <?php checked($all[self::$opt_schemaorg], 1); ?> type="checkbox" class="checkbox">
+                            <label for="<?php echo self::$opt_schemaorg; ?>">
+                                <b>(PRO)</b> <b class="chktitle">Video SEO Tags:</b> Update your YouTube embeds with Google, Bing, and Yahoo friendly video SEO markup.
+                            </label>
+                            <span id="boxschemaorg">
+                                <span class="apikey-msg">
+                                    The video SEO tags include data like the title, description, and thumbnail information of each video you embed.  This plugin automatically extracts this data directly from YouTube using the version 3 API,
+                                    which will soon replace the version 2 API. This particular API version requires that you obtain an API key so that YouTube can authenticate the requests.  Don't worry, it's an easy process.  
+                                    Just <a href="https://developers.google.com/youtube/registering_an_application" target="_blank">click this link &raquo;</a> and follow the video to the right to get your API key. Then paste it in the box below, and click the "Save Changes" button:
+                                    <br>
+                                    <span style="vertical-align: middle; display: inline-block;">
+                                        YouTube API Key: <input type="text" name="<?php echo self::$opt_apikey; ?>" id="<?php echo self::$opt_apikey; ?>" value="<?php echo trim($all[self::$opt_apikey]); ?>" class="textinput" style="width: 200px;">
                                     </span>
                                 </span>
-                            </p>
-                            <div class="hr"></div>
-                            <p>
-                                <input name="<?php echo self::$opt_dynload; ?>" id="<?php echo self::$opt_dynload; ?>" <?php checked($all[self::$opt_dynload], 1); ?> type="checkbox" class="checkbox">                        
-                                <span id="boxdyn">
-                                    Animation:
-                                    <?php $cleandyn = trim($all[self::$opt_dyntype]); ?>
-                                    <select name="<?php echo self::$opt_dyntype; ?>" id="<?php echo self::$opt_dyntype; ?>" >
-                                        <option value="">Select type</option>
-                                        <option value="rotateIn" <?php echo 'rotateIn' === $cleandyn ? 'selected' : '' ?> >rotate in</option>
-                                        <option value="slideInRight" <?php echo 'slideInRight' === $cleandyn ? 'selected' : '' ?> >slide from right</option>
-                                        <option value="slideInLeft" <?php echo 'slideInLeft' === $cleandyn ? 'selected' : '' ?> >slide from left</option>
-                                        <option value="bounceIn" <?php echo 'bounceIn' === $cleandyn ? 'selected' : '' ?> >bounce in</option>
-                                        <option value="flipInX" <?php echo 'flipInX' === $cleandyn ? 'selected' : '' ?> >flip up/down</option>
-                                        <option value="flipInY" <?php echo 'flipInY' === $cleandyn ? 'selected' : '' ?> >flip left/right</option>
-                                        <option value="pulse" <?php echo 'pulse' === $cleandyn ? 'selected' : '' ?> >pulse</option>
-                                        <option value="tada" <?php echo 'tada' === $cleandyn ? 'selected' : '' ?> >jiggle</option>
-                                        <option value="fadeInDown" <?php echo 'fadeInDown' === $cleandyn ? 'selected' : '' ?> >fade in downward</option>
-                                        <option value="fadeInUp" <?php echo 'fadeInUp' === $cleandyn ? 'selected' : '' ?> >fade in upward</option>
-                                        <option value="zoomInDown" <?php echo 'zoomInDown' === $cleandyn ? 'selected' : '' ?> >zoom in downward</option>
-                                        <option value="zoomInUp" <?php echo 'zoomInUp' === $cleandyn ? 'selected' : '' ?> >zoom in upward</option>
-                                    </select>
+                                <span class="apikey-video">
+                                    <iframe width="384" height="216" src="https://www.youtube.com/embed/2vmBACVETf4?rel=0" frameborder="0" allowfullscreen></iframe>
                                 </span>
-                                <label for="<?php echo self::$opt_dynload; ?>">
-                                    <b>(PRO)</b>  <b class="chktitle">Special Lazy-Loading Effects:</b>
-                                    Add eye-catching special effects that will make your YouTube embeds bounce, flip, pulse, or slide as they lazy load on the screen.  Check this box to select your desired effect. <a target="_blank" href="<?php echo self::$epbase ?>/add-special-effects-to-youtube-embeds-in-wordpress.aspx">Read more here &raquo;</a>
-                                </label>
-                            </p>
-                            <div class="hr"></div>
-                            <p>
-                                <img class="ssfb" src="<?php echo plugins_url('images/ssfb.jpg', __FILE__) ?>" />
-                                <input name="<?php echo self::$opt_ogvideo; ?>" id="<?php echo self::$opt_ogvideo; ?>" <?php checked($all[self::$opt_ogvideo], 1); ?> type="checkbox" class="checkbox">
-                                <label for="<?php echo self::$opt_ogvideo; ?>">
-                                    <b>(PRO)</b> <b class="chktitle">Facebook Open Graph Markup:</b>  Update YouTube embeds on your pages with Open Graph markup to enhance Facebook sharing and discovery of the pages. Your shared pages, for example, will also display embedded video thumbnails on Facebook Timelines.
-                                </label>
-                            </p>
-                            <div class="hr"></div>
-                            <p>
-                                <img class="ssfb" src="<?php echo plugins_url('images/youtube_thumbnail_sample.jpg', __FILE__) ?>" />
-                                <input name="<?php echo self::$opt_ftpostimg; ?>" id="<?php echo self::$opt_ftpostimg; ?>" <?php checked($all[self::$opt_ftpostimg], 1); ?> type="checkbox" class="checkbox">
-                                <label for="<?php echo self::$opt_ftpostimg; ?>">
-                                    <b>(PRO)</b> <b class="chktitle">Automatic Video Thumbnails: <sup class="orange">NEW</sup></b> 
-                                    Automatically grab the thumbnail image of the first video embedded in each post or page, and use it as the featured image.  If your theme can display featured images of posts on your blog home, you’ll see the thumbnails there as shown in the picture on the right.  All you have to do is click Update on a post or page and the plugin does the rest!
-                                    (Example shown on the right) <a target="_blank" href="<?php echo self::$epbase ?>/add-youtube-video-thumbnails-featured-image-wordpress.aspx">Watch example here &raquo;</a>
-                                </label>
-                            </p>
+                            </span>
+                        </p>
+                        <div class="hr"></div>
+                        <p>
+                            <input name="<?php echo self::$opt_dynload; ?>" id="<?php echo self::$opt_dynload; ?>" <?php checked($all[self::$opt_dynload], 1); ?> type="checkbox" class="checkbox">                        
+                            <span id="boxdyn">
+                                Animation:
+                                <?php $cleandyn = trim($all[self::$opt_dyntype]); ?>
+                                <select name="<?php echo self::$opt_dyntype; ?>" id="<?php echo self::$opt_dyntype; ?>" >
+                                    <option value="">Select type</option>
+                                    <option value="rotateIn" <?php echo 'rotateIn' === $cleandyn ? 'selected' : '' ?> >rotate in</option>
+                                    <option value="slideInRight" <?php echo 'slideInRight' === $cleandyn ? 'selected' : '' ?> >slide from right</option>
+                                    <option value="slideInLeft" <?php echo 'slideInLeft' === $cleandyn ? 'selected' : '' ?> >slide from left</option>
+                                    <option value="bounceIn" <?php echo 'bounceIn' === $cleandyn ? 'selected' : '' ?> >bounce in</option>
+                                    <option value="flipInX" <?php echo 'flipInX' === $cleandyn ? 'selected' : '' ?> >flip up/down</option>
+                                    <option value="flipInY" <?php echo 'flipInY' === $cleandyn ? 'selected' : '' ?> >flip left/right</option>
+                                    <option value="pulse" <?php echo 'pulse' === $cleandyn ? 'selected' : '' ?> >pulse</option>
+                                    <option value="tada" <?php echo 'tada' === $cleandyn ? 'selected' : '' ?> >jiggle</option>
+                                    <option value="fadeInDown" <?php echo 'fadeInDown' === $cleandyn ? 'selected' : '' ?> >fade in downward</option>
+                                    <option value="fadeInUp" <?php echo 'fadeInUp' === $cleandyn ? 'selected' : '' ?> >fade in upward</option>
+                                    <option value="zoomInDown" <?php echo 'zoomInDown' === $cleandyn ? 'selected' : '' ?> >zoom in downward</option>
+                                    <option value="zoomInUp" <?php echo 'zoomInUp' === $cleandyn ? 'selected' : '' ?> >zoom in upward</option>
+                                </select>
+                            </span>
+                            <label for="<?php echo self::$opt_dynload; ?>">
+                                <b>(PRO)</b>  <b class="chktitle">Special Lazy-Loading Effects:</b>
+                                Add eye-catching special effects that will make your YouTube embeds bounce, flip, pulse, or slide as they lazy load on the screen.  Check this box to select your desired effect. <a target="_blank" href="<?php echo self::$epbase ?>/add-special-effects-to-youtube-embeds-in-wordpress.aspx">Read more here &raquo;</a>
+                            </label>
+                        </p>
+                        <div class="hr"></div>
+                        <p>
+                            <img class="ssfb" src="<?php echo plugins_url('images/ssfb.jpg', __FILE__) ?>" />
+                            <input name="<?php echo self::$opt_ogvideo; ?>" id="<?php echo self::$opt_ogvideo; ?>" <?php checked($all[self::$opt_ogvideo], 1); ?> type="checkbox" class="checkbox">
+                            <label for="<?php echo self::$opt_ogvideo; ?>">
+                                <b>(PRO)</b> <b class="chktitle">Facebook Open Graph Markup:</b>  Update YouTube embeds on your pages with Open Graph markup to enhance Facebook sharing and discovery of the pages. Your shared pages, for example, will also display embedded video thumbnails on Facebook Timelines.
+                            </label>
+                        </p>
+                        <div class="hr"></div>
+                        <p>
+                            <img class="ssfb" src="<?php echo plugins_url('images/youtube_thumbnail_sample.jpg', __FILE__) ?>" />
+                            <input name="<?php echo self::$opt_ftpostimg; ?>" id="<?php echo self::$opt_ftpostimg; ?>" <?php checked($all[self::$opt_ftpostimg], 1); ?> type="checkbox" class="checkbox">
+                            <label for="<?php echo self::$opt_ftpostimg; ?>">
+                                <b>(PRO)</b> <b class="chktitle">Automatic Video Thumbnails: <sup class="orange">NEW</sup></b> 
+                                Automatically grab the thumbnail image of the first video embedded in each post or page, and use it as the featured image.  If your theme can display featured images of posts on your blog home, you’ll see the thumbnails there as shown in the picture on the right.  All you have to do is click Update on a post or page and the plugin does the rest!
+                                (Example shown on the right) <a target="_blank" href="<?php echo self::$epbase ?>/add-youtube-video-thumbnails-featured-image-wordpress.aspx">Watch example here &raquo;</a>
+                            </label>
+                        </p>
 
-                            <?php
-                        }
-                        else
-                        {
-                            ?>
-                            <p class="smallnote orange">Below are PRO features for enhanced SEO and performance (works for even past embed links). </p>
-                            <p>
-                                <input disabled type="checkbox" class="checkbox">
-                                <label>
-                                    <b class="chktitle">Faster Page Loads (Caching): <sup class="orange">NEW</sup></b>  <span class="pronon">(PRO Users)</span> 
-                                    Use embed caching to speed up your page loads. By default, WordPress needs to request information from YouTube.com's servers for every video you embed, every time a page is loaded. These data requests can add time to your total page load time. Turn on this feature to cache that data (instead of having to request for the same information every time you load a page). This should then make your pages that have videos load faster.  It's been noted that even small speed ups in page load can help increase visitor engagement, retention, and conversions.
-                                </label>
-                            <div class="indent-option">
-                                <label>
-                                    <b class="chktitle">Cache Liftime (hours): <sup class="orange">NEW</sup></b> 
-                                    <input id="spdcexp" disabled value="24" type="number">
-                                    Tip: If your pages rarely change, you may wish to set this to a much higher value than 24 hours.
-                                </label>
-                            </div>
-                            </p>
-                            <div class="hr"></div>
-
-                            <p>
-                                <input disabled type="checkbox" class="checkbox">
-                                <label>
-                                    <b class="chktitle">Video SEO Tags:</b>  <span class="pronon">(PRO Users)</span> Update your YouTube embeds with Google, Bing, and Yahoo friendly video SEO markup.
-                                </label>
-                            </p>
-                            <div class="hr"></div>
-                            <p>
-                                <input disabled type="checkbox" class="checkbox">
-                                <label>
-                                    <b class="chktitle">Special Loading Effects:</b>  <span class="pronon">(PRO Users)</span> 
-                                    Add eye-catching special effects that will make your YouTube embeds bounce, flip, pulse, or slide as they load on the screen.  Check this box to select your desired effect. <a target="_blank" href="<?php echo self::$epbase ?>/add-special-effects-to-youtube-embeds-in-wordpress.aspx">Read more here &raquo;</a>
-                                </label>
-                            </p>
-                            <div class="hr"></div>
-                            <p>
-                                <img class="ssfb" src="<?php echo plugins_url('images/ssfb.jpg', __FILE__) ?>" />
-                                <input disabled type="checkbox" class="checkbox">
-                                <label>
-                                    <b class="chktitle">Facebook Open Graph Markup:</b> <span class="pronon">(PRO Users)</span>  Update YouTube embeds on your pages with Open Graph markup to enhance Facebook sharing and discovery of the pages. Your shared pages, for example, will also display embedded video thumbnails on Facebook Timelines.
-                                </label>
-                            </p>
-                            <div class="hr"></div>
-                            <p>
-                                <img class="ssfb" src="<?php echo plugins_url('images/youtube_thumbnail_sample.jpg', __FILE__) ?>" />
-                                <input disabled type="checkbox" class="checkbox">
-                                <label>
-                                    <b class="chktitle">Automatic Video Thumbnails: <sup class="orange">NEW</sup></b>  <span class="pronon">(PRO Users)</span> 
-                                    Automatically grab the thumbnail image of the first video embedded in each post or page, and use it as the featured image. 
-                                    All you have to do is click Update on a post or page and the plugin does the rest! 
-                                    (Example shown on the right) <a target="_blank" href="<?php echo self::$epbase ?>/add-youtube-video-thumbnails-featured-image-wordpress.aspx">Read more here &raquo;</a>
-                                </label>
-                            </p>
-                            <div class="hr"></div>
-                            <p>
-                                <a href="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx" target="_blank">Activate the above and several other features &raquo;</a>
-                            </p>
-                            <?php
-                        }
+                        <?php
+                    }
+                    else
+                    {
                         ?>
-                        <div class="clearboth"></div>
-                    </div>
-                    <p class="submit">
-                        <br>
-                        <input type="submit" onclick="return savevalidate();" name="Submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
-                        <em>If you're using a separate caching plugin and you do not see your changes after saving, you might want to reset your cache.</em>
-                    </p>
+                        <p class="smallnote orange">Below are PRO features for enhanced SEO and performance (works for even past embed links). </p>
+                        <p>
+                            <input disabled type="checkbox" class="checkbox">
+                            <label>
+                                <b class="chktitle">Faster Page Loads (Caching): <sup class="orange">NEW</sup></b>  <span class="pronon">(PRO Users)</span> 
+                                Use embed caching to speed up your page loads. By default, WordPress needs to request information from YouTube.com's servers for every video you embed, every time a page is loaded. These data requests can add time to your total page load time. Turn on this feature to cache that data (instead of having to request for the same information every time you load a page). This should then make your pages that have videos load faster.  It's been noted that even small speed ups in page load can help increase visitor engagement, retention, and conversions. Caching also makes galleries run faster.
+                            </label>
+                        <div class="indent-option">
+                            <label>
+                                <b class="chktitle">Cache Liftime (hours): <sup class="orange">NEW</sup></b> 
+                                <input disabled value="24" type="number">
+                                Tip: If your pages rarely change, you may wish to set this to a much higher value than 24 hours.
+                            </label>
+                        </div>
+                        </p>
+                        <div class="hr"></div>
+                        <p>
+                            <img class="ssaltgallery" src="<?php echo plugins_url('images/ssaltgallery.jpg', __FILE__) ?>" />
+                            <select disabled>
+                                <option value="">Gallery Style</option>
+                            </select>
+                            <label>
+                                <b>(PRO)</b>  <b class="chktitle">Alternate Gallery Styling: <sup class="orange">NEW</sup></b> <span class="pronon">(PRO Users)</span> 
+                                Switch from the grid style of the FREE version to another gallery style.  Right now, we provide a vertical (single column) list style as an alternative, with more designs coming. This current alternative was inspired by the standard YouTube playlist player’s “table of contents,” except our gallery’s video list is always visible and shown under the playing video. <a target="_blank" href="<?php echo self::$epbase ?>/responsive-youtube-playlist-channel-gallery-for-wordpress.aspx">Read more here &raquo;</a>
+                            </label>
+                        </p>
 
-                    <hr>
+                        <div class="hr"></div>
 
+                        <p>
+                            <input disabled type="checkbox" class="checkbox">
+                            <label>
+                                <b class="chktitle">Video SEO Tags:</b>  <span class="pronon">(PRO Users)</span> Update your YouTube embeds with Google, Bing, and Yahoo friendly video SEO markup.
+                            </label>
+                        </p>
+                        <div class="hr"></div>
+                        <p>
+                            <input disabled type="checkbox" class="checkbox">
+                            <label>
+                                <b class="chktitle">Special Loading Effects:</b>  <span class="pronon">(PRO Users)</span> 
+                                Add eye-catching special effects that will make your YouTube embeds bounce, flip, pulse, or slide as they load on the screen.  Check this box to select your desired effect. <a target="_blank" href="<?php echo self::$epbase ?>/add-special-effects-to-youtube-embeds-in-wordpress.aspx">Read more here &raquo;</a>
+                            </label>
+                        </p>
+                        <div class="hr"></div>
+                        <p>
+                            <img class="ssfb" src="<?php echo plugins_url('images/ssfb.jpg', __FILE__) ?>" />
+                            <input disabled type="checkbox" class="checkbox">
+                            <label>
+                                <b class="chktitle">Facebook Open Graph Markup:</b> <span class="pronon">(PRO Users)</span>  Update YouTube embeds on your pages with Open Graph markup to enhance Facebook sharing and discovery of the pages. Your shared pages, for example, will also display embedded video thumbnails on Facebook Timelines.
+                            </label>
+                        </p>
+                        <div class="hr"></div>
+                        <p>
+                            <img class="ssfb" src="<?php echo plugins_url('images/youtube_thumbnail_sample.jpg', __FILE__) ?>" />
+                            <input disabled type="checkbox" class="checkbox">
+                            <label>
+                                <b class="chktitle">Automatic Video Thumbnails:</b>  <span class="pronon">(PRO Users)</span> 
+                                Automatically grab the thumbnail image of the first video embedded in each post or page, and use it as the featured image. 
+                                All you have to do is click Update on a post or page and the plugin does the rest! 
+                                (Example shown on the right) <a target="_blank" href="<?php echo self::$epbase ?>/add-youtube-video-thumbnails-featured-image-wordpress.aspx">Read more here &raquo;</a>
+                            </label>
+                        </p>
+                        <div class="hr"></div>
+                        <p>
+                            <a href="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx" target="_blank">Activate the above and several other features &raquo;</a>
+                        </p>
+                        <?php
+                    }
+                    ?>
+                    <div class="clearboth"></div>
                 </div>
+                <p class="submit">
+                    <br>
+                    <input type="submit" onclick="return savevalidate();" name="Submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
+                    <em>If you're using a separate caching plugin and you do not see your changes after saving, you might want to reset your cache.</em>
+                </p>
+
+                <hr>
+
+
                 <div class="jumper" id="jumpoverride"></div>
 
                 <h3 class="sect">
@@ -2452,9 +2807,9 @@ class YouTubePrefs
                                 Full Visual Embedding Wizard (Easily customize embeds without memorizing codes)
                             </li>
                             <li>
-                                <img src="<?php echo plugins_url('images/vseo.png', __FILE__) ?>">
-                                Automatic tagging for video SEO (will even work for your old embeds)
-                            </li>
+                                <img src="<?php echo plugins_url('images/icongallery.png', __FILE__) ?>">
+                                Alternate Gallery Styling
+                            </li>       
                             <li>
                                 <img src="<?php echo plugins_url('images/iconfx.png', __FILE__) ?>">
                                 Add eye-catching special effects as your videos load
@@ -2493,10 +2848,14 @@ class YouTubePrefs
                                 <img src="<?php echo plugins_url('images/iconfb.png', __FILE__) ?>">
                                 Automatic Open Graph tagging for Facebook
                             </li>
+                            <!--                            <li>
+                                                            <img src="<?php echo plugins_url('images/iconythealth.png', __FILE__) ?>">
+                                                            Instant YouTube embed diagnostic reports
+                                                        </li>                          -->
                             <li>
-                                <img src="<?php echo plugins_url('images/iconythealth.png', __FILE__) ?>">
-                                Instant YouTube embed diagnostic reports
-                            </li>                            
+                                <img src="<?php echo plugins_url('images/vseo.png', __FILE__) ?>">
+                                Automatic tagging for video SEO (will even work for your old embeds)
+                            </li>
                             <li>
                                 <img src="<?php echo plugins_url('images/iconvolume.png', __FILE__) ?>">
                                 Fine-Grained Volume Initialization – Individual video volume settings in the wizard
@@ -2593,6 +2952,7 @@ class YouTubePrefs
                 <a href="#jumphowto">How To Embed</a>
                 <a href="#jumpwiz">Visual YouTube Wizard</a>
                 <a href="#jumpdefaults">Set Defaults</a>
+                <a href="#jumpgallery">Gallery Settings</a>
                 <a href="#jumpoverride">How To Override Defaults</a>
                 <a target="_blank" href="<?php echo self::$epbase . "/dashboard/pro-easy-video-analytics.aspx?ref=protab" ?>" style="border-color: #888888;">Why Upgrade?</a>
                 <a href="#jumpsupport">Support</a>
@@ -2914,13 +3274,29 @@ class YouTubePrefs
 
         public static function ytprefsscript()
         {
-            wp_enqueue_script('__ytprefs__', plugins_url('scripts/ytprefs.min.js', __FILE__));
+            wp_enqueue_style(
+                    '__EPYT__style', plugins_url('styles/ytprefs.min.css', __FILE__)
+            );
+
+            $colwidth = 100.0 / floatval(self::$alloptions[self::$opt_gallery_columns]);
+            $custom_css = "
+                .epyt-gallery-thumb {
+                        width: {$colwidth}%;
+                }";
+            wp_add_inline_style('__EPYT__style', $custom_css);
+
+
+            wp_enqueue_script('__ytprefs__', plugins_url('scripts/ytprefs.min.js', __FILE__), array('jquery'));
+            wp_localize_script('__ytprefs__', '_EPYT_', array(
+                'ajaxurl' => admin_url('admin-ajax.php'),
+                'security' => wp_create_nonce('embedplus-nonce')
+            ));
 
 
             if (!is_admin() && (self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0) && self::$alloptions[self::$opt_dynload] == 1)
             {
                 wp_enqueue_style('__dyntype__', plugins_url('scripts/embdyn.min.css', __FILE__));
-                wp_enqueue_script('__dynload__', plugins_url('scripts/embdyn.min.js', __FILE__), array('jquery'), false, false, true);
+                wp_enqueue_script('__dynload__', plugins_url('scripts/embdyn.min.js', __FILE__), array('jquery'));
             }
         }
 
@@ -3037,6 +3413,8 @@ class YouTubePrefs
     add_action("wp_ajax_my_embedplus_glance_vids", array('YouTubePrefs', 'my_embedplus_glance_vids'));
     add_action("wp_ajax_my_embedplus_glance_count", array('YouTubePrefs', 'my_embedplus_glance_count'));
     add_action("wp_ajax_my_embedplus_dismiss_double_plugin_warning", array('YouTubePrefs', 'my_embedplus_dismiss_double_plugin_warning'));
+    add_action("wp_ajax_my_embedplus_gallery_page", array('YouTubePrefs', 'my_embedplus_gallery_page'));
+    add_action("wp_ajax_nopriv_my_embedplus_gallery_page", array('YouTubePrefs', 'my_embedplus_gallery_page'));
 
     add_action('admin_enqueue_scripts', 'youtubeprefs_admin_enqueue_scripts');
 
