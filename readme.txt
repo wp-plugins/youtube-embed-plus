@@ -7,7 +7,7 @@ Tested up to: 4.2
 Stable tag: 10.3
 License: GPLv3 or later
 
-YouTube embed plugin. Embed a responsive YouTube video, playlist gallery, or channel gallery. Add video thumbnails, analytics, SEO, caching...
+YouTube embed plugin. Embed a responsive video, YouTube channel gallery, or playlist gallery. Add video thumbnails, analytics, SEO, caching...
 
 == Description ==
 
@@ -142,7 +142,8 @@ You can also start and end each individual video at particular times. Like the a
 4. YouTube Embed Screenshot 4: Wizard Insert Search Result Screenshot
 5. YouTube Embed Screenshot 5: Wizard Search Results Screenshot
 6. YouTube Embed Screenshot 6: Gallery layout for a playlist or channel
-7. YouTube Embed Screenshot 7: Localization/internationalization so you can set the player's interface language
+7. YouTube Embed Screenshot 7: YouTube playlist galleries are also easily supported.  Here's the Billboard Top 25 Songs for example.
+8. YouTube Embed Screenshot 8: Localization/internationalization so you can set the player's interface language
 
 == Changelog ==
 
