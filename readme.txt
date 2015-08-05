@@ -1,10 +1,10 @@
 === YouTube ===
 Contributors: embedplus
 Plugin Name: YouTube Embed
-Tags: video gallery, youtube galleries, channel gallery, gallery, playlist gallery, youtube gallery, accessibility, analytics, api, blocked youtube videos, cache, caching, channel, deleted youtube videos, effects, embed youtube, embedding youtube, featured image, get_locale, i18n, internationalization, l10n, language, lazy, lazy load, locale, localization, mute, no-cookie, oembed, page speed, playlist, playlists, plugin, Reddit, responsive, seo, short code, shortcode, special effects, ssl, subtitles, thumbnail, thumbnail image, thumbnails, tinymce, translate, translator, video, video analytics, video plugin, video seo, video shortcode, video thumbnails, view count, volume, widget, wordpress security, wordpress youtube embed, youtube, youtube api, youtube analytics, youtube embed, youtube impressions, youtube player, youtube playlist, youtube plugin, youtube shortcode, youtube snippets, youtube takedowns, youtube thumbnails, youtube plugin migration
+Tags: youtube channel, video gallery, youtube galleries, channel gallery, gallery, playlist gallery, youtube gallery, accessibility, analytics, api, blocked youtube videos, cache, caching, channel, deleted youtube videos, effects, embed youtube, embedding youtube, featured image, get_locale, i18n, internationalization, l10n, language, lazy, lazy load, locale, localization, mute, no-cookie, oembed, page speed, playlist, playlists, plugin, Reddit, responsive, seo, short code, shortcode, ssl, subtitles, thumbnail, thumbnail image, thumbnails, tinymce, translate, translator, video, video analytics, video plugin, video seo, video shortcode, video thumbnails, view count, volume, widget, wordpress security, wordpress youtube embed, youtube, youtube api, youtube analytics, youtube embed, youtube impressions, youtube player, youtube playlist, youtube plugin, youtube shortcode, youtube snippets, youtube takedowns, youtube thumbnails, youtube plugin migration
 Requires at least: 3.3
 Tested up to: 4.2
-Stable tag: 10.3
+Stable tag: 10.4
 License: GPLv3 or later
 
 YouTube embed plugin. Embed a responsive video, YouTube channel gallery, or playlist gallery. Add video thumbnails, analytics, SEO, caching...
@@ -13,7 +13,7 @@ YouTube embed plugin. Embed a responsive video, YouTube channel gallery, or play
 
 **Here are a few recently added features (even more features below):**
 
-* The ability to make playlist (and channel) embeds have a gallery layout. By the default, the plugin can generate a grid-based [responsive playlist and channel gallery >>](http://www.embedplus.com/responsive-youtube-playlist-channel-gallery-for-wordpress.aspx). Your visitors can browse through pages of video thumbnails and choose from videos that are pulled from an entire playlist or channel.
+* YouTube Channel and Playlist Gallery - The ability to make playlist (and channel) embeds have a gallery layout. By default, the plugin can generate a grid-based [responsive playlist and channel gallery >>](http://www.embedplus.com/responsive-youtube-playlist-channel-gallery-for-wordpress.aspx). Your visitors can browse through pages of video thumbnails and choose from videos that are pulled from an entire YouTube channel or playlist.
 * Improved accessibility by using title attributes for screen reader support. It should help your site [pass functional accessibility evaluations (FAE)](https://www.youtube.com/watch?v=gpAiFnYYkbk).
 * Site origin information with each embed code as an extra security measure. In YouTube's/Google's own words, checking this option "protects against malicious third-party JavaScript being injected into your page and hijacking control of your YouTube player." We especially recommend checking it as it adds higher security than the built-in YouTube embedding method that comes with the current version of WordPress (i.e. oembed).
 * Easy "Insert" button for both the Visual and Text mode of the editor
@@ -146,6 +146,9 @@ You can also start and end each individual video at particular times. Like the a
 8. YouTube Embed Screenshot 8: Localization/internationalization so you can set the player's interface language
 
 == Changelog ==
+
+= YouTube Embed 10.4 =
+Addresses limitations some users were getting when pasting a YouTube channel and/or playlist gallery.
 
 = YouTube Embed 10.3 =
 Adds the ability to make playlist and channel embeds have a gallery layout. By the default, the plugin can generate a grid-based [responsive playlist and channel gallery >>](http://www.embedplus.com/responsive-youtube-playlist-channel-gallery-for-wordpress.aspx)

@@ -3,7 +3,7 @@
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube embed plugin. Embed a responsive YouTube video, playlist gallery, or channel gallery. Add video thumbnails, analytics, SEO, caching...
-  Version: 10.3
+  Version: 10.4
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
@@ -32,7 +32,7 @@
 class YouTubePrefs
 {
 
-    public static $version = '10.3';
+    public static $version = '10.4';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -96,8 +96,8 @@ class YouTubePrefs
     public static $epbase = '//www.embedplus.com';
     public static $double_plugin = false;
     public static $scriptsprinted = 0;
-    public static $badentities = array('&#215;', '×', '&#8211;', '–', '&amp;');
-    public static $goodliterals = array('x', 'x', '--', '--', '&');
+    public static $badentities = array('&#215;', '×', '&#8211;', '–', '&amp;', '&#038;', '&#38;');
+    public static $goodliterals = array('x', 'x', '--', '--', '&', '&', '&');
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -833,6 +833,7 @@ class YouTubePrefs
 
     public static function do_ytprefs()
     {
+        add_filter('autoptimize_filter_js_exclude', 'YouTubePrefs::ao_override_jsexclude', 10, 1);
         if (!is_admin())
         {
             add_filter('the_content', 'YouTubePrefs::apply_prefs_content', 1);
@@ -854,6 +855,15 @@ class YouTubePrefs
                 add_action('save_post', array('YouTubePrefs', 'doftpostimg'), 110, 3);
             }
         }
+    }
+
+    public static function ao_override_jsexclude($exclude)
+    {
+        if (strpos($exclude, 'ytprefs.min.js') === false)
+        {
+            return $exclude . ",ytprefs.min.js";
+        }
+        return $exclude;
     }
 
     public static function apply_prefs_shortcode($atts, $content = null)
@@ -1001,33 +1011,36 @@ class YouTubePrefs
             }
         }
 
-        $pagination = '<div class="epyt-pagination">';
-        if (!empty($prevPageToken))
-        {
-            $pagination .= '<div class="epyt-pagebutton epyt-prev" data-playlistid="' . esc_attr($playlistId)
-                    . '" data-pagesize="' . intval($pageSize)
-                    . '" data-pagetoken="' . esc_attr($prevPageToken)
-                    . '" data-style="' . esc_attr($style)
-                    . '" data-columns="' . intval($columns)
-                    . '"><div>&laquo;</div> ' . _('Prev') . '</div>';
-        }
-
         $totalPages = ceil($totalResults / $resultsPerPage);
-        $pagination .= '<div class="epyt-pagenumbers">';
-        $pagination .= '<div class="epyt-current">1</div><div class="epyt-pageseparator">' . _("of") . '</div><div class="epyt-totalpages">' . $totalPages . '</div>';
-        $pagination .= '</div>';
-
-        if (!empty($nextPageToken))
+        $pagination = '<div class="epyt-pagination">';
+        if ($totalPages > 1)
         {
-            $pagination .= '<div class="epyt-pagebutton epyt-next" data-playlistid="' . esc_attr($playlistId)
-                    . '" data-pagesize="' . intval($pageSize)
-                    . '" data-pagetoken="' . esc_attr($nextPageToken)
-                    . '" data-style="' . esc_attr($style)
-                    . '" data-columns="' . intval($columns)
-                    . '">' . _('Next') . ' <div>&raquo;</div></div>';
-        }
-        $pagination .= '<div class="epyt-loader"><img src="' . plugins_url('images/gallery-page-loader.gif', __FILE__) . '"></div></div>';
+            if (!empty($prevPageToken))
+            {
+                $pagination .= '<div class="epyt-pagebutton epyt-prev" data-playlistid="' . esc_attr($playlistId)
+                        . '" data-pagesize="' . intval($pageSize)
+                        . '" data-pagetoken="' . esc_attr($prevPageToken)
+                        . '" data-style="' . esc_attr($style)
+                        . '" data-columns="' . intval($columns)
+                        . '"><div>&laquo;</div> ' . _('Prev') . '</div>';
+            }
 
+            $pagination .= '<div class="epyt-pagenumbers">';
+            $pagination .= '<div class="epyt-current">1</div><div class="epyt-pageseparator">' . _("of") . '</div><div class="epyt-totalpages">' . $totalPages . '</div>';
+            $pagination .= '</div>';
+
+            if (!empty($nextPageToken))
+            {
+                $pagination .= '<div class="epyt-pagebutton epyt-next" data-playlistid="' . esc_attr($playlistId)
+                        . '" data-pagesize="' . intval($pageSize)
+                        . '" data-pagetoken="' . esc_attr($nextPageToken)
+                        . '" data-style="' . esc_attr($style)
+                        . '" data-columns="' . intval($columns)
+                        . '">' . _('Next') . ' <div>&raquo;</div></div>';
+            }
+            $pagination .= '<div class="epyt-loader"><img src="' . plugins_url('images/gallery-page-loader.gif', __FILE__) . '"></div>';
+        }
+        $pagination .= '</div>';
 
         $code = $pagination . $code . $pagination;
 
@@ -1334,12 +1347,13 @@ class YouTubePrefs
 
     public static function spdcpurge()
     {
-        $allk = get_option(self::$spdcall);
-        foreach ($allk as $t)
-        {
-            $success = delete_transient($t);
+        $allk = get_option(self::$spdcall, array()); {
+            foreach ($allk as $t)
+            {
+                $success = delete_transient($t);
+            }
+            update_option(self::$spdcall, array());
         }
-        update_option(self::$spdcall, array());
     }
 
     public static function keyvalue($qry, $includev)
@@ -1930,11 +1944,11 @@ class YouTubePrefs
         $new_pointer_content .= '<p>'; // ooopointer
         if (!(self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0))
         {
-            $new_pointer_content .= __("This update adds playlist and channel gallery support for FREE and PRO users with some <a target=_blank href=" . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer' . ">additional PRO settings &raquo;</a>");
+            $new_pointer_content .= __("This update improves playlist and channel features in FREE and <a target=_blank href=" . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer' . ">PRO galleries &raquo;</a>");
         }
         else
         {
-            $new_pointer_content .= __("This update adds playlist and channel gallery support for FREE and PRO users with some additional PRO settings.");
+            $new_pointer_content .= __("This update improves playlist and channel features in FREE and PRO galleries.");
         }
         $new_pointer_content .= '</p>';
 
@@ -2512,7 +2526,7 @@ class YouTubePrefs
                 <p><code>&layout=gallery</code></p>
                 <p>For example, below is a playlist that has been converted into a gallery. Notice the new layout parameter, with no spaces:</p>
                 <p>
-                    <code style="font-size: .9em;">http://www.youtube.com/embed?listType=playlist&width=474&height=266&list=UUAuUUnT6oDeKwE6v1NGQxug&plindex=0<b>&layout=gallery</b></code>
+                    <code style="font-size: .9em;">http://www.youtube.com/watch?listType=playlist&width=474&height=266&list=UUAuUUnT6oDeKwE6v1NGQxug&plindex=0<b>&layout=gallery</b></code>
                 </p>
                 <p class="smallnote">
                     PRO users can just use the playlist or channel wizard steps to fully to build codes like the above.
@@ -3277,8 +3291,9 @@ class YouTubePrefs
             wp_enqueue_style(
                     '__EPYT__style', plugins_url('styles/ytprefs.min.css', __FILE__)
             );
-
-            $colwidth = 100.0 / floatval(self::$alloptions[self::$opt_gallery_columns]);
+            $cols = floatval(self::$alloptions[self::$opt_gallery_columns]);
+            $cols = $cols == 0 ? 3.0 : $cols;
+            $colwidth = 100.0 / $cols;
             $custom_css = "
                 .epyt-gallery-thumb {
                         width: {$colwidth}%;
