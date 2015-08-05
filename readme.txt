@@ -13,13 +13,13 @@ YouTube embed plugin. Embed a responsive video, YouTube channel gallery, or play
 
 **Here are a few recently added features (even more features below):**
 
-* YouTube Channel and Playlist Gallery - The ability to make playlist (and channel) embeds have a gallery layout. By default, the plugin can generate a grid-based [responsive playlist and channel gallery >>](http://www.embedplus.com/responsive-youtube-playlist-channel-gallery-for-wordpress.aspx). Your visitors can browse through pages of video thumbnails and choose from videos that are pulled from an entire YouTube channel or playlist.
+* YouTube Channel and Playlist Gallery - The ability to make playlist (and channel) embeds have a gallery layout. By default, the plugin can generate a grid-based [responsive playlist or channel gallery >>](http://www.embedplus.com/responsive-youtube-playlist-channel-gallery-for-wordpress.aspx). Your visitors can browse through pages of video thumbnails and choose from videos that are pulled from an entire YouTube channel or playlist.
 * Improved accessibility by using title attributes for screen reader support. It should help your site [pass functional accessibility evaluations (FAE)](https://www.youtube.com/watch?v=gpAiFnYYkbk).
 * Site origin information with each embed code as an extra security measure. In YouTube's/Google's own words, checking this option "protects against malicious third-party JavaScript being injected into your page and hijacking control of your YouTube player." We especially recommend checking it as it adds higher security than the built-in YouTube embedding method that comes with the current version of WordPress (i.e. oembed).
 * Easy "Insert" button for both the Visual and Text mode of the editor
 * [Embed an entire channel as a playlist >>](https://www.youtube.com/watch?v=_9D4yMyd40g)
 * Start video settings for playlist embeds. You can now choose to start a playlist with a specific video or have the plugin automatically start with the most recently added video.
-* Volume level initialization ( [helpful for autoplay >>](http://www.embedplus.com/mute-volume-youtube-wordpress.aspx) )
+* [Volume level initialization](http://www.embedplus.com/mute-volume-youtube-wordpress.aspx) - helpful when autoplay is checked
 * iOS playback preferences
 * [Automatic localization/internationalization](http://www.embedplus.com/youtube-iso-639-1-language-codes.aspx) so you can set the player's interface language from English to another
 * Instant HTTPS support. It can even convert past non-HTTPS videos to HTTPS.  Did you know that Google uses [HTTPS/SSL support as a ranking signal for SERP?](http://embedplus.com/convert-old-youtube-embeds-to-https-ssl.aspx)
@@ -32,8 +32,8 @@ YouTube embed plugin. Embed a responsive video, YouTube channel gallery, or play
 You can even extend the plugin with PRO features like:
 
 * Alternate playlist and channel gallery styling
-* Caching to avoid making frequent requests to YouTube.com and speed up your page loads.  
-* [Automatic video thumbnail images](http://embedplus.com/add-youtube-video-thumbnails-featured-image-wordpress.aspx): each post or page that contains at least one video will have the thumbnail of its first video serve as its featured image.
+* Caching to avoid making frequent requests to YouTube.com and speed up your page loads
+* [Automatic video thumbnail images](http://embedplus.com/add-youtube-video-thumbnails-featured-image-wordpress.aspx): each post or page that contains at least one video will have the thumbnail of its first video serve as its featured image
 * [Eye-catching special effects for YouTube embeds >>](http://www.embedplus.com/add-special-effects-to-youtube-embeds-in-wordpress.aspx) (uses lazy loading)
 * Automatic tagging for video SEO
 * Automatic Open Graph tagging for Facebook
