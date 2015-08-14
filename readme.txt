@@ -4,7 +4,7 @@ Plugin Name: YouTube Embed
 Tags: youtube channel, video gallery, youtube galleries, channel gallery, gallery, playlist gallery, youtube gallery, accessibility, analytics, api, blocked youtube videos, cache, caching, channel, deleted youtube videos, effects, embed youtube, embedding youtube, featured image, get_locale, i18n, internationalization, l10n, language, lazy, lazy load, locale, localization, mute, no-cookie, oembed, page speed, playlist, playlists, plugin, Reddit, responsive, seo, short code, shortcode, ssl, subtitles, thumbnail, thumbnail image, thumbnails, tinymce, translate, translator, video, video analytics, video plugin, video seo, video shortcode, video thumbnails, view count, volume, widget, wordpress security, wordpress youtube embed, youtube, youtube api, youtube analytics, youtube embed, youtube impressions, youtube player, youtube playlist, youtube plugin, youtube shortcode, youtube snippets, youtube takedowns, youtube thumbnails, youtube plugin migration
 Requires at least: 3.3
 Tested up to: 4.2
-Stable tag: 10.4
+Stable tag: 10.5
 License: GPLv3 or later
 
 YouTube embed plugin. Embed a responsive video, YouTube channel gallery, or playlist gallery. Add video thumbnails, analytics, SEO, caching...
@@ -17,7 +17,7 @@ YouTube embed plugin. Embed a responsive video, YouTube channel gallery, or play
 * Improved accessibility by using title attributes for screen reader support. It should help your site [pass functional accessibility evaluations (FAE)](https://www.youtube.com/watch?v=gpAiFnYYkbk).
 * Site origin information with each embed code as an extra security measure. In YouTube's/Google's own words, checking this option "protects against malicious third-party JavaScript being injected into your page and hijacking control of your YouTube player." We especially recommend checking it as it adds higher security than the built-in YouTube embedding method that comes with the current version of WordPress (i.e. oembed).
 * Easy "Insert" button for both the Visual and Text mode of the editor
-* [Embed an entire channel as a playlist >>](https://www.youtube.com/watch?v=_9D4yMyd40g)
+* [Embed an entire channel as a  (non-gallery, single embedded player) playlist >>](https://www.youtube.com/watch?v=_9D4yMyd40g)
 * Start video settings for playlist embeds. You can now choose to start a playlist with a specific video or have the plugin automatically start with the most recently added video.
 * [Volume level initialization](http://www.embedplus.com/mute-volume-youtube-wordpress.aspx) - helpful when autoplay is checked
 * iOS playback preferences
@@ -48,7 +48,7 @@ This plugin helps you easily manage the growing complexity of YouTube embedding.
 
 The settings page has plenty of default options that you can automatically apply to all your embedded YouTube videos. **Check out the free options below:**
 
-* Force HD quality when available
+* [Force HD quality when available >>](http://www.embedplus.com/force-high-definition-hd-youtube-embed.aspx) (now deprecated)
 * Make your videos responsive so that they dynamically fit in all screen sizes (smart phone, PC and tablet)
 * Modest branding - hide YouTube logo while playing
 * Turn on/off all annotations by default
@@ -146,6 +146,9 @@ You can also start and end each individual video at particular times. Like the a
 8. YouTube Embed Screenshot 8: Localization/internationalization so you can set the player's interface language
 
 == Changelog ==
+
+= YouTube Embed 10.5 =
+Enhanced gallery settings for scrolling, video titles, and thumbnail styling.
 
 = YouTube Embed 10.4 =
 Addresses limitations some users were getting when pasting a YouTube channel and/or playlist gallery.

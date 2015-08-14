@@ -3,7 +3,7 @@
   Plugin Name: YouTube
   Plugin URI: http://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube embed plugin. Embed a responsive YouTube video, playlist gallery, or channel gallery. Add video thumbnails, analytics, SEO, caching...
-  Version: 10.4
+  Version: 10.5
   Author: EmbedPlus Team
   Author URI: http://www.embedplus.com
  */
@@ -32,7 +32,7 @@
 class YouTubePrefs
 {
 
-    public static $version = '10.4';
+    public static $version = '10.5';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -89,6 +89,8 @@ class YouTubePrefs
     public static $opt_gallery_apikey = 'gallery_apikey';
     public static $opt_gallery_columns = 'gallery_columns';
     public static $opt_gallery_style = 'gallery_style';
+    public static $opt_gallery_scrolloffset = 'gallery_scrolloffset';
+    public static $opt_gallery_showtitle = 'gallery_showtitle';
     public static $opt_alloptions = 'youtubeprefs_alloptions';
     public static $alloptions = null;
     public static $yt_options = array();
@@ -260,12 +262,12 @@ class YouTubePrefs
                     jQuery(ele).parent('.accbox').hide(400);
                 }
 
-                (function($j)
+                (function ($j)
                 {
-                    $j(document).ready(function() {
+                    $j(document).ready(function () {
 
 
-                        $j('.acctitle').click(function() {
+                        $j('.acctitle').click(function () {
                             var $acctitle = $j(this);
                             var $accbox = $j(this).parent().children('.accbox');
                             var pid = $accbox.attr("data-postid");
@@ -277,7 +279,7 @@ class YouTubePrefs
                                 timeout: 30000,
                                 url: wpajaxurl,
                                 data: {action: 'my_embedplus_glance_vids', postid: pid},
-                                success: function(response) {
+                                success: function (response) {
                                     if (response.type == "success") {
                                         $accbox.html(response.data),
                                                 $accbox.show(400);
@@ -285,10 +287,10 @@ class YouTubePrefs
                                     else {
                                     }
                                 },
-                                error: function(xhr, ajaxOptions, thrownError) {
+                                error: function (xhr, ajaxOptions, thrownError) {
 
                                 },
-                                complete: function() {
+                                complete: function () {
                                     $acctitle.children('.accloader').remove();
                                 }
 
@@ -501,12 +503,12 @@ class YouTubePrefs
         ?>
         <script type="text/javascript">
             function widen_ytprefs_wiz() {
-                setTimeout(function() {
+                setTimeout(function () {
                     jQuery("#TB_window").animate({marginLeft: '-' + parseInt((950 / 2), 10) + 'px', width: '950px'}, 300);
                     jQuery("#TB_window iframe").animate({width: '950px'}, 300);
                 }, 15);
             }
-            jQuery(document).ready(function() {
+            jQuery(document).ready(function () {
                 jQuery("#ytprefs_wiz_button").click(widen_ytprefs_wiz);
                 jQuery(window).resize(widen_ytprefs_wiz);
             });
@@ -559,23 +561,23 @@ class YouTubePrefs
                 </div>
                 <iframe allowTransparency="true" src="<?php echo self::$epbase . '/both-plugins-conflict.aspx' ?>" style="width:2px; height: 2px;" ></iframe>
                 <script type="text/javascript">
-                    (function($) {
-                        $(document).ready(function() {
-                            $('.epxout').click(function() {
+                    (function ($) {
+                        $(document).ready(function () {
+                            $('.epxout').click(function () {
                                 $.ajax({
                                     type: "post",
                                     dataType: "json",
                                     timeout: 30000,
                                     url: wpajaxurl,
                                     data: {action: 'my_embedplus_dismiss_double_plugin_warning'},
-                                    success: function(response) {
+                                    success: function (response) {
                                         if (response.type == "success") {
                                             $(".embedpluswarningbox").hide();
                                         }
                                     },
-                                    error: function(xhr, ajaxOptions, thrownError) {
+                                    error: function (xhr, ajaxOptions, thrownError) {
                                     },
-                                    complete: function() {
+                                    complete: function () {
                                     }
                                 });
                             });
@@ -701,6 +703,8 @@ class YouTubePrefs
         $_hl = '';
         $_dohl = 0;
         $_gallery_columns = 3;
+        $_gallery_scrolloffset = 20;
+        $_gallery_showtitle = 1;
         $_gallery_pagesize = 15;
         $_gallery_style = 'grid';
 
@@ -754,6 +758,8 @@ class YouTubePrefs
             $_apikey = self::tryget($arroptions, self::$opt_apikey, '');
             $_gallery_pagesize = self::tryget($arroptions, self::$opt_gallery_pagesize, 15);
             $_gallery_columns = self::tryget($arroptions, self::$opt_gallery_columns, 3);
+            $_gallery_scrolloffset = self::tryget($arroptions, self::$opt_gallery_scrolloffset, 20);
+            $_gallery_showtitle = self::tryget($arroptions, self::$opt_gallery_showtitle, 1);
             $_gallery_style = self::tryget($arroptions, self::$opt_gallery_style, 'grid');
         }
         else
@@ -807,6 +813,8 @@ class YouTubePrefs
             self::$opt_vol => $_vol,
             self::$opt_apikey => $_apikey,
             self::$opt_gallery_columns => $_gallery_columns,
+            self::$opt_gallery_scrolloffset => $_gallery_scrolloffset,
+            self::$opt_gallery_showtitle => $_gallery_showtitle,
             self::$opt_gallery_style => $_gallery_style,
             self::$opt_gallery_pagesize => $_gallery_pagesize
         );
@@ -910,30 +918,35 @@ class YouTubePrefs
         return self::get_html($m, false);
     }
 
-    public static function get_gallery_page($playlistId, $pageToken, $pageSize, $columns, $style, $apiKey)
+    //public static function get_gallery_page($playlistId, $pageToken, $pageSize, $columns, $style, $apiKey)
+    public static function get_gallery_page($options)
     {
-        if (empty($apiKey))
+//        $playlistId = $options->playlistId;
+//        $pageToken = $options->pageToken;
+        $options->pageSize = intval($options->pageSize);
+        $options->columns = intval($options->columns);
+//        $style = $options->style;
+//        $apiKey = $options->apiKey;
+        $options->showTitle = intval($options->showTitle);
+
+        if (empty($options->apiKey))
         {
             return '<div>Please enter your YouTube API key to embed galleries.</div>';
         }
-        if (self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0 && $style == 'listview')
-        {
-            //$columns = 1;
-        }
 
-        $apiEndpoint = 'https://www.googleapis.com/youtube/v3/playlistItems?part=snippet,status&playlistId=' . $playlistId
-                . '&maxResults=' . $pageSize
-                . '&key=' . $apiKey;
-        if ($pageToken != null)
+        $apiEndpoint = 'https://www.googleapis.com/youtube/v3/playlistItems?part=snippet,status&playlistId=' . $options->playlistId
+                . '&maxResults=' . $options->pageSize
+                . '&key=' . $options->apiKey;
+        if ($options->pageToken != null)
         {
-            $apiEndpoint .= '&pageToken=' . $pageToken;
+            $apiEndpoint .= '&pageToken=' . $options->pageToken;
         }
         $spdckey = '';
         if (self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0 && self::$alloptions[self::$opt_spdc] == 1)
         {
             try
             {
-                $spdckey = self::$spdcprefix . '_' . md5($apiEndpoint . $columns . $style);
+                $spdckey = self::$spdcprefix . '_' . md5($apiEndpoint . $options->columns . $options->style . $options->showTitle);
                 $spdcval = get_transient($spdckey);
                 if (!empty($spdcval))
                 {
@@ -952,6 +965,13 @@ class YouTubePrefs
         $apiResult = wp_remote_get($apiEndpoint);
         $jsonResult = json_decode($apiResult['body']);
 
+        if (isset($jsonResult->error))
+        {
+            return '<div>Sorry, there may be an issue with your YouTube API key. Please enter a valid key to embed galleries.</div>';
+        }
+
+
+
         $resultsPerPage = $jsonResult->pageInfo->resultsPerPage;
         $totalResults = $jsonResult->pageInfo->totalResults;
 
@@ -968,6 +988,7 @@ class YouTubePrefs
         }
 
         $cnt = 0;
+        $code.= '<div class="epyt-gallery-allthumbs">';
         foreach ($jsonResult->items as $item)
         {
 
@@ -975,7 +996,7 @@ class YouTubePrefs
 
             $thumb->id = isset($item->snippet->resourceId->videoId) ? $item->snippet->resourceId->videoId : null;
             $thumb->id = $thumb->id ? $thumb->id : $item->id->videoId;
-            $thumb->title = $item->snippet->title;
+            $thumb->title = $options->showTitle ? $item->snippet->title : '';
             $thumb->privacyStatus = isset($item->status->privacyStatus) ? $item->status->privacyStatus : null;
 
             if ($thumb->privacyStatus == 'private')
@@ -1002,14 +1023,15 @@ class YouTubePrefs
                 }
             }
 
-            $code .= self::get_thumbnail_html($thumb, $style);
+            $code .= self::get_thumbnail_html($thumb, $options);
             $cnt++;
 
-            if ($cnt % $columns === 0)
+            if ($cnt % $options->columns === 0 && $options->style !== 'carousel')
             {
                 $code .= '<div class="epyt-gallery-rowbreak"></div>';
             }
         }
+        $code .= '<div class="epyt-gallery-clear"></div></div>';
 
         $totalPages = ceil($totalResults / $resultsPerPage);
         $pagination = '<div class="epyt-pagination">';
@@ -1017,12 +1039,13 @@ class YouTubePrefs
         {
             if (!empty($prevPageToken))
             {
-                $pagination .= '<div class="epyt-pagebutton epyt-prev" data-playlistid="' . esc_attr($playlistId)
-                        . '" data-pagesize="' . intval($pageSize)
+                $pagination .= '<div class="epyt-pagebutton epyt-prev" data-playlistid="' . esc_attr($options->playlistId)
+                        . '" data-pagesize="' . intval($options->pageSize)
                         . '" data-pagetoken="' . esc_attr($prevPageToken)
-                        . '" data-style="' . esc_attr($style)
-                        . '" data-columns="' . intval($columns)
-                        . '"><div>&laquo;</div> ' . _('Prev') . '</div>';
+                        . '" data-style="' . esc_attr($options->style)
+                        . '" data-columns="' . intval($options->columns)
+                        . '" data-showtitle="' . intval($options->showTitle)
+                        . '"><div class="arrow">&laquo;</div> <div>' . _('Prev') . '</div></div>';
             }
 
             $pagination .= '<div class="epyt-pagenumbers">';
@@ -1031,12 +1054,13 @@ class YouTubePrefs
 
             if (!empty($nextPageToken))
             {
-                $pagination .= '<div class="epyt-pagebutton epyt-next" data-playlistid="' . esc_attr($playlistId)
-                        . '" data-pagesize="' . intval($pageSize)
+                $pagination .= '<div class="epyt-pagebutton epyt-next" data-playlistid="' . esc_attr($options->playlistId)
+                        . '" data-pagesize="' . intval($options->pageSize)
                         . '" data-pagetoken="' . esc_attr($nextPageToken)
-                        . '" data-style="' . esc_attr($style)
-                        . '" data-columns="' . intval($columns)
-                        . '">' . _('Next') . ' <div>&raquo;</div></div>';
+                        . '" data-style="' . esc_attr($options->style)
+                        . '" data-columns="' . intval($options->columns)
+                        . '" data-showtitle="' . intval($options->showTitle)
+                        . '"><div>' . _('Next') . '</div> <div class="arrow">&raquo;</div></div>';
             }
             $pagination .= '<div class="epyt-loader"><img src="' . plugins_url('images/gallery-page-loader.gif', __FILE__) . '"></div>';
         }
@@ -1057,22 +1081,37 @@ class YouTubePrefs
         return $code;
     }
 
-    public static function get_thumbnail_html($thumb, $style)
+    public static function get_thumbnail_html($thumb, $options)
     {
         $escId = esc_attr($thumb->id);
         $code = '';
         $styleclass = '';
+        $rawstyle = '';
 
-        if (self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0 && $style == 'listview')
+        if (self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0)
         {
-            $styleclass = 'epyt-listview';
+            if ($options->style == 'listview')
+            {
+                $styleclass = 'epyt-listview';
+            }
+            else if ($options->style == 'carousel')
+            {
+                $rawstyle = ' style="width: ' . (100.0 / floatval($options->pageSize)) . '%;" ';
+            }
         }
 
-        $code .= '<div data-videoid="' . $escId . '" class="epyt-gallery-thumb ' . $styleclass . '">';
+        $code .= '<div data-videoid="' . $escId . '" class="epyt-gallery-thumb ' . $styleclass . '" ' . $rawstyle . '>';
         $code .= '<div class="epyt-gallery-img-box"><div class="epyt-gallery-img" style="background-image: url(' . esc_attr($thumb->img) . ')">' .
                 '<div class="epyt-gallery-playhover"><img class="epyt-play-img" src="' . plugins_url('images/playhover.png', __FILE__) . '" /><div class="epyt-gallery-playcrutch"></div></div>' .
                 '</div></div>';
-        $code .= '<div class="epyt-gallery-title">' . esc_html($thumb->title) . '</div>';
+        if ($options->style != 'carousel' && !empty($thumb->title))
+        {
+            $code .= '<div class="epyt-gallery-title">' . esc_html($thumb->title) . '</div>';
+        }
+        else
+        {
+            $code .= '<div class="epyt-gallery-notitle"></div>';
+        }
         $code .= '</div>';
 
 
@@ -1084,7 +1123,10 @@ class YouTubePrefs
         if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')
         {
             check_ajax_referer('embedplus-nonce', 'security');
-            echo self::get_gallery_page($_POST['playlistId'], $_POST['pageToken'], $_POST['pageSize'], $_POST['columns'], $_POST['style'], self::$alloptions[self::$opt_apikey]);
+            //echo self::get_gallery_page($_POST['playlistId'], $_POST['pageToken'], $_POST['pageSize'], $_POST['columns'], $_POST['style'], self::$alloptions[self::$opt_apikey]);
+            $options = (object) $_POST['options'];
+            $options->apiKey = self::$alloptions[self::$opt_apikey];
+            echo self::get_gallery_page($options);
             die();
         }
     }
@@ -1265,10 +1307,22 @@ class YouTubePrefs
                 isset($finalparams['layout']) && strtolower($finalparams['layout']) == 'gallery' && isset($finalparams['list'])
         )
         {
+            $gallery_options = new stdClass();
+            $gallery_options->playlistId = $finalparams['list'];
+            $gallery_options->pageToken = null;
+            $gallery_options->pageSize = $finalparams[self::$opt_gallery_pagesize];
+            $gallery_options->columns = intval($finalparams[self::$opt_gallery_columns]);
+            $gallery_options->showTitle = intval($finalparams[self::$opt_gallery_showtitle]);
+            $gallery_options->style = $finalparams[self::$opt_gallery_style];
+            $gallery_options->apiKey = self::$alloptions[self::$opt_apikey];
+
             $dynsrc = 'data-ep-gallery';
             $galleryWrapper1 = '<div class="epyt-gallery" data-currpage="1">';
             $galleryWrapper2 = '</div>';
-            $galleryCode = '<div class="epyt-gallery-list">' . self::get_gallery_page($finalparams['list'], null, $finalparams[self::$opt_gallery_pagesize], intval($finalparams[self::$opt_gallery_columns]), $finalparams[self::$opt_gallery_style], self::$alloptions[self::$opt_apikey]) . '</div>';
+            $galleryCode = '<div class="epyt-gallery-list epyt-gallery-style-' . esc_attr($gallery_options->style) . '">' .
+                    //self::get_gallery_page($finalparams['list'], null, $finalparams[self::$opt_gallery_pagesize], intval($finalparams[self::$opt_gallery_columns]), $finalparams[self::$opt_gallery_style], self::$alloptions[self::$opt_apikey]) . 
+                    self::get_gallery_page($gallery_options) .
+                    '</div>';
             $videoidoutput = 'GALLERYVIDEOID';
         }
 
@@ -1347,7 +1401,8 @@ class YouTubePrefs
 
     public static function spdcpurge()
     {
-        $allk = get_option(self::$spdcall, array()); {
+        $allk = get_option(self::$spdcall, array());
+        {
             foreach ($allk as $t)
             {
                 $success = delete_transient($t);
@@ -1851,15 +1906,15 @@ class YouTubePrefs
         ?>
         <script type="text/javascript">
             function widen_ytprefs_glance() {
-                setTimeout(function() {
+                setTimeout(function () {
                     jQuery("#TB_window").animate({marginLeft: '-' + parseInt((780 / 2), 10) + 'px', width: '780px'}, 300);
                     jQuery("#TB_window iframe").animate({width: '780px'}, 300);
                 }, 15);
             }
 
-            (function($j)
+            (function ($j)
             {
-                $j(document).ready(function() {
+                $j(document).ready(function () {
 
                     $j.ajax({
                         type: "post",
@@ -1867,7 +1922,7 @@ class YouTubePrefs
                         timeout: 30000,
                         url: wpajaxurl,
                         data: {action: 'my_embedplus_glance_count'},
-                        success: function(response) {
+                        success: function (response) {
                             if (response.type == "success") {
                                 $j(response.container).append(response.data);
                                 $j(".ytprefs_glance_button").click(widen_ytprefs_glance);
@@ -1880,10 +1935,10 @@ class YouTubePrefs
                             else {
                             }
                         },
-                        error: function(xhr, ajaxOptions, thrownError) {
+                        error: function (xhr, ajaxOptions, thrownError) {
 
                         },
-                        complete: function() {
+                        complete: function () {
                         }
                     });
 
@@ -1914,7 +1969,7 @@ class YouTubePrefs
                                 edge: '<?php echo $array['edge']; ?>',
                                 align: '<?php echo $array['align']; ?>'
                             },
-                            close: function() {
+                            close: function () {
                                 $.post(wpajaxurl, {
                                     pointer: '<?php echo $pointer; ?>',
                                     action: 'dismiss-wp-pointer'
@@ -1944,11 +1999,11 @@ class YouTubePrefs
         $new_pointer_content .= '<p>'; // ooopointer
         if (!(self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0))
         {
-            $new_pointer_content .= __("This update improves playlist and channel features in FREE and <a target=_blank href=" . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer' . ">PRO galleries &raquo;</a>");
+            $new_pointer_content .= __("This update improves existing video gallery support for Free and Pro users with <a target=_blank href=" . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer' . ">additional Pro benefits  &raquo;</a>");
         }
         else
         {
-            $new_pointer_content .= __("This update improves playlist and channel features in FREE and PRO galleries.");
+            $new_pointer_content .= __("This update improves existing video gallery support for Free and Pro users with additional Pro benefits.");
         }
         $new_pointer_content .= '</p>';
 
@@ -2032,6 +2087,7 @@ class YouTubePrefs
             $new_options[self::$opt_defaultdims] = self::postchecked(self::$opt_defaultdims) ? 1 : 0;
             $new_options[self::$opt_defaultvol] = self::postchecked(self::$opt_defaultvol) ? 1 : 0;
             $new_options[self::$opt_dohl] = self::postchecked(self::$opt_dohl) ? 1 : 0;
+            $new_options[self::$opt_gallery_showtitle] = self::postchecked(self::$opt_gallery_showtitle) ? 1 : 0;
 
             $_defaultwidth = '';
             try
@@ -2088,6 +2144,17 @@ class YouTubePrefs
                 
             }
             $new_options[self::$opt_gallery_columns] = $_gallery_columns;
+
+            $_gallery_scrolloffset = 20;
+            try
+            {
+                $_gallery_scrolloffset = is_numeric(trim($_POST[self::$opt_gallery_scrolloffset])) ? intval(trim($_POST[self::$opt_gallery_scrolloffset])) : $_gallery_scrolloffset;
+            }
+            catch (Exception $ex)
+            {
+                
+            }
+            $new_options[self::$opt_gallery_scrolloffset] = $_gallery_scrolloffset;
 
             $_gallery_style = 'grid';
             try
@@ -2272,7 +2339,7 @@ class YouTubePrefs
             .wp-pointer-buttons a.close {margin-top: 0 !important;}
             .pad20{padding: 20px 0 20px 0;}
             .ssgallery {float: right; width: 130px; height: auto; margin-left: 15px; border: 3px solid #ffffff;}
-            .ssaltgallery {float: right; height: auto; margin-right: 10px; margin-left: 15px; margin-bottom: 10px; width: 210px;}
+            .ssaltgallery {float: right; height: auto; margin-right: 10px; margin-left: 15px; margin-bottom: 10px; width: 350px;}
         </style>
         <div class="ytindent">
             <br>
@@ -2291,7 +2358,7 @@ class YouTubePrefs
                 <input type="hidden" name="<?php echo $ytprefs_submitted; ?>" value="Y">
 
                 <h3 class="sect">
-                    <?php _e("How to Insert a YouTube Video or Playlist") ?> <!--<span class="pronon">(For Free and <a href="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx" target="_blank">PRO Users &raquo;</a>)</span>-->
+        <?php _e("How to Insert a YouTube Video or Playlist") ?> <!--<span class="pronon">(For Free and <a href="<?php echo self::$epbase ?>/dashboard/pro-easy-video-analytics.aspx" target="_blank">PRO Users &raquo;</a>)</span>-->
                 </h3>
                 <p>
                     <b>For videos:</b> <i>Method 1 - </i> Do you already have a URL to the video you want to embed in a post, page, or even a widget? All you have to do is paste it on its own line, as shown below (including the http:// part). Easy, eh?<br>
@@ -2341,10 +2408,10 @@ class YouTubePrefs
                 </p>
                 <div class="jumper" id="jumpdefaults"></div>
                 <h3 class="sect">
-                    <?php _e("Default YouTube Options") ?> <a href="#top" class="totop">&#9650; top</a>
+        <?php _e("Default YouTube Options") ?> <a href="#top" class="totop">&#9650; top</a>
                 </h3>
                 <p>
-                    <?php _e("One of the benefits of using this plugin is that you can set site-wide default options for all your videos (click \"Save Changes\" when finished). However, you can also override them (and more) on a per-video basis. Directions on how to do that are in the next section.") ?>
+        <?php _e("One of the benefits of using this plugin is that you can set site-wide default options for all your videos (click \"Save Changes\" when finished). However, you can also override them (and more) on a per-video basis. Directions on how to do that are in the next section.") ?>
                 </p>
                 <p class="submit">
                     <input type="submit" onclick="return savevalidate();" name="Submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
@@ -2495,7 +2562,9 @@ class YouTubePrefs
                     <p>
                         <input name="<?php echo self::$opt_playlistorder; ?>" id="<?php echo self::$opt_playlistorder; ?>" <?php checked($all[self::$opt_playlistorder], 1); ?> type="checkbox" class="checkbox">
                         <label for="<?php echo self::$opt_playlistorder; ?>">
-                            <b class="chktitle">Playlist Ordering: <sup class="orange bold">NEW</sup></b> Check this option if you want your playlists to begin with the latest added video by default. (Unchecking this will force playlists to always start with your selected specific video, even if you add videos to the playlist later).
+                            <b class="chktitle">Playlist Ordering: <sup class="orange bold">NEW</sup></b> 
+                            Check this option if you want your playlists to begin with the latest added video by default. (Unchecking this will force playlists to always start with your selected specific video, even if you add videos to the playlist later).
+                            Note that this is not for setting the thumbnail list order of galleries,  just the standard playlist player that YouTube provides.
                         </label>
                     </p>
 
@@ -2517,7 +2586,7 @@ class YouTubePrefs
                 <h3 class="sect">Gallery Settings and Directions<sup class="orange bold">NEW</sup></h3>
                 <img class="ssgallery" src="<?php echo plugins_url('images/ssgallery.png', __FILE__) ?>">
                 <p>
-                    You can now make playlist embeds (and channel-playlist embeds) have a gallery layout. <strong>First, you must obtain your YouTube API key</strong>. 
+                    <a target="_blank" href="<?php echo self::$epbase ?>/responsive-youtube-playlist-channel-gallery-for-wordpress.aspx">You can now make playlist embeds (and channel-playlist embeds) have a gallery layout &raquo;</a>. <strong>First, you must obtain your YouTube API key</strong>. 
                     Don't worry, it's an easy process. Just <a href="https://www.youtube.com/watch?v=2vmBACVETf4" target="_blank">click this link &raquo;</a> and follow the video on that page to get your API key. Then paste it in the box below, and click the "Save Changes" button:
                 </p>
                 <p>
@@ -2529,7 +2598,7 @@ class YouTubePrefs
                     <code style="font-size: .9em;">http://www.youtube.com/watch?listType=playlist&width=474&height=266&list=UUAuUUnT6oDeKwE6v1NGQxug&plindex=0<b>&layout=gallery</b></code>
                 </p>
                 <p class="smallnote">
-                    PRO users can just use the playlist or channel wizard steps to fully to build codes like the above.
+                    The PRO wizard steps for playlist and channels can also fully to build codes like the above.
                 </p>
                 <p>
                     Below are the settings for galleries:
@@ -2550,6 +2619,16 @@ class YouTubePrefs
                         <input name="<?php echo self::$opt_gallery_columns; ?>" id="<?php echo self::$opt_gallery_columns; ?>" type="number" class="textinput" style="width: 60px;" value="<?php echo trim($all[self::$opt_gallery_columns]); ?>">                        
                         Enter how many thumbnails can fit per row.
                     </p>
+                    <p>
+                        <label for="<?php echo self::$opt_gallery_scrolloffset; ?>"><b class="chktitle">Scroll Offset:</b></label>
+                        <input name="<?php echo self::$opt_gallery_scrolloffset; ?>" id="<?php echo self::$opt_gallery_scrolloffset; ?>" type="number" class="textinput" style="width: 60px;" value="<?php echo trim($all[self::$opt_gallery_scrolloffset]); ?>">
+                        After you click on a thumbnail, the gallery will automatically smooth scroll up to the actual player. If you need it to scroll a few pixels further, increase this number.
+                    </p>
+                    <p>
+                        <input name="<?php echo self::$opt_gallery_showtitle; ?>" id="<?php echo self::$opt_gallery_showtitle; ?>" <?php checked($all[self::$opt_gallery_showtitle], 1); ?> type="checkbox" class="checkbox">
+                        <label for="<?php echo self::$opt_gallery_showtitle; ?>"><b class="chktitle">Show Thumbnail Title:</b> Show titles with each thumbnail.</label>
+                    </p>
+
                 </div>
 
                 <p class="submit">
@@ -2566,7 +2645,22 @@ class YouTubePrefs
                     {
                         ?>
                         <p class="smallnote orange">Below are PRO features for enhanced SEO and performance (works for even past embed links). Gallery options for PRO users will also be listed here.</p>
-
+                        <p>
+                            <img class="ssaltgallery" src="<?php echo plugins_url('images/ssaltgalleryall.jpg', __FILE__) ?>" />
+            <?php $cleanstyle = trim($all[self::$opt_gallery_style]); ?>
+                            <select name="<?php echo self::$opt_gallery_style; ?>" id="<?php echo self::$opt_gallery_style; ?>" >
+                                <option value="">Gallery Style</option>
+                                <option value="grid" <?php echo 'grid' === $cleanstyle ? 'selected' : '' ?> >Grid (default)</option>
+                                <option value="listview" <?php echo 'listview' === $cleanstyle ? 'selected' : '' ?> >Vertical List</option>
+                                <option value="carousel" <?php echo 'carousel' === $cleanstyle ? 'selected' : '' ?> >Horizontal Slider</option>
+                            </select>
+                            <label for="<?php echo self::$opt_gallery_style; ?>">
+                                <b>(PRO)</b>  <b class="chktitle">Alternate Gallery Styling: <sup class="orange">NEW</sup></b></b>
+                                Switch from the grid style of the FREE version to another gallery style. Right now, we provide a vertical (single column) and horizontal (single row) list style as alternatives to the grid, with more designs coming. These current alternatives were inspired by the standard YouTube playlist player's "table of contents," except our gallery's video lists are always visible and shown under the playing video.
+                                <a target="_blank" href="<?php echo self::$epbase ?>/responsive-youtube-playlist-channel-gallery-for-wordpress.aspx">Read more here &raquo;</a>
+                            </label>
+                        </p>
+                        <div class="hr"></div>
                         <p>
                             <input name="<?php echo self::$opt_spdc; ?>" id="<?php echo self::$opt_spdc; ?>" <?php checked($all[self::$opt_spdc], 1); ?> type="checkbox" class="checkbox">
                             <label for="<?php echo self::$opt_spdc; ?>">
@@ -2591,20 +2685,7 @@ class YouTubePrefs
                         </div>
                         </p>
                         <div class="hr"></div>
-                        <p>
-                            <img class="ssaltgallery" src="<?php echo plugins_url('images/ssaltgallery.jpg', __FILE__) ?>" />
-                            <?php $cleanstyle = trim($all[self::$opt_gallery_style]); ?>
-                            <select name="<?php echo self::$opt_gallery_style; ?>" id="<?php echo self::$opt_gallery_style; ?>" >
-                                <option value="">Gallery Style</option>
-                                <option value="grid" <?php echo 'grid' === $cleanstyle ? 'selected' : '' ?> >Default (grid)</option>
-                                <option value="listview" <?php echo 'listview' === $cleanstyle ? 'selected' : '' ?> >List view</option>
-                            </select>
-                            <label for="<?php echo self::$opt_gallery_style; ?>">
-                                <b>(PRO)</b>  <b class="chktitle">Alternate Gallery Styling: <sup class="orange">NEW</sup></b></b>
-                                Switch from the grid style of the FREE version to another gallery style.  Right now, we provide a vertical (single column) list style as an alternative, with more designs coming. This current alternative was inspired by the standard YouTube playlist player’s “table of contents,” except our gallery’s video list is always visible and shown under the playing video. <a target="_blank" href="<?php echo self::$epbase ?>/responsive-youtube-playlist-channel-gallery-for-wordpress.aspx">Read more here &raquo;</a>
-                            </label>
-                        </p>
-                        <div class="hr"></div>
+
                         <p>
                             <input name="<?php echo self::$opt_schemaorg; ?>" id="<?php echo self::$opt_schemaorg; ?>" <?php checked($all[self::$opt_schemaorg], 1); ?> type="checkbox" class="checkbox">
                             <label for="<?php echo self::$opt_schemaorg; ?>">
@@ -2630,7 +2711,7 @@ class YouTubePrefs
                             <input name="<?php echo self::$opt_dynload; ?>" id="<?php echo self::$opt_dynload; ?>" <?php checked($all[self::$opt_dynload], 1); ?> type="checkbox" class="checkbox">                        
                             <span id="boxdyn">
                                 Animation:
-                                <?php $cleandyn = trim($all[self::$opt_dyntype]); ?>
+            <?php $cleandyn = trim($all[self::$opt_dyntype]); ?>
                                 <select name="<?php echo self::$opt_dyntype; ?>" id="<?php echo self::$opt_dyntype; ?>" >
                                     <option value="">Select type</option>
                                     <option value="rotateIn" <?php echo 'rotateIn' === $cleandyn ? 'selected' : '' ?> >rotate in</option>
@@ -2678,6 +2759,19 @@ class YouTubePrefs
                         ?>
                         <p class="smallnote orange">Below are PRO features for enhanced SEO and performance (works for even past embed links). </p>
                         <p>
+                            <img class="ssaltgallery" src="<?php echo plugins_url('images/ssaltgalleryall.jpg', __FILE__) ?>" />
+                            <select disabled>
+                                <option value="">Gallery Style</option>
+                            </select>
+                            <label>
+                                <b>(PRO)</b>  <b class="chktitle">Alternate Gallery Styling: <sup class="orange">NEW</sup></b> <span class="pronon">(PRO Users)</span> 
+                                Switch from the grid style of the FREE version to another gallery style. Right now, we provide a vertical (single column) and horizontal (single row) list style as alternatives to the grid, with more designs coming. These current alternatives were inspired by the standard YouTube playlist player's "table of contents," except our gallery's video lists are always visible and shown under the playing video.
+                                <a target="_blank" href="<?php echo self::$epbase ?>/responsive-youtube-playlist-channel-gallery-for-wordpress.aspx">Read more here &raquo;</a>
+                            </label>
+                        </p>
+
+                        <div class="hr"></div>
+                        <p>
                             <input disabled type="checkbox" class="checkbox">
                             <label>
                                 <b class="chktitle">Faster Page Loads (Caching): <sup class="orange">NEW</sup></b>  <span class="pronon">(PRO Users)</span> 
@@ -2692,18 +2786,7 @@ class YouTubePrefs
                         </div>
                         </p>
                         <div class="hr"></div>
-                        <p>
-                            <img class="ssaltgallery" src="<?php echo plugins_url('images/ssaltgallery.jpg', __FILE__) ?>" />
-                            <select disabled>
-                                <option value="">Gallery Style</option>
-                            </select>
-                            <label>
-                                <b>(PRO)</b>  <b class="chktitle">Alternate Gallery Styling: <sup class="orange">NEW</sup></b> <span class="pronon">(PRO Users)</span> 
-                                Switch from the grid style of the FREE version to another gallery style.  Right now, we provide a vertical (single column) list style as an alternative, with more designs coming. This current alternative was inspired by the standard YouTube playlist player’s “table of contents,” except our gallery’s video list is always visible and shown under the playing video. <a target="_blank" href="<?php echo self::$epbase ?>/responsive-youtube-playlist-channel-gallery-for-wordpress.aspx">Read more here &raquo;</a>
-                            </label>
-                        </p>
 
-                        <div class="hr"></div>
 
                         <p>
                             <input disabled type="checkbox" class="checkbox">
@@ -2759,7 +2842,7 @@ class YouTubePrefs
                 <div class="jumper" id="jumpoverride"></div>
 
                 <h3 class="sect">
-                    <?php _e("How To Override Defaults / Other Options") ?> <a href="#top" class="totop">&#9650; top</a>
+        <?php _e("How To Override Defaults / Other Options") ?> <a href="#top" class="totop">&#9650; top</a>
                 </h3>
                 <p>Suppose you have a few videos that need to be different from the above defaults. You can add options to the end of a link as displayed below to override the above defaults. Each option should begin with '&'.
                     <br><span class="smallnote orange">PRO users: You can use the <a href="<?php echo self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=protab' ?>" target="_blank" class="button-primary cuz">&#9658; Customize</a> button that you will see inside the wizard, instead of memorizing the following.</span>
@@ -3057,8 +3140,8 @@ class YouTubePrefs
                 var prokeyval;
                 var mydomain = escape("http://" + window.location.host.toString());
 
-                jQuery(document).ready(function($) {
-                    jQuery('#<?php echo self::$opt_defaultdims; ?>').change(function()
+                jQuery(document).ready(function ($) {
+                    jQuery('#<?php echo self::$opt_defaultdims; ?>').change(function ()
                     {
                         if (jQuery(this).is(":checked"))
                         {
@@ -3071,7 +3154,7 @@ class YouTubePrefs
 
                     });
 
-                    jQuery('#<?php echo self::$opt_dynload; ?>').change(function()
+                    jQuery('#<?php echo self::$opt_dynload; ?>').change(function ()
                     {
                         if (jQuery(this).is(":checked"))
                         {
@@ -3084,7 +3167,7 @@ class YouTubePrefs
 
                     });
 
-                    jQuery('#<?php echo self::$opt_spdc; ?>').change(function()
+                    jQuery('#<?php echo self::$opt_spdc; ?>').change(function ()
                     {
                         if (jQuery(this).is(":checked"))
                         {
@@ -3097,7 +3180,7 @@ class YouTubePrefs
                     });
 
 
-                    jQuery('#<?php echo self::$opt_migrate; ?>').change(function()
+                    jQuery('#<?php echo self::$opt_migrate; ?>').change(function ()
                     {
                         if (jQuery(this).is(":checked"))
                         {
@@ -3111,7 +3194,7 @@ class YouTubePrefs
 
 
 
-                    jQuery('#<?php echo self::$opt_nocookie; ?>').change(function()
+                    jQuery('#<?php echo self::$opt_nocookie; ?>').change(function ()
                     {
                         if (jQuery(this).is(":checked"))
                         {
@@ -3124,7 +3207,7 @@ class YouTubePrefs
 
                     });
 
-                    jQuery('#<?php echo self::$opt_schemaorg; ?>').change(function()
+                    jQuery('#<?php echo self::$opt_schemaorg; ?>').change(function ()
                     {
                         if (jQuery(this).is(":checked"))
                         {
@@ -3152,7 +3235,7 @@ class YouTubePrefs
 
 
 
-                    jQuery('#<?php echo self::$opt_defaultvol; ?>').change(function()
+                    jQuery('#<?php echo self::$opt_defaultvol; ?>').change(function ()
                     {
                         if (jQuery(this).is(":checked"))
                         {
@@ -3171,7 +3254,7 @@ class YouTubePrefs
                     //canrange = false;
                     if (canrange)
                     {
-                        $("input#vol").prop("type", "range").addClass("vol-range").on("input change", function() {
+                        $("input#vol").prop("type", "range").addClass("vol-range").on("input change", function () {
                             $('.vol-output').text($(this).val() > 0 ? $(this).val() + '%' : 'Mute');
                         });
                         $('.vol-output').css("display", "inline-block").text($("input#vol").val() > 0 ? $("input#vol").val() + '%' : 'Mute');
@@ -3184,7 +3267,7 @@ class YouTubePrefs
                     }
 
 
-                    jQuery('#boxspdc input.button').click(function() {
+                    jQuery('#boxspdc input.button').click(function () {
                         jQuery('#clearspdcloading').show();
                         jQuery('#clearspdcfailed').hide();
                         jQuery('#clearspdcsuccess').hide();
@@ -3198,7 +3281,7 @@ class YouTubePrefs
                             timeout: 30000,
                             url: wpajaxurl,
                             data: {action: 'my_embedplus_clearspdc'},
-                            success: function(response) {
+                            success: function (response) {
                                 if (response.type == "success") {
                                     jQuery("#clearspdcsuccess").show();
                                 }
@@ -3206,10 +3289,10 @@ class YouTubePrefs
                                     jQuery("#clearspdcfailed").show();
                                 }
                             },
-                            error: function(xhr, ajaxOptions, thrownError) {
+                            error: function (xhr, ajaxOptions, thrownError) {
                                 jQuery("#clearspdcfailed").show();
                             },
-                            complete: function() {
+                            complete: function () {
                                 jQuery('#clearspdcloading').hide();
                                 $clearbutton.removeAttr('disabled');
                             }
@@ -3221,16 +3304,16 @@ class YouTubePrefs
 
 
 
-                    jQuery("#showcase-validate").click(function() {
+                    jQuery("#showcase-validate").click(function () {
                         window.open("<?php echo self::$epbase . "/showcase-validate.aspx?prokey=" . self::$alloptions[self::$opt_pro] ?>" + "&domain=" + mydomain);
                     });
 
-                    jQuery('#showprokey').click(function() {
+                    jQuery('#showprokey').click(function () {
                         jQuery('.submitpro').show(500);
                         return false;
                     });
 
-                    jQuery('#prokeysubmit').click(function() {
+                    jQuery('#prokeysubmit').click(function () {
                         jQuery(this).attr('disabled', 'disabled');
                         jQuery('#prokeyfailed').hide();
                         jQuery('#prokeysuccess').hide();
@@ -3240,13 +3323,13 @@ class YouTubePrefs
                         var tempscript = document.createElement("script");
                         tempscript.src = "//www.embedplus.com/dashboard/wordpress-pro-validatejp.aspx?simple=1&prokey=" + prokeyval + "&domain=" + mydomain;
                         var n = document.getElementsByTagName("head")[0].appendChild(tempscript);
-                        setTimeout(function() {
+                        setTimeout(function () {
                             n.parentNode.removeChild(n);
                         }, 500);
                         return false;
                     });
 
-                    window.embedplus_record_prokey = function(good) {
+                    window.embedplus_record_prokey = function (good) {
 
                         jQuery.ajax({
                             type: "post",
@@ -3254,7 +3337,7 @@ class YouTubePrefs
                             timeout: 30000,
                             url: wpajaxurl,
                             data: {action: 'my_embedplus_pro_record', <?php echo self::$opt_pro; ?>: (good ? prokeyval : "")},
-                            success: function(response) {
+                            success: function (response) {
                                 if (response.type == "success") {
                                     jQuery("#prokeysuccess").show();
                                 }
@@ -3262,10 +3345,10 @@ class YouTubePrefs
                                     jQuery("#prokeyfailed").show();
                                 }
                             },
-                            error: function(xhr, ajaxOptions, thrownError) {
+                            error: function (xhr, ajaxOptions, thrownError) {
                                 jQuery('#prokeyfailed').show();
                             },
-                            complete: function() {
+                            complete: function () {
                                 jQuery('#prokeyloading').hide();
                                 jQuery('#prokeysubmit').removeAttr('disabled');
                             }
@@ -3304,7 +3387,8 @@ class YouTubePrefs
             wp_enqueue_script('__ytprefs__', plugins_url('scripts/ytprefs.min.js', __FILE__), array('jquery'));
             wp_localize_script('__ytprefs__', '_EPYT_', array(
                 'ajaxurl' => admin_url('admin-ajax.php'),
-                'security' => wp_create_nonce('embedplus-nonce')
+                'security' => wp_create_nonce('embedplus-nonce'),
+                'gallery_scrolloffset' => intval(self::$alloptions[self::$opt_gallery_scrolloffset])
             ));
 
 
@@ -3484,7 +3568,7 @@ class YouTubePrefs
                 var epmessageEvent = epeventMethod == "attachEvent" ? "onmessage" : "message";
 
                 // Listen to message from child window
-                epeventer(epmessageEvent, function(e)
+                epeventer(epmessageEvent, function (e)
                 {
                     var embedcode = "";
                     try
